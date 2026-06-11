@@ -4,7 +4,10 @@
 
 -- Utente Admin di partenza (La password in chiaro andrà sostituita con l'hash SHA-256 nel codice Java)
 INSERT INTO utente (nome, cognome, email, password_hash, is_admin) 
-VALUES ('Luigi', 'Barberio', 'admin@runitup.it', 'admin123', TRUE);
+VALUES ('Luigi', 'Barberio', 'luigi@runitup.it', 'admin123', TRUE);
+
+INSERT INTO utente (nome, cognome, email, password_hash, is_admin) 
+VALUES ('Antonio', 'Tolino', 'antonio@runitup.it', 'admin123', TRUE);
 
 -- Inseriamo alcuni Brand di base
 INSERT INTO brand (nome_brand) VALUES ('Nike'), ('Asics'), ('Hoka'), ('Brooks'), ('Saucony');

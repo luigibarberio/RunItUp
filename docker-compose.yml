@@ -20,12 +20,16 @@ services:
     restart: unless-stopped
     ports:
       - "${APP_PORT}:8080" # Usa la variabile definita nell'env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./.env:/app/.env # Monta il file .env dentro il container
     depends_on:
       - db # Vincolo di avvio: Tomcat si accende SOLO dopo che il database è pronto
-    environment:
-      # Passiamo le System Properties a Tomcat iniettando i valori del file .env
-      # NOTA BENE: L'URL punta a "db" (il nome del servizio container) e non a "localhost"!
-      - CATALINA_OPTS=-Ddb.url=jdbc:postgresql://db:5432/${DB_NAME} -Ddb.user=${DB_USER} -Ddb.password=${DB_PASSWORD}
 
 volumes:
   postgres_data:

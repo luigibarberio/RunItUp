@@ -9,4 +9,8 @@
     <welcome-file>default.jsp</welcome-file>
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
+  <context-param>
+    <param-name>poolSize</param-name>
+    <param-value>10</param-value>
+  </context-param>
 </web-app>

@@ -33,7 +33,7 @@ FROM tomcat:9.0-jdk11
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # 3. Deploy: Copia il file .war generato dallo STAGE 1
-COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps/RunItUp.war
+COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
 # 4. Networking: Espone la porta 8080
 EXPOSE 8080

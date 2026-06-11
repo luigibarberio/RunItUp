@@ -1,6 +1,8 @@
-package it.runitup.model.util;
+package it.runitup.util;
 
 import org.postgresql.ds.PGSimpleDataSource;
+
+import io.github.cdimascio.dotenv.Dotenv;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,12 +20,24 @@ public class ConnectionPool {
     
     private static PGSimpleDataSource pgDataSource;
 
+    private static Dotenv dotenv;
+
+    // Blocco statico per inizializzare il caricamento del file .env
+    static {
+        dotenv = Dotenv.configure().ignoreIfMissing().load();
+    }
+
     // Metodo di utilità per leggere variabili d'ambiente o System Properties con fallback a default
-    private static String getEnvOrDefault(String key, String defaultValue) {
+    private static String getEnv(String key, String defaultValue) {
+        // 1. PRIORITÀ MASSIMA: Variabili d'ambiente (Iniettate da Docker o dal Sistema)
         String value = System.getenv(key);
-        if (value == null) {
-            value = System.getProperty(key);
+
+        // 2. PRIORITÀ MEDIA: File .env (Caricato da dotenv-java)
+        if (value == null || value.trim().isEmpty()) {
+            value = dotenv.get(key);
         }
+
+        // 3. FALLBACK: Valore di default hardcoded
         return (value != null && !value.trim().isEmpty()) ? value : defaultValue;
     }
 
@@ -34,16 +48,18 @@ public class ConnectionPool {
         }
 
         // Costruzione dinamica dell'URL JDBC
-        String dbHost = getEnvOrDefault("DB_HOST", "localhost");
-        String dbPort = getEnvOrDefault("DB_PORT", "5432");
-        String dbName = getEnvOrDefault("DB_NAME", "runitup_db");
+        String dbHost = getEnv("DB_HOST", "localhost");
+        String dbPort = getEnv("DB_PORT", "5432");
+        String dbName = getEnv("DB_NAME", "runitup_db");
         String jdbcUrl = "jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + dbName;
+
+        System.out.println("[ConnectionPool] Inizializzazione in corso... URL: " + jdbcUrl);
 
         // Inizializziazione del DataSource con i parametri letti da ambiente o di default
         pgDataSource = new PGSimpleDataSource();
-        pgDataSource.setURL(getEnvOrDefault(jdbcUrl, "jdbc:postgresql://localhost:5432/runitup_db"));
-        pgDataSource.setUser(getEnvOrDefault("DB_USER", "postgres"));
-        pgDataSource.setPassword(getEnvOrDefault("DB_PASSWORD", "password"));
+        pgDataSource.setUrl(jdbcUrl);
+        pgDataSource.setUser(getEnv("DB_USER", "postgres"));
+        pgDataSource.setPassword(getEnv("DB_PASSWORD", "password"));
 
         // Inizializzazione del Pool
         freeDbConnections = new LinkedList<>();
@@ -114,4 +130,23 @@ public class ConnectionPool {
             }
         }
     }
+
+    // Chiude tutte le connessioni nel pool
+    public static synchronized void shutdown() {
+        if (freeDbConnections != null) {
+            for (Connection conn : freeDbConnections) {
+                try {
+                    if (conn != null && !conn.isClosed()) {
+                        conn.close();
+                    }
+                } catch (SQLException e) {
+                    System.err.println("[ConnectionPool] Errore durante la chiusura di una connessione: " + e.getMessage());
+                }
+            }
+            freeDbConnections.clear();
+            initialized = false;
+            System.out.println("[ConnectionPool] Pool chiuso correttamente.");
+        }
+    }
+
 }

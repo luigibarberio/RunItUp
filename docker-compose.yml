@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: runitup_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Iniezione del database iniziale: tutti gli script SQL presenti in "db_scripts" saranno eseguiti al primo avvio del container
+      - ./db_scripts:/docker-entrypoint-initdb.d/
+
+  app:
+    build: . # Dice a Compose di cercare il "Dockerfile" nella stessa cartella
+    container_name: runitup_app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT}:8080" # Usa la variabile definita nell'env
+    depends_on:
+      - db # Vincolo di avvio: Tomcat si accende SOLO dopo che il database è pronto
+    environment:
+      # Passiamo le System Properties a Tomcat iniettando i valori del file .env
+      # NOTA BENE: L'URL punta a "db" (il nome del servizio container) e non a "localhost"!
+      - CATALINA_OPTS=-Ddb.url=jdbc:postgresql://db:5432/${DB_NAME} -Ddb.user=${DB_USER} -Ddb.password=${DB_PASSWORD}
+
+volumes:
+  postgres_data:

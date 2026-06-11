@@ -1,5 +1,49 @@
-/build/
-.settings/
+# ==========================================
+# MAVEN (Output di Compilazione)
+# ==========================================
+target/
+*.war
+*.ear
+*.jar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+
+# ==========================================
+# ECLIPSE IDE
+# ==========================================
+.metadata
 .classpath
 .project
+.settings/
+RemoteSystemsTempFiles/
+bin/
+/build/
 build/
+
+# ==========================================
+# VISUAL STUDIO CODE
+# ==========================================
+.vscode/
+*.code-workspace
+
+# ==========================================
+# SEGRETI E AMBIENTE LOCALE (DOCKER)
+# ==========================================
+.env
+*.env.local
+*.properties.local
+
+# ==========================================
+# FILE DI SISTEMA OPERATIVO
+# ==========================================
+# Windows
+Thumbs.db
+ehthumbs.db
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride

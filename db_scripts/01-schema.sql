@@ -50,7 +50,10 @@ CREATE TABLE prodotto (
     genere genere_scarpa NOT NULL,
     tipo_terreno VARCHAR(50) NOT NULL CHECK (tipo_terreno IN ('ASFALTO', 'TRAIL', 'PISTA')),
     tipo_appoggio VARCHAR(50) NOT NULL CHECK (tipo_appoggio IN ('NEUTRO', 'PRONATORE', 'SUPINATORE')),
-    tipo_passo VARCHAR(50) NOT NULL CHECK (tipo_passo IN ('LENTO', 'MEDIO', 'VELOCE'))
+    tipo_passo VARCHAR(50) NOT NULL CHECK (tipo_passo IN ('LENTO', 'MEDIO', 'VELOCE')),
+    data_inserimento TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Si compila da solo al momento dell'INSERT
+    in_evidenza BOOLEAN DEFAULT FALSE,
+    totale_vendite INT DEFAULT 0 CHECK (totale_vendite >= 0)
 );
 
 CREATE TABLE variante_prodotto (

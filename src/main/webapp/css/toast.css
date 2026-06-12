@@ -1,0 +1,61 @@
+/* =========================================
+   TOAST COMPONENT
+   ========================================= */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%); /* Centratura orizzontale perfetta */
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Mantiene i toast centrati se ce n'è più di uno */
+    gap: 10px;
+    width: 90%; /* Evita che tocchi i bordi su mobile */
+    max-width: 400px;
+}
+
+.toast {
+    background-color: #ffffff;
+    color: var(--testo-principale);
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    border-top: 4px solid transparent; /* Spostiamo il bordo colorato in alto */
+    width: 100%;
+    
+    /* Animazione di discesa dall'alto */
+    transform: translateY(-150%);
+    opacity: 0;
+    animation: toastDropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.toast.error {
+    border-top-color: var(--promozioni);
+}
+
+.toast.success {
+    border-top-color: var(--conferme);
+}
+
+.toast.fade-out {
+    animation: toastFadeOut 0.3s ease forwards;
+}
+
+@keyframes toastDropIn {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastFadeOut {
+    to {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+}

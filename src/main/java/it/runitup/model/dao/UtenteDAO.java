@@ -18,29 +18,37 @@ public class UtenteDAO {
         // Query SQL con parametri (PreparedStatement) per evitare SQL Injection
         String query = "SELECT * FROM utente WHERE email = ?";
         
-        // Il costrutto try-with-resources chiude in automatico le risorse (Connection e Statement)
-        try (Connection con = ConnectionPool.getConnection();
-             PreparedStatement ps = con.prepareStatement(query)) {
-            
-            ps.setString(1, email);
-            
-            // Esecuzione della query e gestione del ResultSet
-            try (ResultSet rs = ps.executeQuery()) {
+        Connection con = ConnectionPool.getConnection();
+
+        try{
+            // Il costrutto try-with-resources chiude in automatico le risorse (Connection e Statement)
+            try (PreparedStatement ps = con.prepareStatement(query)) {
                 
-                // Se c'è almeno una riga (l'utente esiste ed è unico)
-                if (rs.next()) {
-                    utente = new Utente();
-                    utente.setIdUtente(rs.getInt("id_utente"));
-                    utente.setNome(rs.getString("nome"));
-                    utente.setCognome(rs.getString("cognome"));
-                    utente.setEmail(rs.getString("email"));
-                    utente.setPasswordHash(rs.getString("password_hash"));
-                    utente.setTelefono(rs.getString("telefono"));
-                    utente.setAdmin(rs.getBoolean("is_admin"));
+                ps.setString(1, email);
+                
+                // Esecuzione della query e gestione del ResultSet
+                try (ResultSet rs = ps.executeQuery()) {
+                    
+                    // Se c'è almeno una riga (l'utente esiste ed è unico)
+                    if (rs.next()) {
+                        utente = new Utente();
+                        utente.setIdUtente(rs.getInt("id_utente"));
+                        utente.setNome(rs.getString("nome"));
+                        utente.setCognome(rs.getString("cognome"));
+                        utente.setEmail(rs.getString("email"));
+                        utente.setPasswordHash(rs.getString("password_hash"));
+                        utente.setTelefono(rs.getString("telefono"));
+                        utente.setAdmin(rs.getBoolean("is_admin"));
+                    }
                 }
-            }
-        } 
+            } 
         // L'eccezione SQLException viene "lanciata" (throws) al chiamante (la Servlet)
+        // Si chiude la connessione nel blocco finally per garantire che venga sempre rilasciata al pool, anche in caso di errori
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
         
         return utente;
     }
@@ -51,19 +59,25 @@ public class UtenteDAO {
         // Query SQL con parametri (PreparedStatement) per evitare SQL Injection
         String query = "INSERT INTO utente (nome, cognome, email, password_hash, telefono, is_admin) VALUES (?, ?, ?, ?, ?, ?)";
         
-        try (Connection con = ConnectionPool.getConnection();
-             PreparedStatement ps = con.prepareStatement(query)) {
-            
-            // Prendiamo i dati dall'oggetto Java e li infiliamo nei '?'
-            ps.setString(1, utente.getNome());
-            ps.setString(2, utente.getCognome());
-            ps.setString(3, utente.getEmail());
-            ps.setString(4, utente.getPasswordHash());
-            ps.setString(5, utente.getTelefono());
-            ps.setBoolean(6, utente.isAdmin()); // Di default un nuovo utente non è admin
-            
-            // Esecuzione dell'INSERT
-            ps.executeUpdate();
+        Connection con = ConnectionPool.getConnection();
+        try{
+            try (PreparedStatement ps = con.prepareStatement(query)) {
+                
+                // Prendiamo i dati dall'oggetto Java e li infiliamo nei '?'
+                ps.setString(1, utente.getNome());
+                ps.setString(2, utente.getCognome());
+                ps.setString(3, utente.getEmail());
+                ps.setString(4, utente.getPasswordHash());
+                ps.setString(5, utente.getTelefono());
+                ps.setBoolean(6, utente.isAdmin()); // Di default un nuovo utente non è admin
+                
+                // Esecuzione dell'INSERT
+                ps.executeUpdate();
+            }
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
         }
     }
 

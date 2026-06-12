@@ -1,7 +1,6 @@
 package it.runitup.control;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,93 +11,64 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.mindrot.jbcrypt.BCrypt;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import org.mindrot.jbcrypt.BCrypt;
 
 import it.runitup.model.bean.Utente;
 import it.runitup.model.dao.UtenteDAO;
+// TODO import it.runitup.model.bean.Carrello;
 
-// Servlet per gestire le richieste di login degli utenti
-@WebServlet(name = "LoginServlet", value = "/login")
+@WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    private UtenteDAO utenteDAO = new UtenteDAO();
 
-    // Gson per convertire le risposte in formato JSON
-    private final Gson gson = new Gson();
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
-        // Si imposta il tipo di risposta JSON e la codifica dei caratteri
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        
-        // Parametri dalla richiesta di login
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        
-        // Mappa che conterrà i dati della risposta JSON
-        Map<String, String> jsonResponse = new HashMap<>();
-        
-        // Si verifica che i campi email e password siano presenti e non vuoti
-        if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Status 400
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "Campi obbligatori mancanti.");
-            
-            // Si scrive la risposta JSON nel corpo della risposta
-            response.getWriter().write(gson.toJson(jsonResponse));
-            return;
-        }
-        
-        UtenteDAO utenteDAO = new UtenteDAO();
-        
-        try {
-            Utente utenteTrovato = utenteDAO.doRetrieveByEmail(email);
-            
-            if (utenteTrovato != null && BCrypt.checkpw(password, utenteTrovato.getPasswordHash())) {
-                
-                // Login riuscito, si crea la sessione e si salva l'utente loggato
-                HttpSession session = request.getSession();
-                session.setAttribute("utente", utenteTrovato);
-                
-                // TODO: Gestire il merge del carrello del Guest nel Database 
-                // non appena avremo implementato la logica del Carrello.
-                
-                jsonResponse.put("status", "success");
-                jsonResponse.put("message", "Login effettuato con successo.");
-                
-                response.getWriter().write(gson.toJson(jsonResponse));
-                
-            } else {
-                // Login fallito: email non trovata o password errata
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Status 401
-                jsonResponse.put("status", "error");
-                jsonResponse.put("message", "Email o password errati.");
-                response.getWriter().write(gson.toJson(jsonResponse));
-            }
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Status 500
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "Errore interno del server, riprova più tardi.");
-            
-            response.getWriter().write(gson.toJson(jsonResponse));
-        }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        Gson gson = new Gson();
+        JsonObject jsonRequest = gson.fromJson(request.getReader(), JsonObject.class);
         
-        // Verifica se l'utente è già loggato controllando la sessione
-        HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("utente") != null) {
-            // Se è loggato, reindirizza alla pagina principale
-            response.sendRedirect(request.getContextPath() + "/");
-            return;
+        // NORMALIZZAZIONE: Email sempre in lowercase
+        String email = jsonRequest.get("email").getAsString().toLowerCase();
+        String password = jsonRequest.get("password").getAsString();
+
+        Map<String, Object> jsonResponse = new HashMap<>();
+
+        try {
+            Utente utente = utenteDAO.doRetrieveByEmail(email);
+
+            // Verifica esistenza utente E verifica password con BCrypt
+            if (utente != null && BCrypt.checkpw(password, utente.getPasswordHash())) {
+                
+                HttpSession session = request.getSession(true);
+                session.setAttribute("utenteLoggato", utente);
+
+                // GESTIONE CARRELLO (Merge logic)
+                // Carrello carrelloSessione = (Carrello) session.getAttribute("carrello");
+                // TODO: CarrelloDAO carrelloDAO = new CarrelloDAO();
+                // Carrello carrelloDB = carrelloDAO.doRetrieveByUtente(utente.getIdUtente());
+                // carrelloSessione.merge(carrelloDB); 
+                
+                jsonResponse.put("success", true);
+                jsonResponse.put("redirectUrl", request.getContextPath() + "/"); 
+            } else {
+                jsonResponse.put("success", false);
+                jsonResponse.put("message", "Email o password errata.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            jsonResponse.put("success", false);
+            jsonResponse.put("message", "Errore durante il login.");
         }
 
-        // Se non è loggato, inoltra la richiesta alla view nascosta
-        request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
+        response.getWriter().write(gson.toJson(jsonResponse));
     }
 }

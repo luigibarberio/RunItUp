@@ -1,0 +1,46 @@
+/* =========================================
+   VARIABILI DI TEMA (Palette Ufficiale RunItUp)
+   ========================================= */
+:root {
+    --colore-primario: #0C59CF;
+    --colore-secondario: #3786E3;
+    --sfondo-principale: #F8FAFC;
+    --sfondo-alternativo: #ECEEF0;
+    --testo-principale: #111111;
+    --testo-secondario: #181818;
+    --promozioni: #CC3A12;
+    --conferme: #027E6F;
+}
+
+/* =========================================
+   RESET GLOBALE
+   ========================================= */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* =========================================
+   TYPOGRAPHY E IMPOSTAZIONI BASE
+   ========================================= */
+body {
+    /* Font di sistema: puliti, veloci da caricare e moderni */
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    
+    /* Applichiamo le tue variabili per lo sfondo e il testo */
+    background-color: var(--sfondo-principale);
+    color: var(--testo-principale);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased; /* Rende i testi più nitidi sugli schermi moderni */
+}
+
+a {
+    text-decoration: none;
+    color: var(--colore-primario);
+    transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+    color: var(--colore-secondario);
+}

@@ -1,6 +1,7 @@
 package it.runitup.model.bean;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 public class Prodotto implements Serializable {
 
@@ -18,12 +19,17 @@ public class Prodotto implements Serializable {
     private String tipoAppoggio;
     private String tipoPasso;
 
+    private Timestamp dataInserimento;
+    private boolean inEvidenza;
+    private int totaleVendite;
+
     public Prodotto() {
         super();
     }
 
     public Prodotto(int idProdotto, String nome, String descrizione, Brand brand, String immagineCopertina,
-                    GenereScarpa genere, String tipoTerreno, String tipoAppoggio, String tipoPasso) {
+                    GenereScarpa genere, String tipoTerreno, String tipoAppoggio, String tipoPasso,
+                    Timestamp dataInserimento, boolean inEvidenza, int totaleVendite) {
         this.idProdotto = idProdotto;
         this.nome = nome;
         this.descrizione = descrizione;
@@ -33,9 +39,12 @@ public class Prodotto implements Serializable {
         this.tipoTerreno = tipoTerreno;
         this.tipoAppoggio = tipoAppoggio;
         this.tipoPasso = tipoPasso;
+        this.dataInserimento = dataInserimento;
+        this.inEvidenza = inEvidenza;
+        this.totaleVendite = totaleVendite;
     }
 
-    // --- Getter e Setter ---
+    // --- Getters e Setters ---
     public int getIdProdotto() { return idProdotto; }
     public void setIdProdotto(int idProdotto) { this.idProdotto = idProdotto; }
 
@@ -62,6 +71,15 @@ public class Prodotto implements Serializable {
 
     public String getTipoPasso() { return tipoPasso; }
     public void setTipoPasso(String tipoPasso) { this.tipoPasso = tipoPasso; }
+
+    public Timestamp getDataInserimento() { return dataInserimento; }
+    public void setDataInserimento(Timestamp dataInserimento) { this.dataInserimento = dataInserimento; }
+
+    public boolean isInEvidenza() { return inEvidenza; }
+    public void setInEvidenza(boolean inEvidenza) { this.inEvidenza = inEvidenza; }
+
+    public int getTotaleVendite() { return totaleVendite; }
+    public void setTotaleVendite(int totaleVendite) { this.totaleVendite = totaleVendite; }
 
     @Override
     public String toString() {

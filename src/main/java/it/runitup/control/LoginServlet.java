@@ -25,7 +25,14 @@ public class LoginServlet extends HttpServlet {
     private UtenteDAO utenteDAO = new UtenteDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
+        // Se l'utente è già loggato, lo si reindirizza alla home
+        if (request.getSession(false) != null && request.getSession(false).getAttribute("utenteLoggato") != null) {
+            response.sendRedirect(request.getContextPath() + "/");
+            return;
+        }else {
+            // Altrimenti, mostra la pagina di login
+            request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
+        }
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -35,13 +42,22 @@ public class LoginServlet extends HttpServlet {
         Gson gson = new Gson();
         JsonObject jsonRequest = gson.fromJson(request.getReader(), JsonObject.class);
         
-        // NORMALIZZAZIONE: Email sempre in lowercase
-        String email = jsonRequest.get("email").getAsString().toLowerCase();
-        String password = jsonRequest.get("password").getAsString();
-
+        
         Map<String, Object> jsonResponse = new HashMap<>();
-
+        
         try {
+            // NORMALIZZAZIONE: Email sempre in lowercase
+            String email = jsonRequest.has("email") ? jsonRequest.get("email").getAsString().trim().toLowerCase() : "";
+            String password = jsonRequest.has("password") ? jsonRequest.get("password").getAsString() : "";
+            
+            if (email.isEmpty() || email.length() > 100 || password.isEmpty() || password.length() > 50) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                jsonResponse.put("success", false);
+                jsonResponse.put("message", "Credenziali non valide."); // Messaggio generico per non dare indizi ad un attaccante
+                response.getWriter().write(gson.toJson(jsonResponse));
+                return;
+            }
+            
             Utente utente = utenteDAO.doRetrieveByEmail(email);
 
             // Verifica esistenza utente E verifica password con BCrypt
@@ -56,8 +72,21 @@ public class LoginServlet extends HttpServlet {
                 // Carrello carrelloDB = carrelloDAO.doRetrieveByUtente(utente.getIdUtente());
                 // carrelloSessione.merge(carrelloDB); 
                 
+                // Cattura l'eventuale URL di destinazione salvato dal filtro di autenticazione (AuthFilter) prima del login
+                String redirectDopoLogin = (String) session.getAttribute("redirectDopoLogin");
+                
+                if (redirectDopoLogin != null) {
+                    // Se esiste un URL di destinazione, lo include nella risposta JSON per permettere al client di fare un redirect dinamico dopo il login
+                    jsonResponse.put("redirectUrl", redirectDopoLogin);
+                    // Pulisce l'attributo dalla sessione per evitare redirect indesiderati in futuro
+                    session.removeAttribute("redirectDopoLogin"); 
+                } else {
+                    // Comportamento standard: andiamo alla Home
+                    jsonResponse.put("redirectUrl", request.getContextPath() + "/"); 
+                }
+
+
                 jsonResponse.put("success", true);
-                jsonResponse.put("redirectUrl", request.getContextPath() + "/"); 
             } else {
                 jsonResponse.put("success", false);
                 jsonResponse.put("message", "Email o password errata.");

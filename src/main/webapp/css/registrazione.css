@@ -1,0 +1,46 @@
+.register-card {
+    max-width: 550px; /* Più larga per ospitare le colonne affiancate */
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+}
+
+.input-row .input-group {
+    flex: 1; /* Dividono lo spazio al 50% */
+}
+
+/* Stile per il gruppo del telefono */
+.phone-input-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+.phone-prefix {
+    padding: 12px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 110px;
+}
+
+.phone-prefix:focus {
+    border-color: var(--colore-primario);
+}
+
+.phone-input-wrapper input[type="tel"] {
+    flex-grow: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+    .input-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}

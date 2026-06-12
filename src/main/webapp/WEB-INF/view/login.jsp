@@ -69,6 +69,7 @@
     <jsp:include page="/WEB-INF/view/fragments/toast.jsp" />
     
     <script src="${pageContext.request.contextPath}/js/toast.js"></script>
+    <script src="${pageContext.request.contextPath}/js/formUtils.js"></script>
     <script src="${pageContext.request.contextPath}/js/login.js"></script>
 </body>
 </html>

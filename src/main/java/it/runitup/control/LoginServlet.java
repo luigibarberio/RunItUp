@@ -29,10 +29,9 @@ public class LoginServlet extends HttpServlet {
         if (request.getSession(false) != null && request.getSession(false).getAttribute("utenteLoggato") != null) {
             response.sendRedirect(request.getContextPath() + "/");
             return;
-        }else {
-            // Altrimenti, mostra la pagina di login
-            request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
         }
+        // Altrimenti, mostra la pagina di login
+        request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

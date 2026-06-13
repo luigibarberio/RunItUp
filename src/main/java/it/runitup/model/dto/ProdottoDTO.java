@@ -5,8 +5,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import it.runitup.model.bean.Prodotto;
 
-import java.util.Base64;
-
 public class ProdottoDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;

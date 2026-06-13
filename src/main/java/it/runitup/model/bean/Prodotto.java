@@ -13,11 +13,11 @@ public class Prodotto implements Serializable {
 
     private Brand brand;
     
-    private String immagineCopertina;
+    private byte[] immagineCopertina;
     private GenereScarpa genere;
-    private String tipoTerreno;
-    private String tipoAppoggio;
-    private String tipoPasso;
+    private TipoTerreno tipoTerreno;
+    private TipoAppoggio tipoAppoggio;
+    private TipoPasso tipoPasso;
 
     private Timestamp dataInserimento;
     private boolean inEvidenza;
@@ -27,8 +27,8 @@ public class Prodotto implements Serializable {
         super();
     }
 
-    public Prodotto(int idProdotto, String nome, String descrizione, Brand brand, String immagineCopertina,
-                    GenereScarpa genere, String tipoTerreno, String tipoAppoggio, String tipoPasso,
+    public Prodotto(int idProdotto, String nome, String descrizione, Brand brand, byte[] immagineCopertina,
+                    GenereScarpa genere, TipoTerreno tipoTerreno, TipoAppoggio tipoAppoggio, TipoPasso tipoPasso,
                     Timestamp dataInserimento, boolean inEvidenza, int totaleVendite) {
         this.idProdotto = idProdotto;
         this.nome = nome;
@@ -57,20 +57,20 @@ public class Prodotto implements Serializable {
     public Brand getBrand() { return brand; }
     public void setBrand(Brand brand) { this.brand = brand; }
 
-    public String getImmagineCopertina() { return immagineCopertina; }
-    public void setImmagineCopertina(String immagineCopertina) { this.immagineCopertina = immagineCopertina; }
+    public byte[] getImmagineCopertina() { return immagineCopertina; }
+    public void setImmagineCopertina(byte[] immagineCopertina) { this.immagineCopertina = immagineCopertina; }
 
     public GenereScarpa getGenere() { return genere; }
     public void setGenere(GenereScarpa genere) { this.genere = genere; }
 
-    public String getTipoTerreno() { return tipoTerreno; }
-    public void setTipoTerreno(String tipoTerreno) { this.tipoTerreno = tipoTerreno; }
+    public TipoTerreno getTipoTerreno() { return tipoTerreno; }
+    public void setTipoTerreno(TipoTerreno tipoTerreno) { this.tipoTerreno = tipoTerreno; }
 
-    public String getTipoAppoggio() { return tipoAppoggio; }
-    public void setTipoAppoggio(String tipoAppoggio) { this.tipoAppoggio = tipoAppoggio; }
+    public TipoAppoggio getTipoAppoggio() { return tipoAppoggio; }
+    public void setTipoAppoggio(TipoAppoggio tipoAppoggio) { this.tipoAppoggio = tipoAppoggio; }
 
-    public String getTipoPasso() { return tipoPasso; }
-    public void setTipoPasso(String tipoPasso) { this.tipoPasso = tipoPasso; }
+    public TipoPasso getTipoPasso() { return tipoPasso; }
+    public void setTipoPasso(TipoPasso tipoPasso) { this.tipoPasso = tipoPasso; }
 
     public Timestamp getDataInserimento() { return dataInserimento; }
     public void setDataInserimento(Timestamp dataInserimento) { this.dataInserimento = dataInserimento; }

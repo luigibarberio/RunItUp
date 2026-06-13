@@ -1,0 +1,334 @@
+/* ==========================================================================
+   LAYOUT PRINCIPALE DEL CATALOGO (CSS Grid)
+   ========================================================================== */
+.catalogo-main {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    /* Diciamo alla griglia l'altezza esatta delle righe */
+    grid-template-rows: min-content 1fr min-content; 
+    grid-template-areas: 
+        "sidebar header"
+        "sidebar products"
+        "sidebar pagination";
+    gap: 20px 40px;
+    align-items: start;
+}
+
+/* ==========================================================================
+   ORDINAMENTO (Header in alto a destra)
+   ========================================================================== */
+.catalogo-header {
+    grid-area: header;
+    display: flex;
+    justify-content: flex-end; /* Allinea a destra */
+    align-items: center;
+}
+
+.catalogo-header select {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: inherit;
+    background-color: #fff;
+    color: var(--testo-principale);
+    cursor: pointer;
+    font-weight: 500;
+    transition: border-color 0.2s;
+}
+
+.catalogo-header select:focus {
+    outline: none;
+    border-color: var(--colore-primario);
+}
+
+/* ==========================================================================
+   SIDEBAR DEI FILTRI
+   ========================================================================== */
+.catalogo-filters {
+    grid-area: sidebar;
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    
+    /* La sidebar rimane fissa in alto... */
+    position: sticky;
+    top: 20px; 
+    
+    /* ...ma non supera MAI l'altezza dello schermo dell'utente */
+    max-height: calc(100vh - 40px); 
+    
+    /* Se i filtri sono troppi, si scrolla SOLO dentro la sidebar! */
+    overflow-y: auto; 
+    
+    /* Estetica della scrollbar per i browser Webkit (Chrome, Edge, Safari) */
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+}
+
+.filter-group {
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Titoli di ogni sezione di filtro */
+.filter-group > label:first-child {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    color: var(--testo-secondario);
+    margin-bottom: 4px;
+    border-bottom: 2px solid var(--sfondo-alternativo);
+    padding-bottom: 6px;
+}
+
+/* Allineamento checkbox e testo */
+.filter-group label {
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--testo-principale);
+}
+
+.filter-group input[type="checkbox"] {
+    margin-right: 10px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--colore-primario); /* Colora la spunta con il blu RunItUp */
+}
+
+/* Input di testo/numerici (Prezzi) */
+.filter-group input[type="number"] {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 100%;
+    font-family: inherit;
+}
+
+.filter-group input[type="number"]:focus {
+    outline: none;
+    border-color: var(--colore-primario);
+}
+
+/* ==========================================================================
+   BOTTONI SIDEBAR (Azioni Filtri)
+   ========================================================================== */
+.filter-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 32px;
+    
+    /* Effetto "Sticky Bottom": i bottoni rimangono sempre visibili in fondo alla sidebar */
+    position: sticky;
+    bottom: -24px; /* Compensa il padding inferiore della sidebar */
+    background: #fff; /* Sfondo pieno per coprire i filtri che scorrono sotto */
+    padding: 15px 0 24px 0;
+    
+    /* Ombra rivolta verso l'alto per dare l'effetto di profondità */
+    box-shadow: 0 -10px 10px -10px rgba(0,0,0,0.1); 
+    z-index: 10;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.btn-primary { background-color: var(--colore-primario); color: #fff; }
+.btn-primary:hover { background-color: var(--colore-secondario); }
+.btn-secondary { background-color: var(--sfondo-alternativo); color: var(--testo-principale); }
+.btn-secondary:hover { background-color: #d1d5d8; }
+
+/* Nasconde di default i bottoni che servono solo su mobile */
+.mobile-only {
+    display: none;
+}
+
+/* ==========================================================================
+   GRIGLIA PRODOTTI
+   ========================================================================== */
+.catalogo-prodotti {
+    grid-area: products;
+    display: grid;
+    /* Crea colonne che si adattano dinamicamente, minimo 260px l'una */
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+    align-content: start;
+}
+
+.catalogo-prodotti > p {
+    grid-column: 1 / -1; /* Occupa tutta la larghezza se non ci sono prodotti */
+    text-align: center;
+    padding: 40px;
+    font-size: 1.1rem;
+    color: var(--testo-secondario);
+    background: #fff;
+    border-radius: 8px;
+    border: 1px dashed #ccc;
+}
+
+/* ==========================================================================
+   PAGINAZIONE
+   ========================================================================== */
+.catalogo-pagination {
+    grid-area: pagination;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.catalogo-pagination ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    gap: 16px;
+}
+
+.pagination-item button {
+    padding: 10px 24px;
+    background-color: #fff;
+    border: 1px solid var(--colore-primario);
+    color: var(--colore-primario);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.pagination-item button:hover:not([disabled]) {
+    background-color: var(--colore-primario);
+    color: #fff;
+}
+
+/* Stato disabilitato dei bottoni di paginazione */
+.pagination-item.disabled button,
+.pagination-item button[disabled] {
+    border-color: #e0e0e0;
+    color: #a0a0a0;
+    cursor: not-allowed;
+    background-color: #f5f5f5;
+}
+
+/* ==========================================================================
+   STILE CHECKBOX A BOTTONE (PILLS)
+   ========================================================================== */
+.filter-pills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Mette i primi filtri su due colonne */
+    gap: 10px;
+}
+
+.filter-pills-wrap {
+    display: flex;
+    flex-wrap: wrap; /* Affianca brand, taglie, ecc., andando a capo se non c'è spazio */
+    gap: 8px;
+}
+
+.custom-pill {
+    cursor: pointer;
+    display: block;
+}
+
+/* Nascondiamo la checkbox di sistema brutta */
+.custom-pill input[type="checkbox"] {
+    display: none; 
+}
+
+/* Creiamo la "scatola" finta che fa da bottone */
+.pill-box {
+    display: block;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: center;
+    background: #fff;
+    color: var(--testo-principale);
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+/* QUANDO SELEZIONATO: Si riempie del colore primario */
+.custom-pill input[type="checkbox"]:checked + .pill-box {
+    background-color: var(--colore-primario);
+    color: #fff;
+    border-color: var(--colore-primario);
+    font-weight: bold;
+}
+
+/* Effetto Hover quando NON è selezionato */
+.custom-pill:hover input[type="checkbox"]:not(:checked) + .pill-box {
+    border-color: var(--colore-primario);
+    background-color: var(--sfondo-principale);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (Smartphone e Tablet - Max 991px)
+   ========================================================================== */
+@media (max-width: 991px) {
+    .catalogo-main {
+        grid-template-columns: 1fr;
+        /* La sidebar sparisce dalla griglia perché diventerà "fixed" (mobile menu) */
+        grid-template-areas: 
+            "header"
+            "products"
+            "pagination";
+        gap: 20px;
+    }
+    
+    /* L'header mostra il bottone "Filtri" a sinistra e la "Select" a destra */
+    .catalogo-header {
+        justify-content: space-between;
+    }
+    
+    /* Mostriamo il bottone Filtri */
+    .mobile-only {
+        display: block;
+    }
+
+    /* TRASFORMAZIONE DELLA SIDEBAR IN CASSETTO MOBILE */
+    .catalogo-filters {
+        position: fixed;
+        top: 0;
+        left: -100%; /* Nascosta fuori dallo schermo a sinistra */
+        width: 85%;
+        max-width: 350px;
+        height: 100vh; /* Prende tutta l'altezza del telefono */
+        max-height: 100vh;
+        z-index: 1000; /* Sta sopra a tutto il resto */
+        border-radius: 0;
+        border: none;
+        box-shadow: 4px 0 15px rgba(0,0,0,0.2); /* Ombra a destra */
+        
+        /* Animazione fluida quando entra */
+        transition: left 0.3s ease-in-out;
+    }
+
+    /* Classe aggiunta dal JavaScript per aprire il menù */
+    .catalogo-filters.open {
+        left: 0; 
+    }
+
+    /* I bottoni in fondo si adattano al padding del mobile */
+    .filter-actions {
+        bottom: -24px; 
+    }
+}

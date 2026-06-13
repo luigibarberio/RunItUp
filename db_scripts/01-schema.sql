@@ -3,7 +3,10 @@
 -- ==============================================================================
 
 -- CREAZIONE TIPI ENUM
-CREATE TYPE genere_scarpa AS ENUM ('UOMO', 'DONNA', 'UNISEX', 'BAMBINO');
+CREATE TYPE genere_scarpa AS ENUM ('UOMO', 'DONNA', 'UNISEX');
+CREATE TYPE tipo_terreno AS ENUM ('STRADA', 'STERRATO');
+CREATE TYPE tipo_passo AS ENUM ('LENTO', 'MEDIO', 'VELOCE');
+CREATE TYPE tipo_appoggio AS ENUM ('NEUTRO', 'PRONATORE', 'SUPINATORE');
 CREATE TYPE stato_ordine AS ENUM ('IN_LAVORAZIONE', 'SPEDITO', 'CONSEGNATO', 'ANNULLATO');
 CREATE TYPE tipo_sconto_coupon AS ENUM ('FISSO', 'PERCENTUALE');
 
@@ -46,12 +49,12 @@ CREATE TABLE prodotto (
     nome VARCHAR(255) NOT NULL,
     descrizione TEXT,
     id_brand INT NOT NULL REFERENCES brand(id_brand) ON DELETE CASCADE,
-    immagine_copertina VARCHAR(255),
+    immagine_copertina BYTEA,
     genere genere_scarpa NOT NULL,
-    tipo_terreno VARCHAR(50) NOT NULL CHECK (tipo_terreno IN ('ASFALTO', 'TRAIL', 'PISTA')),
-    tipo_appoggio VARCHAR(50) NOT NULL CHECK (tipo_appoggio IN ('NEUTRO', 'PRONATORE', 'SUPINATORE')),
-    tipo_passo VARCHAR(50) NOT NULL CHECK (tipo_passo IN ('LENTO', 'MEDIO', 'VELOCE')),
-    data_inserimento TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Si compila da solo al momento dell'INSERT
+    tipo_terreno tipo_terreno NOT NULL,
+    tipo_appoggio tipo_appoggio NOT NULL,
+    tipo_passo tipo_passo NOT NULL,
+    data_inserimento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     in_evidenza BOOLEAN DEFAULT FALSE,
     totale_vendite INT DEFAULT 0 CHECK (totale_vendite >= 0)
 );

@@ -1,0 +1,134 @@
+/* ==========================================================================
+   STILE SINGOLA CARD PRODOTTO (prodotto_card.css)
+   ========================================================================== */
+
+/* Contenitore principale della card */
+.product-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.product-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+
+/* Area Immagine */
+.card-image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* Aspetto 1:1 (quadrato) */
+    background-color: #f9f9f9;
+    overflow: hidden;
+}
+
+.product-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Evita che l'immagine si deformi */
+    padding: 10px;
+}
+
+/* Contenitore delle etichette (Nuovo, In Evidenza, Offerta) */
+.badges-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-new { background-color: #2196F3; } /* Blu */
+.badge-hot { background-color: #FF9800; } /* Arancione */
+.badge-sale { background-color: #F44336; } /* Rosso */
+
+/* Corpo della card (Testi e Prezzi) */
+.card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* Brand e Genere */
+.card-meta {
+    margin-bottom: 6px;
+}
+
+.brand-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #757575;
+    text-transform: uppercase;
+}
+
+.product-gender {
+    font-size: 0.8rem;
+    color: #9e9e9e;
+    margin: 4px 0 12px 0;
+}
+
+/* Nome Prodotto */
+.product-name {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+    flex-grow: 1; /* Spinge il prezzo sempre in basso */
+}
+
+.product-name a {
+    text-decoration: none;
+    color: #333333;
+    transition: color 0.2s;
+}
+
+.product-name a:hover {
+    color: var(--testo-principale, #000000);
+}
+
+/* Area Prezzi */
+.price-wrapper {
+    margin-top: auto; /* Allinea i prezzi in basso */
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.current-price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #333333;
+}
+
+.current-price.sale-price {
+    color: #F44336; /* Rosso per il prezzo scontato */
+}
+
+.old-price {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #9e9e9e;
+    text-decoration: line-through; /* Sbarra il prezzo vecchio */
+}

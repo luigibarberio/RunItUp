@@ -9,7 +9,7 @@
     if (dto != null && dto.getProdotto() != null) {
         NumberFormat valutaFormat = NumberFormat.getCurrencyInstance(Locale.ITALY);
         String linkDettaglio = request.getContextPath() + "/dettaglio?id=" + dto.getProdotto().getIdProdotto();
-        String base64Img = dto.getImmagineBase64();
+        String base64Img = dto.getProdotto().getImmagineBase64();
 %>
 
 <article class="product-card" data-id="<%= dto.getProdotto().getIdProdotto() %>">

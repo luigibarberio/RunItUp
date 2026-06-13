@@ -81,6 +81,21 @@ public class Prodotto implements Serializable {
     public int getTotaleVendite() { return totaleVendite; }
     public void setTotaleVendite(int totaleVendite) { this.totaleVendite = totaleVendite; }
 
+    // Metodo di utilità per convertire l'immagine in Base64 per la visualizzazione (o viceversa, per la creazione/modifica)
+    public String getImmagineBase64() {
+        if (this.immagineCopertina != null && this.immagineCopertina.length > 0) {
+            return java.util.Base64.getEncoder().encodeToString(this.immagineCopertina);
+        }
+        return null;
+    }
+    public void setImmagineBase64(String base64) {
+        if (base64 != null && !base64.trim().isEmpty()) {
+            this.immagineCopertina = java.util.Base64.getDecoder().decode(base64);
+        } else {
+            this.immagineCopertina = null;
+        }
+    }
+
     @Override
     public String toString() {
         return "Prodotto [idProdotto=" + idProdotto + ", nome=" + nome + ", brand=" + (brand != null ? brand.getNomeBrand() : "null") + "]";

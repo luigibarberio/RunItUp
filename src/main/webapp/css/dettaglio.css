@@ -1,0 +1,178 @@
+/* =========================================
+   LAYOUT DETTAGLIO PRODOTTO
+   ========================================= */
+.dettaglio-main {
+    max-width: 1040px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.product-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: flex-start;
+}
+
+/* =========================================
+   IMMAGINE
+   ========================================= */
+.product-image {
+    width: 100%;
+    background-color: #E6E8EA; /* Colore placeholder grigio chiaro tipico */
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+/* =========================================
+   INFO E PREZZO
+   ========================================= */
+.product-info {
+    margin-bottom: 25px;
+}
+
+.product-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--testo-principale);
+    margin: 0 0 5px 0;
+}
+
+.product-brand {
+    font-size: 1rem;
+    color: #666;
+    margin: 0;
+}
+
+.price-section {
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    min-height: 40px; /* Previene saltelli di layout tra selezioni */
+}
+
+.current-price {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--testo-principale);
+}
+
+.old-price {
+    font-size: 1.2rem;
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 12px;
+}
+
+/* --- SELETTORI (I box con il bordo) --- */
+.selector-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    padding: 0 15px;
+    height: 52px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    transition: border-color 0.2s ease;
+}
+
+.selector-box:focus-within {
+    border-color: var(--testo-principale); /* Highlight del bordo quando ci clicchi */
+}
+
+.selector-box label {
+    font-size: 0.95rem;
+    color: var(--testo-secondario);
+    flex-shrink: 0;
+}
+
+.selector-box select {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--testo-principale);
+    outline: none;
+    cursor: pointer;
+    
+    /* Nasconde lo stile di default del sistema operativo (freccia inclusa) */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    /* Aggiunge una freccia custom moderna in SVG */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 16px;
+    
+    /* Allineamento testo a destra, lasciando spazio per la freccia */
+    text-align: right;
+    text-align-last: right; 
+    padding-right: 20px; 
+}
+
+/* Opzioni disabilitate / Feedback visivo */
+.selector-box select option {
+    font-weight: normal;
+    color: var(--testo-principale);
+}
+
+.selector-box select:disabled {
+    color: #999;
+    cursor: not-allowed;
+    /* Freccia sbiadita quando disabilitato */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+.selector-box select option:disabled {
+    color: #ccc;
+    background-color: #f9f9f9;
+}
+
+/* --- BOTTONE --- */
+
+.btn-cart {
+    width: 100%;
+    padding: 16px;
+    background-color: #2D2D2D; /* Tonalità scura da mockup */
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-cart:hover:not(:disabled) {
+    background-color: #1a1a1a;
+}
+
+.btn-cart:disabled {
+    background-color: #8c8c8c;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 768px) {
+    .product-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+}

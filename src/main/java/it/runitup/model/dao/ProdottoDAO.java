@@ -1,5 +1,6 @@
 package it.runitup.model.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,12 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.runitup.model.bean.TipoTerreno;
+import it.runitup.model.bean.VarianteProdotto;
 import it.runitup.model.bean.TipoAppoggio;
 import it.runitup.model.bean.TipoPasso;
 import it.runitup.model.bean.Brand;
 import it.runitup.model.bean.GenereScarpa;
 import it.runitup.model.bean.Prodotto;
 import it.runitup.model.dto.ProdottoDTO;
+import it.runitup.model.dto.VarianteDTO;
 import it.runitup.model.filter.FiltroCatalogo;
 import it.runitup.util.ConnectionPool;
 
@@ -285,4 +288,101 @@ public class ProdottoDAO {
         }
         return prodotti;
     }
+
+    // Recupera un prodotto completo di Brand dal database
+    public Prodotto doRetrieveById(int idProdotto) throws SQLException {
+        Prodotto prodotto = null;
+        
+        // Join con brand per recuperare l'oggetto Brand associato
+        String query = "SELECT p.*, b.nome_brand " +
+                       "FROM prodotto p " +
+                       "JOIN brand b ON p.id_brand = b.id_brand " +
+                       "WHERE p.id_prodotto = ?";
+
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, idProdotto);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    prodotto = new Prodotto();
+                    prodotto.setIdProdotto(rs.getInt("id_prodotto"));
+                    prodotto.setNome(rs.getString("nome"));
+                    prodotto.setDescrizione(rs.getString("descrizione"));
+                    prodotto.setImmagineCopertina(rs.getBytes("immagine_copertina"));
+                    
+                    // Enum mapping
+                    if (rs.getString("genere") != null)
+                        prodotto.setGenere(GenereScarpa.valueOf(rs.getString("genere")));
+                    if (rs.getString("tipo_terreno") != null)
+                        prodotto.setTipoTerreno(TipoTerreno.valueOf(rs.getString("tipo_terreno")));
+                    if (rs.getString("tipo_appoggio") != null)
+                        prodotto.setTipoAppoggio(TipoAppoggio.valueOf(rs.getString("tipo_appoggio")));
+                    if (rs.getString("tipo_passo") != null)
+                        prodotto.setTipoPasso(TipoPasso.valueOf(rs.getString("tipo_passo")));
+                    
+                    prodotto.setDataInserimento(rs.getTimestamp("data_inserimento"));
+                    prodotto.setInEvidenza(rs.getBoolean("in_evidenza"));
+                    prodotto.setTotaleVendite(rs.getInt("totale_vendite"));
+
+                    // Mapping dell'oggetto Brand
+                    Brand brand = new Brand();
+                    brand.setIdBrand(rs.getInt("id_brand"));
+                    brand.setNomeBrand(rs.getString("nome_brand"));
+                    prodotto.setBrand(brand);
+                }
+            }
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
+        return prodotto;
+    }
+
+    // Recupera tutte le varianti disponibili per un dato prodotto, calcolando il prezzo scontato se è attiva una promozione
+    public List<VarianteDTO> getVariantiDTOByProdottoId(int idProdotto) throws SQLException {
+        List<VarianteDTO> listaVarianti = new ArrayList<>();
+        
+        String query = "SELECT v.*, pr.percentuale " +
+                    "FROM variante_prodotto v " +
+                    "LEFT JOIN variante_promozione vp ON v.id_variante = vp.id_variante " +
+                    "LEFT JOIN promozione pr ON vp.id_promozione = pr.id_promozione " +
+                    "    AND CURRENT_TIMESTAMP BETWEEN pr.data_inizio AND pr.data_fine " +
+                    "WHERE v.id_prodotto = ? AND v.quantita_magazzino > 0";
+
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, idProdotto);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    VarianteProdotto v = new VarianteProdotto();
+                    v.setIdVariante(rs.getInt("id_variante"));
+                    v.setColore(rs.getString("colore"));
+                    v.setTaglia(rs.getString("taglia"));
+                    v.setPrezzo(rs.getBigDecimal("prezzo"));
+                    v.setQuantitaMagazzino(rs.getInt("quantita_magazzino"));
+
+                    VarianteDTO vDto = new VarianteDTO();
+                    vDto.setVariante(v);
+                    
+                    BigDecimal percentuale = rs.getBigDecimal("percentuale");
+                    if (percentuale != null) {
+                        vDto.setInPromozione(true);
+                        // Calcolo prezzo scontato: Prezzo * (1 - percentuale/100)
+                        BigDecimal sconto = v.getPrezzo().multiply(percentuale.divide(new BigDecimal("100")));
+                        vDto.setPrezzoScontato(v.getPrezzo().subtract(sconto));
+                    } else {
+                        vDto.setInPromozione(false);
+                    }
+                    
+                    listaVarianti.add(vDto);
+                }
+            }
+        } finally {
+            ConnectionPool.releaseConnection(con);
+        }
+        return listaVarianti;
+    }
+
 }

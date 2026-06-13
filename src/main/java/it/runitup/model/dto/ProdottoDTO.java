@@ -48,20 +48,4 @@ public class ProdottoDTO implements Serializable {
     public List<String> getTaglieDisponibili() { return taglieDisponibili; }
     public void setTaglieDisponibili(List<String> taglieDisponibili) { this.taglieDisponibili = taglieDisponibili; }
 
-    // Metodo di utilità per convertire l'immagine in Base64 per la visualizzazione (o viceversa, per la creazione/modifica)
-    public String getImmagineBase64() {
-        if (prodotto != null && prodotto.getImmagineCopertina() != null) {
-            return Base64.getEncoder().encodeToString(prodotto.getImmagineCopertina());
-        }
-        return null;
-    }
-
-    public void setImmagineBase64(String base64) {
-        if (base64 != null && !base64.isEmpty()) {
-            this.prodotto.setImmagineCopertina(Base64.getDecoder().decode(base64));
-        } else {
-            this.prodotto.setImmagineCopertina(null);
-        }
-    }
-
 }

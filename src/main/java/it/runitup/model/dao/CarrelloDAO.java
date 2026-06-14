@@ -90,7 +90,8 @@ public class CarrelloDAO {
         // 1. Otteniamo l'ID del carrello (se non esiste, il metodo lo crea al volo)
         int idCarrello = getOrCreateCarrelloByUtente(idUtente).getIdCarrello();
 
-        try (Connection con = ConnectionPool.getConnection()) {
+        Connection con = ConnectionPool.getConnection();
+        try {
             
             // 2. Recuperiamo la giacenza attuale in magazzino
             int quantitaMagazzino = 0;
@@ -144,6 +145,10 @@ public class CarrelloDAO {
             }
             
             return true; // Operazione completata con successo
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
         }
     }
 
@@ -202,4 +207,68 @@ public class CarrelloDAO {
         return carrello;
     }
     
+    // Ottiene la quantità di una specifica variante nel carrello (0 se non c'è)
+    public int getQuantitaVoce(int idCarrello, int idVariante) throws SQLException {
+        String query = "SELECT quantita FROM voce_carrello WHERE id_carrello = ? AND id_variante = ?";
+        
+        Connection con = ConnectionPool.getConnection();
+
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, idCarrello);
+            ps.setInt(2, idVariante);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt("quantita");
+            }
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
+        return 0;
+    }
+
+    // Rimuove fisicamente una voce dal carrello (quando la quantità scende a 0)
+    public void rimuoviVoce(int idCarrello, int idVariante) throws SQLException {
+        String query = "DELETE FROM voce_carrello WHERE id_carrello = ? AND id_variante = ?";
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, idCarrello);
+            ps.setInt(2, idVariante);
+            ps.executeUpdate();
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
+    }
+
+    // Imposta forzatamente la quantità (inserisce se non c'è, aggiorna se c'è)
+    public void impostaQuantitaVoce(int idCarrello, int idVariante, int nuovaQuantita) throws SQLException {
+        String checkQuery = "SELECT id_voce FROM voce_carrello WHERE id_carrello = ? AND id_variante = ?";
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement psCheck = con.prepareStatement(checkQuery)) {
+            psCheck.setInt(1, idCarrello);
+            psCheck.setInt(2, idVariante);
+            try (ResultSet rs = psCheck.executeQuery()) {
+                if (rs.next()) {
+                    String updateQuery = "UPDATE voce_carrello SET quantita = ? WHERE id_carrello = ? AND id_variante = ?";
+                    try (PreparedStatement psUp = con.prepareStatement(updateQuery)) {
+                        psUp.setInt(1, nuovaQuantita);
+                        psUp.setInt(2, idCarrello);
+                        psUp.setInt(3, idVariante);
+                        psUp.executeUpdate();
+                    }
+                } else {
+                    String insertQuery = "INSERT INTO voce_carrello (id_carrello, id_variante, quantita) VALUES (?, ?, ?)";
+                    try (PreparedStatement psIn = con.prepareStatement(insertQuery)) {
+                        psIn.setInt(1, idCarrello);
+                        psIn.setInt(2, idVariante);
+                        psIn.setInt(3, nuovaQuantita);
+                        psIn.executeUpdate();
+                    }
+                }
+            }
+        }
+    }
+
 }

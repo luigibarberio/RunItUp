@@ -99,7 +99,7 @@ public class RegistrazioneServlet extends HttpServlet {
             utenteDAO.doSave(nuovoUtente);
 
             jsonResponse.put("success", true);
-            jsonResponse.put("redirectUrl", request.getContextPath() + "/login?registrato=true");
+            jsonResponse.put("redirectUrl", request.getContextPath() + "/login");
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,6 +1,7 @@
 package it.runitup.control;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,9 +16,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.mindrot.jbcrypt.BCrypt;
 
+import it.runitup.control.service.CarrelloManager;
 import it.runitup.model.bean.Utente;
+import it.runitup.model.dao.CarrelloDAO;
 import it.runitup.model.dao.UtenteDAO;
-// TODO import it.runitup.model.bean.Carrello;
+import it.runitup.model.dao.VarianteDAO;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -65,11 +68,17 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession(true);
                 session.setAttribute("utenteLoggato", utente);
 
-                // GESTIONE CARRELLO (Merge logic)
-                // Carrello carrelloSessione = (Carrello) session.getAttribute("carrello");
-                // TODO: CarrelloDAO carrelloDAO = new CarrelloDAO();
-                // Carrello carrelloDB = carrelloDAO.doRetrieveByUtente(utente.getIdUtente());
-                // carrelloSessione.merge(carrelloDB); 
+                // Al momento del login, uniamo il carrello ospite con quello reale dell'utente loggato
+                CarrelloDAO carrelloDAO = new CarrelloDAO();
+                VarianteDAO varianteDAO = new VarianteDAO();
+                CarrelloManager cartManager = new CarrelloManager(request, carrelloDAO, varianteDAO);
+                
+                try {
+                    cartManager.mergeCarrello();
+                } catch (SQLException e) {
+                    // Se c'è un errore durante la fusione dei carrelli, logghiamo l'errore ma non blocchiamo il login
+                    e.printStackTrace(); 
+                }
                 
                 // Cattura l'eventuale URL di destinazione salvato dal filtro di autenticazione (AuthFilter) prima del login
                 String redirectDopoLogin = (String) session.getAttribute("redirectDopoLogin");

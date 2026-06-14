@@ -33,7 +33,7 @@
             <a href="${pageContext.request.contextPath}/login" aria-label="Accedi">
                 &#128100;
             </a>
-            <a href="${pageContext.request.contextPath}/cart" aria-label="Carrello">
+            <a href="${pageContext.request.contextPath}/carrello" aria-label="Carrello">
                 &#128722;
             </a>
         </div>

@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-// Specifica qui tutte le rotte che richiedono l'utente loggato
-@WebFilter({"/checkout", "/area-personale/*", "/carrello", "/ordini"})
+// Filtro di autenticazione per proteggere le pagine riservate agli utenti loggati
+@WebFilter({"/checkout", "/area-personale/*", "/ordini"})
 public class AuthFilter implements Filter {
 
     public void init(FilterConfig fConfig) throws ServletException {

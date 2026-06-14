@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     colSel.addEventListener('change', aggiornaUI);
     tagSel.addEventListener('change', aggiornaUI);
 
-    // 4. CHIAMATA FETCH JSON (Invariata e pulita)
+    // 4. CHIAMATA FETCH JSON
     btnAggiungi.addEventListener('click', async () => {
         const match = varianti.find(v => v.variante.colore === colSel.value && v.variante.taglia === tagSel.value);
         if (!match) return;
@@ -84,10 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
         btnAggiungi.disabled = true;
 
         try {
-            const response = await fetch('aggiungi_al_carrello', {
+            const response = await fetch('modifica_carrello', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idVariante: match.variante.idVariante })
+                body: JSON.stringify({ idVariante: match.variante.idVariante, delta: 1 })
             });
 
             const data = await response.json();

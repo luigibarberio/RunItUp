@@ -380,9 +380,56 @@ public class ProdottoDAO {
                 }
             }
         } finally {
-            ConnectionPool.releaseConnection(con);
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
         }
         return listaVarianti;
+    }
+
+    // Recupera una variante specifica con i dettagli del prodotto e del brand, calcolando il prezzo scontato se è attiva una promozione
+    public VarianteDTO getVarianteConPromozione(VarianteProdotto variante) throws SQLException {
+        VarianteDTO vDto = new VarianteDTO();
+        vDto.setVariante(variante);
+        vDto.setInPromozione(false);
+
+        if (variante == null) return vDto;
+
+        // Query perfettamente allineata alla tabella ponte variante_promozione
+        // Seleziona la percentuale controllando che il timestamp attuale sia nel range di validità
+        String query = "SELECT pr.percentuale " +
+                       "FROM variante_promozione vpr " +
+                       "JOIN promozione pr ON vpr.id_promozione = pr.id_promozione " +
+                       "WHERE vpr.id_variante = ? " +
+                       "  AND CURRENT_TIMESTAMP BETWEEN pr.data_inizio AND pr.data_fine";
+        
+                       
+        Connection con = ConnectionPool.getConnection();
+        
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            
+            ps.setInt(1, variante.getIdVariante());
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    BigDecimal percentuale = rs.getBigDecimal("percentuale");
+                    
+                    if (percentuale != null && percentuale.compareTo(BigDecimal.ZERO) > 0) {
+                        vDto.setInPromozione(true);
+                        
+                        // Calcolo prezzo scontato: Prezzo - (Prezzo * percentuale / 100)
+                        BigDecimal cento = new BigDecimal("100");
+                        BigDecimal sconto = variante.getPrezzo().multiply(percentuale.divide(cento, 4, java.math.RoundingMode.HALF_UP));
+                        vDto.setPrezzoScontato(variante.getPrezzo().subtract(sconto));
+                    }
+                }
+            }
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
+        return vDto;
     }
 
 }

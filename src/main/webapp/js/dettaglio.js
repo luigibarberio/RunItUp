@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnAggiungi.disabled = true;
 
         try {
-            const response = await fetch('modifica_carrello', {
+            const response = await fetch('carrello', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ idVariante: match.variante.idVariante, delta: 1 })

@@ -14,7 +14,7 @@ async function modificaQuantita(idVariante, delta) {
 
     try {
         // Fetch asincrona verso l'endpoint unificato
-        const response = await fetch('modifica_carrello', {
+        const response = await fetch('carrello', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idVariante: idVariante, delta: delta })
@@ -74,7 +74,7 @@ async function rimuoviArticolo(idVariante) {
     }
 
     try {
-        const response = await fetch('modifica_carrello', {
+        const response = await fetch('carrello', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idVariante: idVariante, action: 'remove' })

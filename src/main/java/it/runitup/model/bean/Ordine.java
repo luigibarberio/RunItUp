@@ -18,6 +18,7 @@ public class Ordine implements Serializable {
     private BigDecimal totaleIva;
     private BigDecimal totalePagato;
     
+    private String nome_e_cognome_destinatario;
     private String indirizzoSpedizione;
     private String citta;
     private String cap;
@@ -29,7 +30,7 @@ public class Ordine implements Serializable {
     }
 
     public Ordine(int idOrdine, Utente utente, Coupon coupon, LocalDateTime dataOrdine, BigDecimal totaleImponibile,
-                  BigDecimal totaleIva, BigDecimal totalePagato, String indirizzoSpedizione, String citta, String cap,
+                  BigDecimal totaleIva, BigDecimal totalePagato, String nome_e_cognome_destinatario, String indirizzoSpedizione, String citta, String cap,
                   String metodoPagamento, StatoOrdine stato) {
         this.idOrdine = idOrdine;
         this.utente = utente;
@@ -38,6 +39,7 @@ public class Ordine implements Serializable {
         this.totaleImponibile = totaleImponibile;
         this.totaleIva = totaleIva;
         this.totalePagato = totalePagato;
+        this.nome_e_cognome_destinatario = nome_e_cognome_destinatario;
         this.indirizzoSpedizione = indirizzoSpedizione;
         this.citta = citta;
         this.cap = cap;
@@ -82,8 +84,11 @@ public class Ordine implements Serializable {
     public StatoOrdine getStato() { return stato; }
     public void setStato(StatoOrdine stato) { this.stato = stato; }
 
+    public String getNome_e_cognome_destinatario() { return nome_e_cognome_destinatario; }
+    public void setNome_e_cognome_destinatario(String nome_e_cognome_destinatario) { this.nome_e_cognome_destinatario = nome_e_cognome_destinatario; }
+
     @Override
     public String toString() {
-        return "Ordine [idOrdine=" + idOrdine + ", utente=" + (utente != null ? utente.getEmail() : "null") + ", totalePagato=" + totalePagato + ", stato=" + stato + "]";
+        return "Ordine [idOrdine=" + idOrdine + ", utente=" + (utente != null ? utente.getEmail() : "null") + ", totalePagato=" + totalePagato + ", stato=" + stato + ", nome_e_cognome_destinatario=" + nome_e_cognome_destinatario + "]";
     }
 }

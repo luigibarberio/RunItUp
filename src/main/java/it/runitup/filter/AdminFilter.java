@@ -28,7 +28,7 @@ public class AdminFilter implements Filter {
         
         Utente utente = null;
         if (session != null) {
-            utente = (Utente) session.getAttribute("utente");
+            utente = (Utente) session.getAttribute("utenteLoggato");
         }
 
         // Hard Check: L'utente deve esistere e il metodo isAdmin() deve restituire TRUE

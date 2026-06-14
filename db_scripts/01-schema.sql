@@ -9,6 +9,7 @@ CREATE TYPE tipo_passo AS ENUM ('LENTO', 'MEDIO', 'VELOCE');
 CREATE TYPE tipo_appoggio AS ENUM ('NEUTRO', 'PRONATORE', 'SUPINATORE');
 CREATE TYPE stato_ordine AS ENUM ('IN_LAVORAZIONE', 'SPEDITO', 'CONSEGNATO', 'ANNULLATO');
 CREATE TYPE tipo_sconto_coupon AS ENUM ('FISSO', 'PERCENTUALE');
+CREATE TYPE metodo_pagamento AS ENUM ('CARTA', 'PAYPAL', 'CONTRASSEGNO');
 
 -- CREAZIONE TABELLE INDIPENDENTI
 CREATE TABLE utente (
@@ -98,10 +99,12 @@ CREATE TABLE ordine (
     totale_iva DECIMAL(10,2) NOT NULL CHECK (totale_iva >= 0),
     totale_pagato DECIMAL(10,2) NOT NULL CHECK (totale_pagato >= 0),
     
+    -- DATI DI SPEDIZIONE E PAGAMENTO
+    nome_e_cognome_destinatario VARCHAR(200) NOT NULL,
     indirizzo_spedizione TEXT NOT NULL,
     citta VARCHAR(100) NOT NULL,
     cap VARCHAR(10) NOT NULL,
-    metodo_pagamento VARCHAR(50) NOT NULL CHECK (metodo_pagamento IN ('CARTA', 'PAYPAL', 'CONTRASSEGNO')),
+    metodo_pagamento metodo_pagamento NOT NULL,
     stato stato_ordine NOT NULL DEFAULT 'IN_LAVORAZIONE'
 );
 

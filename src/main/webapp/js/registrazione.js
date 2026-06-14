@@ -29,40 +29,42 @@ document.addEventListener('DOMContentLoaded', () => {
         registerBtn.disabled = !isValid;
     };
 
-    // --- FUNZIONI DI VALIDAZIONE ---
+    // --- FUNZIONI DI VALIDAZIONE SNELLITE CON FORMUTILS ---
     const validateTesto = (campo, minLen, errorId) => {
-        FormUtils.clearError(inputs[campo], errorId);
-        const val = inputs[campo].value.trim();
-        if (val.length < minLen) {
+        // 1. Controllo vuoto centralizzato
+        if (!FormUtils.checkText(campo, errorId, 'Campo obbligatorio.')) {
+            state[campo] = false;
+        } 
+        // 2. Controllo manuale aggiuntivo per la lunghezza minima
+        else if (inputs[campo].value.trim().length < minLen) {
             FormUtils.showError(inputs[campo], errorId, `Minimo ${minLen} caratteri.`);
             state[campo] = false;
-        } else {
+        } 
+        else {
             state[campo] = true;
         }
         checkFormValidity();
     };
 
     const validateEmail = async () => {
-        FormUtils.clearError(inputs.email, 'emailError');
         state.email = false; 
         checkFormValidity();
 
-        const val = inputs.email.value.trim();
-        if (!FormUtils.emailRegex.test(val)) {
-            FormUtils.showError(inputs.email, 'emailError', 'Formato email non valido.');
-            return;
-        }
+        // Controlli base con FormUtils (Vuoto e Regex)
+        if (!FormUtils.checkText('email', 'emailError', 'L\'email è obbligatoria.')) return;
+        if (!FormUtils.checkRegex('email', 'emailError', FormUtils.emailRegex, 'Formato email non valido.')) return;
 
         // ==========================================
         // PUNTO D'ESAME: Controllo AJAX Email Live
         // ==========================================
         try {
-            const response = await fetch(`check-email?email=${encodeURIComponent(val)}`);
+            const response = await fetch(`check-email?email=${encodeURIComponent(inputs.email.value.trim())}`);
             const data = await response.json();
 
             if (data.esiste) {
                 FormUtils.showError(inputs.email, 'emailError', 'Questa email è già registrata.');
             } else {
+                FormUtils.clearError(inputs.email, 'emailError');
                 state.email = true; // Email perfetta e libera!
             }
         } catch (e) {
@@ -73,21 +75,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const validatePhone = () => {
-        FormUtils.clearError(inputs.telefono, 'telefonoError');
         const val = inputs.telefono.value.trim();
-        if (val !== "" && !FormUtils.phoneRegex.test(val)) {
-            FormUtils.showError(inputs.telefono, 'telefonoError', 'Formato numero di telefono non valido.');
-            state.telefono = false;
-        } else {
+        if (val === "") {
+            // Se è vuoto (ed è opzionale), puliamo l'errore e diamo il via libera
+            FormUtils.clearError(inputs.telefono, 'telefonoError');
             state.telefono = true;
+        } else {
+            // Se c'è scritto qualcosa, controlliamo che sia un numero valido
+            state.telefono = FormUtils.checkRegex('telefono', 'telefonoError', FormUtils.phoneRegex, 'Formato numero non valido.');
         }
         checkFormValidity();
     };
 
     const validatePassword = () => {
-        FormUtils.clearError(inputs.password, 'passwordError');
-        const val = inputs.password.value;
-        if (val.length < 8) {
+        if (!FormUtils.checkText('password', 'passwordError', 'La password è obbligatoria.')) {
+            state.password = false;
+        } else if (inputs.password.value.length < 8) {
             FormUtils.showError(inputs.password, 'passwordError', 'Minimo 8 caratteri.');
             state.password = false;
         } else {
@@ -97,15 +100,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const validateConferma = () => {
-        FormUtils.clearError(inputs.conferma, 'confermaPasswordError');
         const p1 = inputs.password.value;
         const p2 = inputs.conferma.value;
-        if (p2 === "") {
+
+        if (!FormUtils.checkText('confermaPassword', 'confermaPasswordError', 'Conferma la password.')) {
             state.conferma = false;
         } else if (p1 !== p2) {
             FormUtils.showError(inputs.conferma, 'confermaPasswordError', 'Le password non coincidono.');
             state.conferma = false;
         } else {
+            FormUtils.clearError(inputs.conferma, 'confermaPasswordError');
             state.conferma = true;
         }
         checkFormValidity();
@@ -118,10 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
     inputs.cognome.addEventListener('blur', () => validateTesto('cognome', 2, 'cognomeError'));
     inputs.cognome.addEventListener('input', () => validateTesto('cognome', 2, 'cognomeError'));
 
-    inputs.email.addEventListener('blur', validateEmail); // L'AJAX scatta al BLUR (quando si esce dal campo)
+    inputs.email.addEventListener('blur', validateEmail); 
     inputs.email.addEventListener('input', () => {
         FormUtils.clearError(inputs.email, 'emailError');
-        state.email = false; // Disabilita il form mentre digita
+        state.email = false; // Disabilita il form mentre digita per forzare il re-check
         checkFormValidity();
     });
 
@@ -140,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!Object.values(state).every(val => val === true)) return;
 
         registerBtn.disabled = true;
-        registerBtn.querySelector('.btn-text').textContent = 'Registrazione...';
+        registerBtn.querySelector('.btn-text').textContent = 'Registrazione in corso...';
 
         try {
             const response = await fetch('registrazione', {

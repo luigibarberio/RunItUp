@@ -7,27 +7,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNZIONI DI VALIDAZIONE ---
     const validateEmail = () => {
-        FormUtils.clearError(emailInput, 'emailError');
-        const value = emailInput.value.trim();
-        
-        if (!value) {
-            FormUtils.showError(emailInput, 'emailError', 'L\'email è obbligatoria.');
-            return false;
-        } else if (!FormUtils.emailRegex.test(value)) {
-            FormUtils.showError(emailInput, 'emailError', 'Inserisci un formato email valido.');
-            return false;
-        }
-        return true;
+        // 1. Controlla che non sia vuota
+        if (!FormUtils.checkText('email', 'emailError', 'L\'email è obbligatoria.')) return false;
+        // 2. Controlla il formato Regex
+        return FormUtils.checkRegex('email', 'emailError', FormUtils.emailRegex, 'Inserisci un formato email valido.');
     };
 
     const validatePassword = () => {
-        FormUtils.clearError(passwordInput, 'passwordError');
-        const value = passwordInput.value;
+        // 1. Controlla che non sia vuota
+        if (!FormUtils.checkText('password', 'passwordError', 'La password è obbligatoria.')) return false;
         
-        if (!value) {
-            FormUtils.showError(passwordInput, 'passwordError', 'La password è obbligatoria.');
-            return false;
-        } else if (value.length < 4) {
+        // 2. Controllo manuale specifico per la lunghezza
+        if (passwordInput.value.length < 4) {
             FormUtils.showError(passwordInput, 'passwordError', 'La password deve avere almeno 4 caratteri.');
             return false;
         }
@@ -45,7 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        if (!validateEmail() || !validatePassword()) return;
+        const isEmailValid = validateEmail();
+        const isPassValid = validatePassword();
+        if (!isEmailValid || !isPassValid) return;
 
         loginBtn.disabled = true;
         loginBtn.querySelector('.btn-text').textContent = 'Accesso in corso...';

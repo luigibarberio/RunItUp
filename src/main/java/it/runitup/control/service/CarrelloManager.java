@@ -22,7 +22,7 @@ public class CarrelloManager {
 
     public CarrelloManager(HttpServletRequest request, CarrelloDAO carrelloDAO, VarianteDAO varianteDAO) {
         this.session = request.getSession();
-        this.utenteLoggato = (Utente) session.getAttribute("utente");
+        this.utenteLoggato = (Utente) session.getAttribute("utenteLoggato");
         this.carrelloDAO = carrelloDAO;
         this.varianteDAO = varianteDAO;
     }

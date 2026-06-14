@@ -56,7 +56,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.success) {
-                successOverlay.classList.remove('hidden');
+                const overlay = document.getElementById('successOverlay');
+                const title = document.getElementById('overlayTitle');
+                const text = document.getElementById('overlayText');
+                
+                // Possiamo anche personalizzare i testi al volo se vogliamo
+                title.textContent = "Accesso Eseguito!";
+                text.textContent = "Benvenuto su RunItUp, ti stiamo reindirizzando...";
+                
+                overlay.classList.remove('hidden');
+                
+                // Redirect unificato
                 setTimeout(() => window.location.href = data.redirectUrl, 1500);
             } else {
                 if (window.showToast) window.showToast(data.message, "error");

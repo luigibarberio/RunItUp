@@ -52,13 +52,13 @@
             <div class="login-footer">
                 <p>Non hai un account? <a href="${pageContext.request.contextPath}/registrazione">Registrati ora</a></p>
             </div>
-
-            <div id="successOverlay" class="success-overlay hidden">
-                <div class="success-content">
-                    <div class="check-icon">✔</div>
-                    <h3>Accesso Eseguito!</h3>
-                    <p>Ti stiamo reindirizzando...</p>
-                </div>
+        </div>
+        
+        <div id="successOverlay" class="success-overlay hidden">
+            <div class="success-content">
+                <div class="check-icon">✔</div>
+                <h3 id="overlayTitle">Accesso Eseguito!</h3>
+                <p id="overlayText">Benvenuto su RunItUp, ti stiamo reindirizzando...</p>
             </div>
         </div>
     </main>

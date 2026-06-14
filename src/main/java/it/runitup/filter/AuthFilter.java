@@ -36,7 +36,6 @@ public class AuthFilter implements Filter {
             // Utente autorizzato: lascia procedere la richiesta verso la Servlet o JSP di destinazione
             chain.doFilter(request, response);
         } else {
-            // Utente NON autorizzato.
             // 1. Catturiamo l'URL esatto che stava cercando di visitare (inclusi eventuali parametri, es: ?id=5)
             String requestURI = httpRequest.getRequestURI();
             String queryString = httpRequest.getQueryString();
@@ -50,12 +49,12 @@ public class AuthFilter implements Filter {
             HttpSession newSession = httpRequest.getSession(true);
             newSession.setAttribute("redirectDopoLogin", urlDiDestinazione);
 
-            // 3. Lo cacciamo verso la pagina di login
+            // 3. Reindirizziamo l'utente alla pagina di login
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
         }
     }
 
     public void destroy() {
-        // Pulizia risorse (vuoto per ora)
+        // Pulizia risorse se necessario (non in questo caso)
     }
 }

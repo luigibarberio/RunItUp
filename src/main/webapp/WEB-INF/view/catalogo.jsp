@@ -42,10 +42,10 @@
         </button>
 
         <select id="ordinaSelect" name="ordina" form="filtriForm" onchange="submitFiltri()">
+            <option value="vendite" <%= (filtri != null && "vendite".equals(filtri.getOrdinamento())) ? "selected" : "" %>>I più venduti</option>
             <option value="prezzo_asc" <%= (filtri != null && "prezzo_asc".equals(filtri.getOrdinamento())) ? "selected" : "" %>>Prezzo: dal più basso</option>
             <option value="prezzo_desc" <%= (filtri != null && "prezzo_desc".equals(filtri.getOrdinamento())) ? "selected" : "" %>>Prezzo: dal più alto</option>
             <option value="recenti" <%= (filtri != null && "recenti".equals(filtri.getOrdinamento())) ? "selected" : "" %>>Recenti</option>
-            <option value="vendite" <%= (filtri != null && "vendite".equals(filtri.getOrdinamento())) ? "selected" : "" %>>I più venduti</option>
         </select>
     </header>
     

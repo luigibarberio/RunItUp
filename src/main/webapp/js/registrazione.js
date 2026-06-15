@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         registerBtn.disabled = !isValid;
     };
 
-    // --- FUNZIONI DI VALIDAZIONE SNELLITE CON FORMUTILS ---
+    // --- FUNZIONI DI VALIDAZIONE ---
     const validateTesto = (campo, minLen, errorId) => {
         // 1. Controllo vuoto centralizzato
         if (!FormUtils.checkText(campo, errorId, 'Campo obbligatorio.')) {
@@ -96,7 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             state.password = true;
         }
-        validateConferma(); // Ricontrolla la conferma se cambio la pass principale
+        // Se la password è valida, ricontrolla anche la conferma (perché se cambio la pass principale, la conferma potrebbe non essere più valida)
+        if (state.password && inputs.conferma.value.trim() !== '') {
+            validateConferma();
+        }
     };
 
     const validateConferma = () => {
@@ -117,10 +120,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- EVENT LISTENERS (BLUR e INPUT) ---
     inputs.nome.addEventListener('blur', () => validateTesto('nome', 2, 'nomeError'));
-    inputs.nome.addEventListener('input', () => validateTesto('nome', 2, 'nomeError'));
+    inputs.nome.addEventListener('input', () => {
+        FormUtils.clearError(inputs.nome, 'nomeError');
+        state.nome = false;
+        checkFormValidity();
+    });
 
     inputs.cognome.addEventListener('blur', () => validateTesto('cognome', 2, 'cognomeError'));
-    inputs.cognome.addEventListener('input', () => validateTesto('cognome', 2, 'cognomeError'));
+    inputs.cognome.addEventListener('input', () => {
+        FormUtils.clearError(inputs.cognome, 'cognomeError');
+        state.cognome = false;
+        checkFormValidity();
+    });
 
     inputs.email.addEventListener('blur', validateEmail); 
     inputs.email.addEventListener('input', () => {
@@ -130,7 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     inputs.telefono.addEventListener('blur', validatePhone);
-    inputs.telefono.addEventListener('input', validatePhone);
+    inputs.telefono.addEventListener('input', () => {
+        FormUtils.clearError(inputs.telefono, 'telefonoError');
+        state.telefono = false;
+        checkFormValidity();
+    });
 
     inputs.password.addEventListener('blur', validatePassword);
     inputs.password.addEventListener('input', validatePassword);

@@ -121,8 +121,16 @@ public class CheckoutServlet extends HttpServlet {
             String metodoPagamentoStr = jsonBody.has("metodoPagamento") ? jsonBody.get("metodoPagamento").getAsString().trim() : "";
             String codiceCoupon = jsonBody.has("codiceCoupon") ? jsonBody.get("codiceCoupon").getAsString().trim().toUpperCase() : "";
 
-            // Validazione severa delle stringhe
-            if (nome.isEmpty() || cognome.isEmpty() || indirizzo.isEmpty() || citta.isEmpty() || cap.length() != 5) {
+            // TODO Validare tutti i campi lato backend come fatto qui di seguito
+            // Validazione severa delle stringhe, con limite di lunghezza e formato
+            if (nome.isEmpty() || nome.length() > 50 ||
+                cognome.isEmpty() || cognome.length() > 50 ||
+                indirizzo.isEmpty() || indirizzo.length() > 100 ||
+                citta.isEmpty() || citta.length() > 50 ||
+                cap.length() != 5 || !cap.matches("\\d{5}") ||
+                metodoPagamentoStr.isEmpty() || metodoPagamentoStr.length() > 20 ||
+                codiceCoupon.length() > 20) {
+
                 inviaRisposta(response, jsonResponse, false, "Dati di spedizione non conformi o incompleti.");
                 return;
             }

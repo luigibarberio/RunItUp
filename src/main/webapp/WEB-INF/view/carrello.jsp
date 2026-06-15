@@ -76,7 +76,7 @@
                                  data-prezzo-originale="<%= prezzoOriginaleUnitario %>"
                                  data-in-promo="<%= varianteDTO.isInPromozione() %>">
                                 
-                                <a href="<%= request.getContextPath() %>/prodotto?id=<%= prodotto.getIdProdotto() %>" class="product-img-wrapper">
+                                <a href="<%= request.getContextPath() %>/dettaglio?id=<%= prodotto.getIdProdotto() %>" class="product-img-wrapper">
                                     <% 
                                         String base64Img = prodotto.getImmagineBase64();
                                         if (base64Img != null && !base64Img.isEmpty()) { 
@@ -89,7 +89,7 @@
                                 
                                 <div class="product-details">
                                     <h3>
-                                        <a href="<%= request.getContextPath() %>/prodotto?id=<%= prodotto.getIdProdotto() %>" class="cart-product-link">
+                                        <a href="<%= request.getContextPath() %>/dettaglio?id=<%= prodotto.getIdProdotto() %>" class="cart-product-link">
                                             <%= prodotto.getNome() %>
                                         </a>
                                     </h3>

@@ -5,39 +5,62 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.querySelector('.login-btn');
     const successOverlay = document.getElementById('successOverlay');
 
+    const state = {
+        email: false,
+        password: false
+    };
+
+    // --- Attiva il pulsante di login solo se entrambi i campi sono validi ---
+    const checkFormValidity = () => {
+        const isValid = Object.values(state).every(val => val === true);
+        loginBtn.disabled = !(isValid);
+    };
+
     // --- FUNZIONI DI VALIDAZIONE ---
     const validateEmail = () => {
         // 1. Controlla che non sia vuota
-        if (!FormUtils.checkText('email', 'emailError', 'L\'email è obbligatoria.')) return false;
-        // 2. Controlla il formato Regex
-        return FormUtils.checkRegex('email', 'emailError', FormUtils.emailRegex, 'Inserisci un formato email valido.');
+        if (!FormUtils.checkText('email', 'emailError', 'L\'email è obbligatoria.')){
+            state.email = false;
+        }else if (!FormUtils.checkRegex('email', 'emailError', FormUtils.emailRegex, 'Inserisci un formato email valido.')) {
+            state.email = false;
+        }
+        else {
+            state.email = true;
+        }
+        checkFormValidity();
     };
 
     const validatePassword = () => {
         // 1. Controlla che non sia vuota
-        if (!FormUtils.checkText('password', 'passwordError', 'La password è obbligatoria.')) return false;
-        
-        // 2. Controllo manuale specifico per la lunghezza
-        if (passwordInput.value.length < 4) {
+        if (!FormUtils.checkText('password', 'passwordError', 'La password è obbligatoria.')) {
+            state.password = false;
+        } else if (passwordInput.value.length < 4) { // 2. Controllo manuale specifico per la lunghezza
             FormUtils.showError(passwordInput, 'passwordError', 'La password deve avere almeno 4 caratteri.');
-            return false;
+            state.password = false;
+        } else {
+            state.password = true;
         }
-        return true;
+        checkFormValidity();
     };
 
     // --- EVENT LISTENERS ---
     emailInput.addEventListener('blur', validateEmail);
-    emailInput.addEventListener('input', () => FormUtils.clearError(emailInput, 'emailError'));
+    emailInput.addEventListener('input', () => {
+        FormUtils.clearError(emailInput, 'emailError');
+        state.email = false;
+        checkFormValidity();
+    });
 
     passwordInput.addEventListener('blur', validatePassword);
-    passwordInput.addEventListener('input', () => FormUtils.clearError(passwordInput, 'passwordError'));
+    passwordInput.addEventListener('input', validatePassword);
 
     // --- INVIO FORM ---
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const isEmailValid = validateEmail();
-        const isPassValid = validatePassword();
+        const isEmailValid = state.email;
+        const isPassValid = state.password;
+
         if (!isEmailValid || !isPassValid) return;
 
         loginBtn.disabled = true;

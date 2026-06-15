@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/registrazione.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/toast.css">
 </head>
@@ -52,7 +51,7 @@
                         <select name="prefisso" id="prefisso" class="phone-prefix">
                             <option value="+39">+39</option>
                         </select>
-                        <input type="tel" id="telefono" name="telefono" placeholder="333 1234567" maxlength="15">
+                        <input type="tel" id="telefono" name="telefono" placeholder="3331234567" maxlength="10">
                     </div>
                     <span class="error-msg" id="telefonoError"></span>
                 </div>

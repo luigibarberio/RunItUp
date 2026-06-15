@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const paymentRadios = document.querySelectorAll('input[name="metodoPagamento"]');
     const creditCardFields = document.getElementById('creditCardFields');
     const btnInviaOrdine = document.getElementById('btnInviaOrdine');
-    const originalBtnText = btnInviaOrdine.innerHTML; // Salviamo il testo col prezzo generato dalla JSP!
 
     // Mappa degli input
     const inputs = {
@@ -23,6 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
         cvvCarta: document.getElementById('cvvCarta'),
         codiceCoupon: document.getElementById('codiceCoupon')
     };
+
+    // Variabile per tenere traccia del coupon applicato. Ci servirà per evitare che si possa effettuare un ordine senza aver applicato un coupon valido, magari modificando il campo del coupon dopo averlo validato
+    let couponConfermato = "";
 
     // --- 1. GESTIONE DELLO STATO (Pattern usato in registrazione.js) ---
     // Nome e Cognome sono precompilati dalla JSP, quindi partono a true se non sono vuoti
@@ -140,6 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 couponMessage.style.color = 'var(--conferme)';
                 couponMessage.textContent = `Coupon applicato! Sconto di ${data.scontoRilevato}`;
                 
+                // Salviamo il coupon confermato
+                couponConfermato = codice;
+
                 // --- Aggiornamento Dinamico della Sidebar Costi ---
                 const summaryCouponRow = document.getElementById('summary-coupon-row');
                 const summaryCouponCode = document.getElementById('summary-coupon-code');
@@ -154,6 +159,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     // Rendiamo visibile la riga dello sconto nella sidebar
                     summaryCouponRow.classList.remove('hidden');
+
+                    // Puliamo il campo di testo del coupon
+                    inputs.codiceCoupon.value = "";
                 }
 
                 // Aggiornamento del totale complessivo dell'ordine
@@ -165,14 +173,34 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 couponMessage.style.color = 'var(--promozioni)';
                 couponMessage.textContent = data.message || 'Coupon non valido o scaduto.';
+                
             }
         } catch (error) {
             console.error("Errore validazione coupon:", error);
             couponMessage.style.color = 'var(--promozioni)';
             couponMessage.textContent = 'Errore di connessione.';
+
         } finally {
             btnApplicaCoupon.disabled = false;
             btnApplicaCoupon.textContent = 'Applica';
+        }
+    });
+
+    // Se l'utente modifica il campo del coupon dopo averlo confermato, avvisiamo che deve riapplicarlo. Non resettiamo subito couponConfermato per non fargli perdere lo sconto a schermo
+    inputs.codiceCoupon.addEventListener('input', () => {
+        if (couponConfermato !== "" && inputs.codiceCoupon.value.trim().toUpperCase() !== "") {
+            couponMessage.textContent = "Codice del Coupon modificato. Ricordati di applicarlo!";
+            couponMessage.style.color = 'var(--testo-secondario)';
+        } else if (inputs.codiceCoupon.value.trim() === "") {
+            couponMessage.textContent = ""; // Se cancella il campo, togliamo il messaggio di avviso
+        }
+    });
+
+    // Listener sulla pressione del tasto Enter nel campo del coupon per simulare il click sul bottone "Applica" e evitare l'invio del form
+    inputs.codiceCoupon.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Blocca l'invio del checkout form
+            document.getElementById('btnApplicaCoupon').click(); // Simula il click sul tasto Applica
         }
     });
 
@@ -188,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
             citta: inputs.citta.value.trim(),
             cap: inputs.cap.value.trim(),
             metodoPagamento: document.querySelector('input[name="metodoPagamento"]:checked').value,
-            codiceCoupon: inputs.codiceCoupon.value.trim().toUpperCase() // Passiamo il coupon al backend
+            codiceCoupon: couponConfermato // Passiamo il coupon al backend
         };
 
         btnInviaOrdine.disabled = true;
@@ -214,14 +242,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 if (window.showToast) window.showToast(data.message, "error");
                 btnInviaOrdine.disabled = false;
-                btnInviaOrdine.innerHTML = originalBtnText; // RIPRISTINA IL PREZZO PRECEDENTE!
+                btnInviaOrdine.innerHTML = "Conferma e Paga (" + totaleFormattato + ")"; // Si ripristina il testo originale del bottone
             }
 
         } catch (error) {
             console.error("Errore Fetch:", error);
             if (window.showToast) window.showToast("Errore di comunicazione col server.", "error");
             btnInviaOrdine.disabled = false;
-            btnInviaOrdine.innerHTML = originalBtnText; // RIPRISTINA IL PREZZO PRECEDENTE!
+            btnInviaOrdine.innerHTML = "Conferma e Paga (" + totaleFormattato + ")"; // Si ripristina il testo originale del bottone
         }
     });
 });

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 // Filtro di autenticazione per proteggere le pagine riservate agli utenti loggati
-@WebFilter({"/checkout", "/area-personale/*", "/ordini"})
+@WebFilter({"/checkout", "/area_personale/*", "/ordini/*", "/stampa_fattura/*", "/fattura_pdf/*"})
 public class AuthFilter implements Filter {
 
     public void init(FilterConfig fConfig) throws ServletException {
@@ -50,7 +50,7 @@ public class AuthFilter implements Filter {
             newSession.setAttribute("redirectDopoLogin", urlDiDestinazione);
 
             // 3. Reindirizziamo l'utente alla pagina di login
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login?redirected=true");
         }
     }
 

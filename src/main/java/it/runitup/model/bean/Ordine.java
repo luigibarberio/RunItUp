@@ -17,6 +17,7 @@ public class Ordine implements Serializable {
     private BigDecimal totaleImponibile;
     private BigDecimal totaleIva;
     private BigDecimal totalePagato;
+    private BigDecimal costoSpedizione;
     
     private String nome_e_cognome_destinatario;
     private String indirizzoSpedizione;
@@ -69,6 +70,12 @@ public class Ordine implements Serializable {
     public BigDecimal getTotalePagato() { return totalePagato; }
     public void setTotalePagato(BigDecimal totalePagato) { this.totalePagato = totalePagato; }
 
+    public BigDecimal getCostoSpedizione() { return costoSpedizione; }
+    public void setCostoSpedizione(BigDecimal costoSpedizione) { this.costoSpedizione = costoSpedizione; }
+
+    public String getNome_e_cognome_destinatario() { return nome_e_cognome_destinatario; }
+    public void setNome_e_cognome_destinatario(String nome_e_cognome_destinatario) { this.nome_e_cognome_destinatario = nome_e_cognome_destinatario; }
+
     public String getIndirizzoSpedizione() { return indirizzoSpedizione; }
     public void setIndirizzoSpedizione(String indirizzoSpedizione) { this.indirizzoSpedizione = indirizzoSpedizione; }
 
@@ -83,10 +90,7 @@ public class Ordine implements Serializable {
 
     public StatoOrdine getStato() { return stato; }
     public void setStato(StatoOrdine stato) { this.stato = stato; }
-
-    public String getNome_e_cognome_destinatario() { return nome_e_cognome_destinatario; }
-    public void setNome_e_cognome_destinatario(String nome_e_cognome_destinatario) { this.nome_e_cognome_destinatario = nome_e_cognome_destinatario; }
-
+    
     @Override
     public String toString() {
         return "Ordine [idOrdine=" + idOrdine + ", utente=" + (utente != null ? utente.getEmail() : "null") + ", totalePagato=" + totalePagato + ", stato=" + stato + ", nome_e_cognome_destinatario=" + nome_e_cognome_destinatario + "]";

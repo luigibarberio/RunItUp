@@ -1,0 +1,269 @@
+/* Contenitore principale della pagina */
+.history-main {
+    padding: 40px 20px;
+    min-height: calc(100vh - 300px); /* Impedisce al footer di salire se la lista è vuota */
+    background-color: var(--sfondo-principale);
+}
+
+.history-container {
+    max-width: 900px; /* Layout focalizzato e centrato, ottimale per la lettura sequenziale */
+    margin: 0 auto;
+}
+
+/* --- INTESTAZIONE CRONOLOGIA (Header Section) --- */
+.history-header {
+    margin-bottom: 30px;
+}
+
+.history-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--testo-principale);
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.history-header p {
+    font-size: 0.95rem;
+    color: #64748B; /* Grigio ardesia descrittivo uniforme */
+}
+
+/* --- STATO VUOTO (Empty State Box) --- */
+.empty-history-box {
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    border: 1px solid var(--sfondo-alternativo);
+    padding: 50px 30px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+    margin-bottom: 30px;
+}
+
+.empty-icon {
+    font-size: 3.5rem;
+    margin-bottom: 16px;
+}
+
+.empty-history-box h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--testo-principale);
+    margin-bottom: 10px;
+}
+
+.empty-history-box p {
+    font-size: 0.95rem;
+    color: #64748B;
+    max-width: 450px;
+    margin: 0 auto 24px auto;
+}
+
+.empty-history-box .btn-primary {
+    display: inline-block;
+    background-color: var(--colore-primario);
+    color: #FFFFFF;
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    box-shadow: 0 4px 12px rgba(12, 89, 207, 0.15);
+}
+
+.empty-history-box .btn-primary:hover {
+    background-color: var(--colore-secondario);
+}
+
+/* --- ELENCO ORDINI (List Wrapper & Cards) --- */
+.orders-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Distanza fissa tra le card */
+    margin-bottom: 30px;
+}
+
+/* La singola Card dell'ordine */
+.order-history-card {
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    border: 1px solid var(--sfondo-alternativo);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.order-history-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03);
+}
+
+/* Barra superiore della Card (Metadati) */
+.order-meta-info {
+    background-color: var(--sfondo-alternativo);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+.order-number {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--testo-principale);
+}
+
+.order-date {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #64748B;
+}
+
+/* Corpo centrale della Card (Dati commerciali disposti in linea) */
+.order-card-body {
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.body-info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #94A3B8; /* Grigio spento per etichette secondarie */
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--testo-principale);
+}
+
+/* Risalto cromatico e tipografico per il prezzo totale */
+.price-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--testo-principale);
+}
+
+/* Piè di pagina della Card (Stato + Link di navigazione) */
+.order-card-footer {
+    padding: 16px 24px;
+    border-top: 1px dashed var(--sfondo-alternativo);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #FAFAFA;
+}
+
+/* --- BADGES DI STATO (Coerenti al 100% con dettaglio_ordine.css) --- */
+.order-status-badge {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.badge-warning {
+    background-color: #FEF3C7;
+    color: #D97706;
+}
+
+.badge-info {
+    background-color: rgba(12, 89, 207, 0.1);
+    color: var(--colore-primario);
+}
+
+.badge-success {
+    background-color: rgba(2, 126, 111, 0.1);
+    color: var(--conferme);
+}
+
+.badge-danger {
+    background-color: rgba(204, 58, 18, 0.1);
+    color: var(--promozioni);
+}
+
+.badge-default {
+    background-color: var(--sfondo-alternativo);
+    color: #64748B;
+}
+
+/* Pulsante testuale per andare al dettaglio */
+.btn-detail-link {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--colore-primario);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.btn-detail-link:hover {
+    color: var(--colore-secondario);
+    text-decoration: underline;
+}
+
+/* --- RETRO-NAVIGAZIONE (Torna al profilo) --- */
+.back-to-profile {
+    margin-top: 20px;
+}
+
+.profile-link {
+    font-size: 0.95rem;
+    color: var(--colore-primario);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.profile-link:hover {
+    color: var(--colore-secondario);
+    text-decoration: underline;
+}
+
+@media (max-width: 650px) {
+    .order-meta-info {
+        padding: 12px 16px;
+    }
+
+    /* Il corpo della card passa in colonna per non stringere le informazioni */
+    .order-card-body {
+        padding: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+    
+    .body-info-group {
+        width: 100%;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.02);
+        padding-bottom: 8px;
+    }
+    
+    .body-info-group:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .order-card-footer {
+        padding: 14px 16px;
+    }
+}

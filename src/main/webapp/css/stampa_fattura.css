@@ -1,0 +1,286 @@
+/* --- IMPOSTAZIONI DI RESET E TIPOGRAFIA PER LA STAMPA --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #111111;
+    background-color: #FFFFFF;
+    line-height: 1.4;
+    font-size: 11pt;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Contenitore principale: emula le proporzioni di una pagina A4 su schermo */
+.a4-page {
+    width: 100%;
+    max-width: 210mm; /* Larghezza esatta foglio A4 */
+    margin: 0 auto;
+    padding: 20mm; /* Margini interni di sicurezza per la testina di stampa */
+    background: #FFFFFF;
+}
+
+/* --- HEADER: Struttura Azienda vs Metadati Documento --- */
+.fattura-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    border-bottom: 2px solid #111111;
+    padding-bottom: 20px;
+}
+
+.company-info {
+    flex: 1;
+}
+
+.company-logo {
+    max-height: 55px; /* Dimensione fissa armoniosa ed elegante */
+    width: auto;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.company-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #111111;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.company-info p {
+    font-size: 0.9rem;
+    color: #475569; /* Grigio scuro descrittivo professionale */
+    margin-bottom: 2px;
+}
+
+.document-info {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.document-info h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+}
+
+/* Tabella metadati ordine (N° ordine, data, pagamento) */
+.doc-meta-table {
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.doc-meta-table th {
+    text-align: right;
+    font-weight: 600;
+    color: #475569;
+    padding: 4px 10px;
+}
+
+.doc-meta-table td {
+    text-align: left;
+    font-weight: 500;
+    color: #111111;
+    padding: 4px 0 4px 10px;
+}
+
+/* --- SEZIONE INTESTAZIONE CLIENTE --- */
+.customer-section {
+    margin-bottom: 35px;
+}
+
+.customer-box {
+    background-color: #F8FAFC; /* Fondo chiarissimo di separazione visiva */
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 16px 20px;
+    width: 60%; /* Stile classico fattura: pannello cliente asimmetrico */
+}
+
+.customer-box h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748B;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.customer-box p {
+    font-size: 0.95rem;
+    color: #111111;
+    margin-bottom: 4px;
+}
+
+.customer-box p:last-child {
+    margin-bottom: 0;
+}
+
+/* --- TABELLA DEGLI ARTICOLI (Snapshot Storico) --- */
+.items-section {
+    margin-bottom: 30px;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.items-table thead tr {
+    background-color: #ECEEF0; /* Intestazione grigia solida */
+    border-top: 1px solid #111111;
+    border-bottom: 1px solid #111111;
+}
+
+.items-table th {
+    padding: 12px 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #111111;
+    letter-spacing: 0.5px;
+}
+
+.items-table td {
+    padding: 14px 10px;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #E2E8F0;
+    vertical-align: top;
+}
+
+/* Allineamento colonne per leggibilità contabile */
+.col-desc { text-align: left; width: 55%; }
+.col-qty  { text-align: center; width: 10%; }
+.col-price { text-align: right; width: 15%; }
+.col-total { text-align: right; width: 20%; }
+
+.items-table th.col-qty { text-align: center; }
+.items-table th.col-price, .items-table th.col-total { text-align: right; }
+
+/* Sub-varianti prodotto storiche (colore e taglia) */
+.item-variants {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: #475569;
+    margin-top: 4px;
+}
+
+/* --- SEZIONE TOTALI CALCOLATI --- */
+.totals-section {
+    display: flex;
+    justify-content: flex-end; /* Spinge lo scontrino a destra */
+    margin-bottom: 45px;
+}
+
+.totals-box {
+    width: 45%; /* Occupa meno della metà della riga */
+}
+
+.totals-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.totals-table th, .totals-table td {
+    padding: 6px 10px;
+    font-size: 0.95rem;
+}
+
+.totals-table th {
+    text-align: right;
+    font-weight: 500;
+    color: #475569;
+}
+
+.totals-table td {
+    text-align: right;
+    font-weight: 600;
+    color: #111111;
+}
+
+/* Riga dello sconto coupon */
+.row-discount th, .totals-table .row-discount td {
+    color: #CC3A12; /* Mantiene la coerenza del rosso promozioni di RunItUp */
+}
+
+/* Riga del totale finale evidenziata */
+.row-final-total {
+    border-top: 1.5px solid #111111;
+}
+
+.row-final-total th {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #000000;
+    padding-top: 12px;
+}
+
+.row-final-total td {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #000000;
+    padding-top: 12px;
+}
+
+/* --- PIÈ DI PAGINA DEL DOCUMENTO (Note legali/Garanzia) --- */
+.doc-footer {
+    text-align: center;
+    border-top: 1px dashed #CBD5E1;
+    padding-top: 20px;
+    margin-top: auto; /* Se supportato, spinge in fondo */
+}
+
+.doc-footer p:first-child {
+    font-size: 1rem;
+    color: #111111;
+    margin-bottom: 4px;
+}
+
+.doc-footer p:last-child {
+    font-size: 0.8rem;
+    color: #64748B;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   DIRETTIVE COMPORTAMENTALI PER LA STAMPA NATIVA (@media print)
+   ========================================================================== */
+@media print {
+    @page {
+        size: A4;
+        margin: 0; /* I margini sono già simulati dal padding di .a4-page */
+    }
+
+    body {
+        background-color: #FFFFFF !important;
+    }
+
+    .a4-page {
+        padding: 15mm !important; /* Ottimizza lo spazio sulla carta reale */
+        max-width: 100% !important;
+        width: 100% !important;
+        box-shadow: none !important;
+    }
+
+    /* Evita che le righe della tabella vengano spezzate a metà foglio */
+    .items-table tr {
+        break-inside: avoid;
+    }
+
+    /* Forza il browser a stampare i colori di sfondo (come l'header grigio della tabella) */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}

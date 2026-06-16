@@ -19,7 +19,7 @@
             <% if (base64Img != null && !base64Img.isEmpty()) { %>
                 <img src="data:image/jpeg;base64,<%= base64Img %>" alt="<%= dto.getProdotto().getNome() %>" class="product-img" loading="lazy">
             <% } else { %>
-                <img src="<%= request.getContextPath() %>/images/placeholder.png" alt="Immagine di <%= dto.getProdotto().getNome() %> non disponibile" class="product-img" loading="lazy">
+                <img src="<%= request.getContextPath() %>/images/placeholder.svg" alt="Immagine di <%= dto.getProdotto().getNome() %> non disponibile" class="product-img" loading="lazy">
             <% } %>
         </a>
         

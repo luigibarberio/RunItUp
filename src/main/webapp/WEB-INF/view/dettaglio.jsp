@@ -36,7 +36,7 @@
                 <% if (base64Img != null && !base64Img.isEmpty()) { %>
                     <img src="data:image/jpeg;base64,<%= base64Img %>" alt="<%= prodotto.getNome() %>" class="product-img" loading="lazy">
                 <% } else { %>
-                    <img src="${pageContext.request.contextPath}/images/placeholder.png" alt="Immagine di <%= prodotto.getNome() %> non disponibile" class="product-img" loading="lazy">
+                    <img src="${pageContext.request.contextPath}/images/placeholder.svg" alt="Immagine di <%= prodotto.getNome() %> non disponibile" class="product-img" loading="lazy">
                 <% } %>
             </div>
 

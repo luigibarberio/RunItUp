@@ -83,7 +83,7 @@
                                     %>
                                         <img src="data:image/jpeg;base64,<%= base64Img %>" alt="<%= prodotto.getNome() %>" class="product-img" loading="lazy">
                                     <% } else { %>
-                                        <img src="<%= request.getContextPath() %>/images/placeholder.png" alt="Immagine non disponibile" class="product-img" loading="lazy">
+                                        <img src="<%= request.getContextPath() %>/images/placeholder.svg" alt="Immagine non disponibile" class="product-img" loading="lazy">
                                     <% } %>
                                 </a>
                                 

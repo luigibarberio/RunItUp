@@ -149,7 +149,7 @@
                                 <% if (p.getImmagineBase64() != null) { %>
                                     <img src="data:image/jpeg;base64,<%= p.getImmagineBase64() %>" alt="<%= p.getNome() %>">
                                 <% } else { %>
-                                    <img src="${pageContext.request.contextPath}/images/placeholder.png" alt="Placeholder">
+                                    <img src="${pageContext.request.contextPath}/images/placeholder.svg" alt="Placeholder">
                                 <% } %>
                             </div>
                             <div class="mini-item-details">

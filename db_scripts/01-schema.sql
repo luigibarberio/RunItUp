@@ -98,6 +98,7 @@ CREATE TABLE ordine (
     totale_imponibile DECIMAL(10,2) NOT NULL CHECK (totale_imponibile >= 0),
     totale_iva DECIMAL(10,2) NOT NULL CHECK (totale_iva >= 0),
     totale_pagato DECIMAL(10,2) NOT NULL CHECK (totale_pagato >= 0),
+    costo_spedizione DECIMAL(10,2) NOT NULL CHECK (costo_spedizione >= 0),
     
     -- DATI DI SPEDIZIONE E PAGAMENTO
     nome_e_cognome_destinatario VARCHAR(200) NOT NULL,

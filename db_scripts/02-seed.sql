@@ -216,13 +216,13 @@ FROM variante_prodotto WHERE id_prodotto = (SELECT id_prodotto FROM prodotto WHE
 -- ==============================================================================
 
 -- ORDINE 1: Mario Rossi, Spedito (Con Coupon BENVENUTO10)
-INSERT INTO ordine (id_utente, id_coupon, data_ordine, totale_imponibile, totale_iva, totale_pagato, indirizzo_spedizione, citta, cap, metodo_pagamento, stato)
+INSERT INTO ordine (id_utente, id_coupon, data_ordine, totale_imponibile, totale_iva, totale_pagato, costo_spedizione, nome_e_cognome_destinatario, indirizzo_spedizione, citta, cap, metodo_pagamento, stato)
 VALUES (
     (SELECT id_utente FROM utente WHERE email = 'cliente1@example.com'), 
     (SELECT id_coupon FROM coupon WHERE codice = 'BENVENUTO10'), 
     CURRENT_TIMESTAMP - INTERVAL '3 days', 
-    115.00, 25.30, 140.30, -- Valori simulati post sconto
-    'Via Roma 10', 'Salerno', '84100', 'PAYPAL', 'SPEDITO'
+    115.00, 25.30, 140.30, 10.00, -- Valori simulati post sconto
+    'Mario Rossi', 'Via Roma 10', 'Salerno', '84100', 'PAYPAL', 'SPEDITO'
 );
 INSERT INTO dettaglio_ordine (id_ordine, id_variante, nome_prodotto_storico, colore_storico, taglia_storica, quantita_acquistata, prezzo_unitario_imponibile, aliquota_iva, prezzo_unitario_con_iva)
 SELECT 
@@ -232,12 +232,12 @@ WHERE p.nome = 'Clifton 9' LIMIT 1;
 
 
 -- ORDINE 2: Luca Verdi, Consegnato (No Coupon)
-INSERT INTO ordine (id_utente, id_coupon, data_ordine, totale_imponibile, totale_iva, totale_pagato, indirizzo_spedizione, citta, cap, metodo_pagamento, stato)
+INSERT INTO ordine (id_utente, id_coupon, data_ordine, totale_imponibile, totale_iva, totale_pagato, costo_spedizione, nome_e_cognome_destinatario, indirizzo_spedizione, citta, cap, metodo_pagamento, stato)
 VALUES (
     (SELECT id_utente FROM utente WHERE email = 'cliente3@example.com'), 
     NULL, CURRENT_TIMESTAMP - INTERVAL '45 days', 
-    204.91, 45.08, 250.00, 
-    'Piazza Duomo 1', 'Milano', '20100', 'CARTA', 'CONSEGNATO'
+    204.91, 45.08, 250.00, 10.00,
+    'Luca Verdi', 'Piazza Duomo 1', 'Milano', '20100', 'CARTA', 'CONSEGNATO'
 );
 INSERT INTO dettaglio_ordine (id_ordine, id_variante, nome_prodotto_storico, colore_storico, taglia_storica, quantita_acquistata, prezzo_unitario_imponibile, aliquota_iva, prezzo_unitario_con_iva)
 SELECT 
@@ -247,13 +247,13 @@ WHERE p.nome = 'Endorphin Pro 3' LIMIT 1;
 
 
 -- ORDINE 3: Martina Neri, In Lavorazione (Con Coupon MINUS20)
-INSERT INTO ordine (id_utente, id_coupon, data_ordine, totale_imponibile, totale_iva, totale_pagato, indirizzo_spedizione, citta, cap, metodo_pagamento, stato)
+INSERT INTO ordine (id_utente, id_coupon, data_ordine, totale_imponibile, totale_iva, totale_pagato, costo_spedizione, nome_e_cognome_destinatario, indirizzo_spedizione, citta, cap, metodo_pagamento, stato)
 VALUES (
     (SELECT id_utente FROM utente WHERE email = 'cliente4@example.com'), 
     (SELECT id_coupon FROM coupon WHERE codice = 'MINUS20'), 
     CURRENT_TIMESTAMP - INTERVAL '2 hours', 
-    102.45, 22.54, 125.00, -- (145 listino - 20 sconto = 125 iva inclusa)
-    'Corso Garibaldi 45', 'Napoli', '80100', 'CONTRASSEGNO', 'IN_LAVORAZIONE'
+    102.45, 22.54, 125.00, 10.00, -- (145 listino - 20 sconto = 125 iva inclusa)
+    'Martina Neri', 'Corso Garibaldi 45', 'Napoli', '80100', 'CONTRASSEGNO', 'IN_LAVORAZIONE'
 );
 INSERT INTO dettaglio_ordine (id_ordine, id_variante, nome_prodotto_storico, colore_storico, taglia_storica, quantita_acquistata, prezzo_unitario_imponibile, aliquota_iva, prezzo_unitario_con_iva)
 SELECT 
@@ -263,12 +263,12 @@ WHERE p.nome = 'Speedcross 6' LIMIT 1;
 
 
 -- ORDINE 4: Alessandro Gialli, Annullato
-INSERT INTO ordine (id_utente, id_coupon, data_ordine, totale_imponibile, totale_iva, totale_pagato, indirizzo_spedizione, citta, cap, metodo_pagamento, stato)
+INSERT INTO ordine (id_utente, id_coupon, data_ordine, totale_imponibile, totale_iva, totale_pagato, costo_spedizione, nome_e_cognome_destinatario, indirizzo_spedizione, citta, cap, metodo_pagamento, stato)
 VALUES (
     (SELECT id_utente FROM utente WHERE email = 'cliente5@example.com'), 
     NULL, CURRENT_TIMESTAMP - INTERVAL '10 days', 
-    106.55, 23.44, 129.99, 
-    'Via Torino 5', 'Torino', '10100', 'PAYPAL', 'ANNULLATO'
+    106.55, 23.44, 129.99, 10.00,
+    'Alessandro Gialli', 'Via Torino 5', 'Torino', '10100', 'PAYPAL', 'ANNULLATO'
 );
 INSERT INTO dettaglio_ordine (id_ordine, id_variante, nome_prodotto_storico, colore_storico, taglia_storica, quantita_acquistata, prezzo_unitario_imponibile, aliquota_iva, prezzo_unitario_con_iva)
 SELECT 

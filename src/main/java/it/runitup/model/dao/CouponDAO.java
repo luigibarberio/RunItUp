@@ -61,7 +61,7 @@ public class CouponDAO {
             }
         } finally {
             if (con != null) {
-                con.close();
+                ConnectionPool.releaseConnection(con);
             }
         }
         return coupon;

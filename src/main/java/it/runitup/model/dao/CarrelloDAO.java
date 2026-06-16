@@ -268,6 +268,10 @@ public class CarrelloDAO {
                     }
                 }
             }
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
         }
     }
 

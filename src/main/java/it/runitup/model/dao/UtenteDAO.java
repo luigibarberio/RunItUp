@@ -60,21 +60,19 @@ public class UtenteDAO {
         String query = "INSERT INTO utente (nome, cognome, email, password_hash, telefono, is_admin) VALUES (?, ?, ?, ?, ?, ?)";
         
         Connection con = ConnectionPool.getConnection();
-        try{
-            try (PreparedStatement ps = con.prepareStatement(query)) {
-                
-                // Prendiamo i dati dall'oggetto Java e li infiliamo nei '?'
-                ps.setString(1, utente.getNome());
-                ps.setString(2, utente.getCognome());
-                ps.setString(3, utente.getEmail());
-                ps.setString(4, utente.getPasswordHash());
-                ps.setString(5, utente.getTelefono());
-                ps.setBoolean(6, utente.isAdmin()); // Di default un nuovo utente non è admin
-                
-                // Esecuzione dell'INSERT
-                ps.executeUpdate();
-            }
-        } finally {
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            
+            // Prendiamo i dati dall'oggetto Java e li infiliamo nei '?'
+            ps.setString(1, utente.getNome());
+            ps.setString(2, utente.getCognome());
+            ps.setString(3, utente.getEmail());
+            ps.setString(4, utente.getPasswordHash());
+            ps.setString(5, utente.getTelefono());
+            ps.setBoolean(6, utente.isAdmin()); // Di default un nuovo utente non è admin
+            
+            // Esecuzione dell'INSERT
+            ps.executeUpdate();
+        }finally {
             if (con != null) {
                 ConnectionPool.releaseConnection(con);
             }

@@ -15,6 +15,8 @@
     Boolean isPaginaSuccAttr = (Boolean) request.getAttribute("isPaginaSuccessiva");
     boolean isPaginaSuccessiva = (isPaginaSuccAttr != null && isPaginaSuccAttr);
     
+    // TODO Impostare direttamente nella jsp il check dei filtri selezionati, in base ai filtri correnti ottenuti in input, in modo da non farlo inutilmente nel js
+
 %>
 
 <!DOCTYPE html>

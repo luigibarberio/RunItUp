@@ -26,7 +26,6 @@ import it.runitup.model.bean.Utente;
 import it.runitup.model.bean.VoceCarrello;
 import it.runitup.model.dao.CarrelloDAO;
 import it.runitup.model.dao.CouponDAO;
-import it.runitup.model.dao.ProdottoDAO;
 import it.runitup.model.dao.VarianteDAO;
 import it.runitup.model.dto.VarianteDTO;
 import it.runitup.model.dto.VoceCarrelloDTO;
@@ -39,7 +38,6 @@ public class CheckoutServlet extends HttpServlet {
 
     private final CarrelloDAO carrelloDAO = new CarrelloDAO();
     private final VarianteDAO varianteDAO = new VarianteDAO();
-    private final ProdottoDAO prodottoDAO = new ProdottoDAO();
     private final OrdineDAO ordineDAO = new OrdineDAO();
     // doGet: Carica le voci del carrello con i prezzi scontati in tempo reale e calcola il totale aggiornato
     @Override
@@ -70,7 +68,7 @@ public class CheckoutServlet extends HttpServlet {
             BigDecimal totaleProdotti = BigDecimal.ZERO;
             
             for (VoceCarrello voce : vociGrezze) {
-                VarianteDTO vDTO = prodottoDAO.getVarianteConPromozione(voce.getVariante());
+                VarianteDTO vDTO = varianteDAO.getVarianteConPromozione(voce.getVariante());
                 vociDTO.add(new VoceCarrelloDTO(voce, vDTO));
                 
                 BigDecimal costoRiga = vDTO.getPrezzoEffettivo().multiply(new BigDecimal(voce.getQuantita()));
@@ -94,7 +92,7 @@ public class CheckoutServlet extends HttpServlet {
         }
     }
 
-// doPost: Riceve i dati JSON, convalida anagrafica, ricalcola i totali (e l'eventuale coupon), scorpora l'IVA e salva sul database
+    // doPost: Riceve i dati JSON, convalida anagrafica, ricalcola i totali (e l'eventuale coupon), scorpora l'IVA e salva sul database
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -157,7 +155,7 @@ public class CheckoutServlet extends HttpServlet {
             BigDecimal totaleProdotti = BigDecimal.ZERO;
             
             for (VoceCarrello voce : vociGrezze) {
-                VarianteDTO vDTO = prodottoDAO.getVarianteConPromozione(voce.getVariante());
+                VarianteDTO vDTO = varianteDAO.getVarianteConPromozione(voce.getVariante());
                 vociDTO.add(new VoceCarrelloDTO(voce, vDTO));
                 BigDecimal subtot = vDTO.getPrezzoEffettivo().multiply(new BigDecimal(voce.getQuantita()));
                 totaleProdotti = totaleProdotti.add(subtot);
@@ -212,6 +210,7 @@ public class CheckoutServlet extends HttpServlet {
             ordine.setTotaleImponibile(totaleImponibile);
             ordine.setTotaleIva(totaleIva);
             ordine.setTotalePagato(totalePagato);
+            ordine.setCostoSpedizione(costoSpedizione);
             
             ordine.setNome_e_cognome_destinatario(nome + " " + cognome);
             ordine.setIndirizzoSpedizione(indirizzo);
@@ -225,8 +224,8 @@ public class CheckoutServlet extends HttpServlet {
 
             if (idOrdineGenerato > 0) {
                 jsonResponse.addProperty("success", true);
-                // Indichiamo al client di spostarsi nell'area riepilogo ordini
-                jsonResponse.addProperty("redirectUrl", request.getContextPath() + "/ordini");
+                // TODO Indichiamo al client di spostarsi alla pagina dei dettagli dell'ordine appena creato, usando l'ID restituito sotto forma di query parameter (es: /ordini/dettaglio?id=123)
+                jsonResponse.addProperty("redirectUrl", request.getContextPath() + "/ordini?id=" + idOrdineGenerato);
                 response.getWriter().write(gson.toJson(jsonResponse));
             } else {
                 inviaRisposta(response, jsonResponse, false, "Scorte esaurite per uno o più articoli selezionati. Ordine annullato.");

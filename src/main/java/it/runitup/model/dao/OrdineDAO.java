@@ -36,9 +36,9 @@ public class OrdineDAO {
                                  
         String svuotaCarrello = "DELETE FROM voce_carrello WHERE id_carrello = (SELECT id_carrello FROM carrello WHERE id_utente = ?)";
 
-                              
-        Connection con = ConnectionPool.getConnection();
+        Connection con = null;
         try {
+            con = ConnectionPool.getConnection();
             con.setAutoCommit(false); // Inizio transazione
 
             // 1. INSERIMENTO ORDINE PRINCIPALE

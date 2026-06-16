@@ -15,7 +15,6 @@ import it.runitup.model.bean.Coupon;
 import it.runitup.model.bean.VoceCarrello;
 import it.runitup.model.dao.CarrelloDAO;
 import it.runitup.model.dao.CouponDAO;
-import it.runitup.model.dao.ProdottoDAO;
 import it.runitup.model.dao.VarianteDAO;
 import it.runitup.model.dto.VarianteDTO;
 import it.runitup.util.SpedizioneUtil;
@@ -27,7 +26,6 @@ public class ValidaCouponServlet extends HttpServlet {
     private final CouponDAO couponDAO = new CouponDAO();
     private final CarrelloDAO carrelloDAO = new CarrelloDAO();
     private final VarianteDAO varianteDAO = new VarianteDAO();
-    private final ProdottoDAO prodottoDAO = new ProdottoDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -68,7 +66,7 @@ public class ValidaCouponServlet extends HttpServlet {
 
             BigDecimal totaleProdotti = BigDecimal.ZERO;
             for (VoceCarrello voce : vociGrezze) {
-                VarianteDTO vDTO = prodottoDAO.getVarianteConPromozione(voce.getVariante());
+                VarianteDTO vDTO = varianteDAO.getVarianteConPromozione(voce.getVariante());
                 BigDecimal costoRiga = vDTO.getPrezzoEffettivo().multiply(new BigDecimal(voce.getQuantita()));
                 totaleProdotti = totaleProdotti.add(costoRiga);
             }
@@ -106,8 +104,10 @@ public class ValidaCouponServlet extends HttpServlet {
 
             // Formattazione del valore dello sconto per la visualizzazione (2 decimali, separatore decimale a virgola)
             jsonResponse.addProperty("importoSconto", String.format(java.util.Locale.US, "%.2f", valoreScontoCalcolato));
-
             jsonResponse.addProperty("nuovoTotale", String.format(java.util.Locale.US, "%.2f", nuovoTotaleFinale));
+            
+            // Includiamo anche il costo di spedizione, così da permettere al client di aggiornare dinamicamente anche quello se necessario (es: se il coupon ha fatto scendere il totale sotto la soglia per la spedizione gratuita)
+            jsonResponse.addProperty("costoSpedizione", String.format(java.util.Locale.US, "%.2f", costoSpedizione));
             
         } catch (Exception e) {
             e.printStackTrace();

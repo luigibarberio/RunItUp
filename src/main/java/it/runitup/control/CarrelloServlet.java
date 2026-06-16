@@ -17,7 +17,6 @@ import com.google.gson.JsonObject;
 import it.runitup.control.service.CarrelloManager;
 import it.runitup.model.bean.VoceCarrello;
 import it.runitup.model.dao.CarrelloDAO;
-import it.runitup.model.dao.ProdottoDAO;
 import it.runitup.model.dao.VarianteDAO;
 import it.runitup.model.dto.VarianteDTO;
 import it.runitup.model.dto.VoceCarrelloDTO;
@@ -37,7 +36,6 @@ public class CarrelloServlet extends HttpServlet {
         try {
             // 1. Inizializziamo il manager unificato e il DAO dei prodotti per le promozioni
             CarrelloManager cartManager = new CarrelloManager(request, carrelloDAO, varianteDAO);
-            ProdottoDAO prodottoDAO = new ProdottoDAO();
             
             // 2. Recuperiamo la lista grezza delle voci (valida sia per loggati che ospiti)
             List<VoceCarrello> vociGrezze = cartManager.getVociCarrello();
@@ -50,7 +48,7 @@ public class CarrelloServlet extends HttpServlet {
             
             for (VoceCarrello voce : vociGrezze) {
                 // Ricaviamo la variante arricchita con lo sconto in tempo reale dal DB
-                VarianteDTO varianteDTO = prodottoDAO.getVarianteConPromozione(voce.getVariante());
+                VarianteDTO varianteDTO = varianteDAO.getVarianteConPromozione(voce.getVariante());
                 
                 // Creiamo il DTO della riga iniettando i due componenti
                 VoceCarrelloDTO voceDTO = new VoceCarrelloDTO(voce, varianteDTO);

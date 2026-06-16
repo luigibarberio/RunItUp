@@ -170,15 +170,18 @@
                     </div>
                     <div class="cost-row">
                         <span>Spedizione:</span>
-                        <span>
-                            <% if (costoSpedizione.compareTo(BigDecimal.ZERO) == 0) { %>
-                                <strong style="color: var(--conferme);">Gratis</strong>
+                        <% 
+                            boolean isFreeShipping = costoSpedizione.compareTo(BigDecimal.ZERO) == 0;
+                            String cssClass = isFreeShipping ? "free-shipping" : "";
+                        %>
+                        <span id="shipping-cost-display" class="<%= cssClass %>">
+                            <% if (isFreeShipping) { %>
+                                Gratis
                             <% } else { %>
                                 € <%= String.format(java.util.Locale.ITALY, "%.2f", costoSpedizione) %>
                             <% } %>
                         </span>
                     </div>
-                    
                     <div class="cost-row coupon-row hidden" id="summary-coupon-row">
                         <span>Sconto Coupon (<span id="summary-coupon-code"></span>):</span>
                         <span class="coupon-discount-val" id="summary-coupon-val">-€ 0,00</span>

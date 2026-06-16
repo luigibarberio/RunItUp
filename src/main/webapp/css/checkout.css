@@ -56,6 +56,11 @@
     gap: 20px;
 }
 
+.free-shipping {
+    color: var(--conferme);
+    font-weight: bold;
+}
+
 /* Ottimizzazione proporzioni per Città e CAP */
 @media (min-width: 651px) {
     .form-group-row .city-box { grid-column: span 1; }

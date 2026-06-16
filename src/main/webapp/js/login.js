@@ -3,7 +3,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const loginBtn = document.querySelector('.login-btn');
-    const successOverlay = document.getElementById('successOverlay');
+    
+    // Funzione per mostrare il toast in caso di reindirizzamento proveniente dall'auth filter
+    const showRedirectToast = () => {
+        if (window.showToast) {
+            window.showToast("Per accedere a questa pagina, effettua il login.", "error");
+        }
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('redirected') === 'true') {
+        showRedirectToast();
+    }
 
     const state = {
         email: false,

@@ -164,12 +164,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     inputs.codiceCoupon.value = "";
                 }
 
-                // Aggiornamento del totale complessivo dell'ordine
+                // Aggiornamento del totale complessivo dell'ordine (e il costo di spedizione se necessario)
                 if (data.nuovoTotale) {
                     const totaleFormattato = parseFloat(data.nuovoTotale).toFixed(2).replace('.', ',');
                     document.getElementById('final-total-display').textContent = `€ ${totaleFormattato}`;
                     btnInviaOrdine.innerHTML = `Conferma e Paga (€ ${totaleFormattato})`;
                 }
+
+                // Aggiornamento del costo di spedizione se il coupon ha fatto scendere il totale sotto la soglia per la spedizione gratuita
+                if (data.costoSpedizione !== undefined) {
+                    const display = document.getElementById('shipping-cost-display');
+                    const costoNumerico = parseFloat(data.costoSpedizione);
+                    
+                    if (costoNumerico === 0) {
+                        display.textContent = "Gratis";
+                        display.classList.add('free-shipping');
+                    } else {
+                        // Usa toLocaleString per formattare correttamente in base alla lingua
+                        const formato = costoNumerico.toLocaleString('it-IT', { 
+                            minimumFractionDigits: 2, 
+                            maximumFractionDigits: 2 
+                        });
+                        display.textContent = `€ ${formato}`;
+                        display.classList.remove('free-shipping');
+                    }
+                }
+
             } else {
                 couponMessage.style.color = 'var(--promozioni)';
                 couponMessage.textContent = data.message || 'Coupon non valido o scaduto.';
@@ -219,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
             codiceCoupon: couponConfermato // Passiamo il coupon al backend
         };
 
+        let btnInviaOrdineOriginalText = btnInviaOrdine.textContent; // Salviamo il testo originale del bottone per poterlo ripristinare in caso di errore
         btnInviaOrdine.disabled = true;
         btnInviaOrdine.textContent = "Elaborazione in corso...";
 
@@ -242,14 +263,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 if (window.showToast) window.showToast(data.message, "error");
                 btnInviaOrdine.disabled = false;
-                btnInviaOrdine.innerHTML = "Conferma e Paga (" + totaleFormattato + ")"; // Si ripristina il testo originale del bottone
+                btnInviaOrdine.textContent = btnInviaOrdineOriginalText; // Si ripristina il testo originale del bottone
             }
 
         } catch (error) {
             console.error("Errore Fetch:", error);
             if (window.showToast) window.showToast("Errore di comunicazione col server.", "error");
             btnInviaOrdine.disabled = false;
-            btnInviaOrdine.innerHTML = "Conferma e Paga (" + totaleFormattato + ")"; // Si ripristina il testo originale del bottone
+            btnInviaOrdine.textContent = btnInviaOrdineOriginalText; // Si ripristina il testo originale del bottone
         }
     });
 });

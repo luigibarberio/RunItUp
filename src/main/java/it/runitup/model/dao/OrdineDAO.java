@@ -14,6 +14,9 @@ import it.runitup.model.bean.Ordine;
 import it.runitup.model.bean.Prodotto;
 import it.runitup.model.bean.VarianteProdotto;
 import it.runitup.model.dto.VoceCarrelloDTO;
+import it.runitup.model.bean.Utente;
+import it.runitup.model.bean.TipoScontoCoupon;
+import it.runitup.model.bean.StatoOrdine;
 import it.runitup.util.ConnectionPool;
 
 import java.time.LocalDateTime;
@@ -277,8 +280,9 @@ public class OrdineDAO {
         Ordine ord = new Ordine();
         ord.setIdOrdine(rs.getInt("id_ordine"));
         
+        // TODO realizzare un metodo DAO per recuperare l'utente completo se necessario. Al momento, impostiamo solo l'ID Utente. Il controllo d'accesso si farà in Servlet.
         // Impostiamo solo l'ID Utente. Il controllo d'accesso si farà in Servlet.
-        it.runitup.model.bean.Utente u = new it.runitup.model.bean.Utente();
+        Utente u = new Utente();
         u.setIdUtente(rs.getInt("id_utente"));
         ord.setUtente(u);
 
@@ -289,7 +293,7 @@ public class OrdineDAO {
             cp.setIdCoupon(idCoupon);
             cp.setCodice(rs.getString("codice"));
             cp.setValoreSconto(rs.getBigDecimal("valore_sconto"));
-            cp.setTipoSconto(it.runitup.model.bean.TipoScontoCoupon.valueOf(rs.getString("tipo_sconto")));
+            cp.setTipoSconto(TipoScontoCoupon.valueOf(rs.getString("tipo_sconto")));
             ord.setCoupon(cp);
         }
 
@@ -315,7 +319,7 @@ public class OrdineDAO {
         ord.setMetodoPagamento(rs.getString("metodo_pagamento"));
         
         // Enum di stato
-        ord.setStato(it.runitup.model.bean.StatoOrdine.valueOf(rs.getString("stato")));
+        ord.setStato(StatoOrdine.valueOf(rs.getString("stato")));
 
         return ord;
     }

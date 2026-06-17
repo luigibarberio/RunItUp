@@ -53,6 +53,74 @@ public class UtenteDAO {
         return utente;
     }
 
+    // Metodo per recuperare un utente tramite ID (Utile per la sincronizzazione dei dati dell'Area Personale e per il Pannello Admin)
+    public Utente doRetrieveById(int idUtente) throws SQLException {
+        Utente utente = null;
+        String query = "SELECT * FROM utente WHERE id_utente = ?";
+        
+        Connection con = ConnectionPool.getConnection();
+        
+        try {
+            // Il try-with-resources chiude automaticamente PreparedStatement e ResultSet
+            try (PreparedStatement ps = con.prepareStatement(query)) {
+                ps.setInt(1, idUtente);
+                
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        utente = new Utente();
+                        utente.setIdUtente(rs.getInt("id_utente"));
+                        utente.setNome(rs.getString("nome"));
+                        utente.setCognome(rs.getString("cognome"));
+                        utente.setEmail(rs.getString("email"));
+                        utente.setPasswordHash(rs.getString("password_hash"));
+                        utente.setTelefono(rs.getString("telefono"));
+                        utente.setAdmin(rs.getBoolean("is_admin"));
+                    }
+                }
+            }
+        // Rilasciamo sempre la connessione al pool, garantendo la robustezza del server
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
+        
+        return utente;
+    }
+
+    // Metodo per recuperare un utente tramite numero di telefono, utile per evitare duplicazioni di contatti
+    public Utente doRetrieveByTelefono(String telefono) throws SQLException {
+        Utente utente = null;
+        String query = "SELECT * FROM utente WHERE telefono = ?";
+        
+        Connection con = ConnectionPool.getConnection();
+        
+        try {
+            try (PreparedStatement ps = con.prepareStatement(query)) {
+                ps.setString(1, telefono);
+                
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        utente = new Utente();
+                        utente.setIdUtente(rs.getInt("id_utente"));
+                        utente.setNome(rs.getString("nome"));
+                        utente.setCognome(rs.getString("cognome"));
+                        utente.setEmail(rs.getString("email"));
+                        utente.setPasswordHash(rs.getString("password_hash"));
+                        utente.setTelefono(rs.getString("telefono"));
+                        utente.setAdmin(rs.getBoolean("is_admin"));
+                    }
+                }
+            }
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
+        
+        return utente;
+    }
+
     // Metodo per salvare un nuovo utente nel database (Registrazione)
     public void doSave(Utente utente) throws SQLException {
         
@@ -78,5 +146,55 @@ public class UtenteDAO {
             }
         }
     }
+
+    // Metodo per aggiornare i dati anagrafici di un utente
+    public void doUpdateAnagrafica(Utente utente) throws SQLException {
+        String query = "UPDATE utente SET nome = ?, cognome = ?, telefono = ? WHERE id_utente = ?";
+        
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            
+            ps.setString(1, utente.getNome());
+            ps.setString(2, utente.getCognome());
+            
+            // Gestione coerente del telefono (nullable nel database)
+            if (utente.getTelefono() != null && !utente.getTelefono().trim().isEmpty()) {
+                ps.setString(3, utente.getTelefono());
+            } else {
+                ps.setNull(3, java.sql.Types.VARCHAR);
+            }
+            
+            ps.setInt(4, utente.getIdUtente());
+            
+            ps.executeUpdate();
+            
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
+    }
+
+    // Metodo per aggiornare l'hash della password di un utente
+    public void doUpdateCompleto(Utente utente) throws SQLException {
+        String query = "UPDATE utente SET nome = ?, cognome = ?, telefono = ?, password_hash = ? WHERE id_utente = ?";
+        
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            
+            ps.setString(1, utente.getNome());
+            ps.setString(2, utente.getCognome());
+            ps.setString(3, utente.getTelefono());
+            ps.setString(4, utente.getPasswordHash());
+            ps.setInt(5, utente.getIdUtente());
+            
+            ps.executeUpdate();
+            
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
+    }    
 
 }

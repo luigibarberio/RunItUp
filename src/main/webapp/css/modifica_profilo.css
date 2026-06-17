@@ -1,0 +1,228 @@
+/* Contenitore principale della pagina */
+.modifica-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 250px);
+    padding: 40px 20px;
+    background-color: var(--sfondo-principale);
+}
+
+/* La scheda del form: estesa per ospitare i campi affiancati e le sezioni */
+.modifica-card {
+    background-color: #FFFFFF;
+    width: 100%;
+    max-width: 600px;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--sfondo-alternativo);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Intestazione della scheda */
+.modifica-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.modifica-header h2 {
+    font-size: 1.8rem;
+    color: var(--testo-principale);
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.modifica-header p {
+    font-size: 0.95rem;
+    color: var(--testo-secondario);
+}
+
+/* --- TITOLI DELLE SEZIONI INTERNE --- */
+.section-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--testo-principale);
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ECEEF0;
+}
+
+.margin-top-section {
+    margin-top: 35px;
+}
+
+.section-subtitle {
+    font-size: 0.85rem;
+    color: #64748B;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+
+/* --- GRUPPI DI INPUT E LAYOUT A GRIGLIA --- */
+.input-row {
+    display: flex;
+    gap: 20px;
+}
+
+.input-row .input-group {
+    flex: 1; /* I campi affiancati prendono il 50% dello spazio ciascuno */
+}
+
+.input-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--testo-principale);
+    margin-bottom: 6px;
+}
+
+/* Stile base per tutti i campi di input e select */
+.input-group input, 
+.input-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--testo-principale);
+    background-color: #FFFFFF;
+    transition: all 0.2s;
+    outline: none;
+    font-family: inherit;
+}
+
+/* Effetto Focus */
+.input-group input:focus,
+.input-group select:focus {
+    border-color: var(--colore-primario);
+    box-shadow: 0 0 0 3px rgba(12, 89, 207, 0.15);
+}
+
+/* Classe specifica per il campo Email disabilitato */
+.input-disabled {
+    background-color: #F8FAFC !important;
+    cursor: not-allowed;
+    color: #64748B !important;
+    border-color: #E2E8F0 !important;
+}
+
+/* Gestione errore visivo (aggiunto da JS) */
+.input-group input.error {
+    border-color: var(--promozioni); /* Rosso RunItUp */
+}
+
+.error-msg {
+    color: var(--promozioni);
+    font-size: 0.8rem;
+    margin-top: 5px;
+    min-height: 16px;
+    display: block;
+}
+
+/* --- GESTIONE CAMPO TELEFONO COMPOSITO --- */
+.phone-input-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+.phone-prefix {
+    width: 90px !important;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+/* --- PULSANTI E AZIONI --- */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+/* Annulla */
+.btn-secondary {
+    flex: 1;
+    text-align: center;
+    padding: 14px;
+    border-radius: 8px;
+    border: 1px solid #CBD5E1;
+    color: var(--testo-principale);
+    background-color: #FFFFFF;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-secondary:hover {
+    background-color: #F8FAFC;
+    border-color: #94A3B8;
+}
+
+/* Applica Modifiche */
+.modifica-btn {
+    flex: 1;
+    padding: 14px;
+    background-color: var(--colore-primario);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modifica-btn:hover:not(:disabled) {
+    background-color: var(--colore-secondario);
+}
+
+.modifica-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+/* Stato disabilitato */
+.modifica-btn:disabled {
+    background-color: #94A3B8;
+    color: #E2E8F0;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* ==========================================================================
+   MEDIA QUERIES - RESPONSIVE DESIGN
+   ========================================================================== */
+@media (max-width: 600px) {
+    .modifica-card {
+        padding: 30px 20px;
+    }
+
+    .modifica-header h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Collassiamo le righe a due colonne in colonna singola su mobile */
+    .input-row {
+        flex-direction: column;
+        gap: 0; /* Il gap viene sostituito dal margin-bottom del singolo input-group */
+    }
+
+    /* I bottoni possono rimanere affiancati o impilati. Affiancati è meglio, ma stringiamo i padding */
+    .form-actions {
+        flex-direction: column-reverse; /* "Annulla" sotto, "Applica" sopra su mobile */
+        gap: 10px;
+    }
+}

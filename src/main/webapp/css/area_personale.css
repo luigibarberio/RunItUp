@@ -1,0 +1,190 @@
+.profile-main {
+    padding: 50px 20px;
+    min-height: calc(100vh - 300px);
+    background-color: var(--sfondo-principale);
+}
+
+.profile-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* --- INTESTAZIONE DI BENVENUTO --- */
+.profile-welcome-section {
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.profile-welcome-section h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--testo-principale);
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.profile-welcome-section p {
+    font-size: 1.05rem;
+    color: #556575;
+    max-width: 700px;
+}
+
+/* --- GRIGLIA DASHBOARD (A Scatole) --- */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    align-items: stretch; /* Le card mantengono la stessa altezza sulla riga */
+}
+
+/* Card Generica (Scatola) */
+.dashboard-card {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    border: 1px solid var(--sfondo-alternativo);
+    padding: 30px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.015);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+}
+
+/* Icona descrittiva in cima */
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+}
+
+.dashboard-card h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--testo-principale);
+    margin-bottom: 10px;
+}
+
+.card-description {
+    font-size: 0.95rem;
+    color: #64748B;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+/* Lista riepilogativa dati utente (Card 1) */
+.info-summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 24px;
+    background-color: var(--sfondo-principale);
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.01);
+}
+
+.info-summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #94A3B8;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--testo-principale);
+    word-break: break-all;
+}
+
+/* Contenitore azioni della card */
+.card-actions {
+    margin-top: auto; /* Spinge i bottoni in fondo alla card */
+}
+
+/* Utility per elementi a tutta larghezza */
+.w-100 { width: 100%; }
+.mb-2 { margin-bottom: 10px; }
+.mt-auto { margin-top: auto; }
+
+/* Stile bottoni e ancore uniformato */
+.dashboard-card .btn-primary,
+.dashboard-card .btn-secondary {
+    padding: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dashboard-card .btn-primary {
+    background-color: var(--colore-primario);
+    color: #FFFFFF;
+    border: none;
+}
+
+.dashboard-card .btn-primary:hover {
+    background-color: var(--colore-secondario);
+}
+
+.dashboard-card .btn-secondary {
+    background-color: #FFFFFF;
+    color: var(--testo-principale);
+    border: 1px solid #CBD5E1;
+}
+
+.dashboard-card .btn-secondary:hover {
+    background-color: var(--sfondo-principale);
+    border-color: #94A3B8;
+}
+
+/* Bottone Logout personalizzato (Rosso semantico RunItUp) */
+.btn-logout {
+    padding: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    color: var(--promozioni);
+    border: 1px solid rgba(204, 58, 18, 0.2);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-logout:hover {
+    background-color: rgba(204, 58, 18, 0.05);
+    border-color: var(--promozioni);
+}
+
+/* ==========================================================================
+   MEDIA QUERIES - RESPONSIVE DESIGN
+   ========================================================================== */
+@media (max-width: 480px) {
+    .profile-main {
+        padding: 30px 15px;
+    }
+    .profile-welcome-section h1 {
+        font-size: 1.8rem;
+    }
+    .dashboard-card {
+        padding: 20px;
+    }
+}

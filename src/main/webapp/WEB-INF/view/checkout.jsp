@@ -151,7 +151,7 @@
                                      onerror="this.src='${pageContext.request.contextPath}/images/placeholder.svg'">
                             </div>
                             <div class="mini-item-details">
-                                <h4><%= p.getNome() %></h4>
+                                <h4><%= p.getNome() + " - " + voceDTO.getVarianteDTO().getVariante().getColore() %></h4>
                                 <p>Qtà: <%= qta %> | Tg: <%= voceDTO.getVarianteDTO().getVariante().getTaglia() %></p>
                             </div>
                             <div class="mini-item-price">

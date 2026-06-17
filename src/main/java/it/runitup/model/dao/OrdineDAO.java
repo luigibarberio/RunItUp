@@ -275,16 +275,15 @@ public class OrdineDAO {
         return dettagli;
     }
 
-    // Metodo di utilità per mappare un ResultSet in un oggetto Ordine, incluso il coupon se presente
+    // Metodo di utilità per mappare un ResultSet in un oggetto Ordine, inclusi l'utente e il coupon se presenti
     private Ordine mappaOrdineDaResultSet(ResultSet rs) throws SQLException {
         Ordine ord = new Ordine();
         ord.setIdOrdine(rs.getInt("id_ordine"));
         
-        // TODO realizzare un metodo DAO per recuperare l'utente completo se necessario. Al momento, impostiamo solo l'ID Utente. Il controllo d'accesso si farà in Servlet.
-        // Impostiamo solo l'ID Utente. Il controllo d'accesso si farà in Servlet.
-        Utente u = new Utente();
-        u.setIdUtente(rs.getInt("id_utente"));
-        ord.setUtente(u);
+        // Mappatura completa dell'utente associato all'ordine
+        UtenteDAO utenteDAO = new UtenteDAO();
+        Utente utente = utenteDAO.doRetrieveById(rs.getInt("id_utente"));
+        ord.setUtente(utente);
 
         // Se l'ordine ha un coupon associato, lo mappiamo.
         int idCoupon = rs.getInt("id_coupon");

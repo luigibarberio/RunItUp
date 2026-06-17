@@ -31,6 +31,7 @@ import it.runitup.model.dto.VarianteDTO;
 import it.runitup.model.dto.VoceCarrelloDTO;
 import it.runitup.util.SpedizioneUtil;
 import it.runitup.model.dao.OrdineDAO;
+import it.runitup.model.dao.UtenteDAO;
 
 @WebServlet("/checkout")
 public class CheckoutServlet extends HttpServlet {
@@ -43,15 +44,6 @@ public class CheckoutServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        HttpSession session = request.getSession(false);
-        Utente utente = (Utente) session.getAttribute("utenteLoggato");
-        
-        // Anche se il filtro dovrebbe già aver bloccato l'accesso, aggiungiamo un controllo di sicurezza per evitare NullPointerException
-        if (utente == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
         
         try {
             CarrelloManager cartManager = new CarrelloManager(request, carrelloDAO, varianteDAO);
@@ -103,10 +95,13 @@ public class CheckoutServlet extends HttpServlet {
         com.google.gson.Gson gson = new com.google.gson.Gson();
 
         HttpSession session = request.getSession(false);
-        // Utilizziamo correttamente la chiave unificata utenteLoggato
-        Utente utente = (Utente) session.getAttribute("utenteLoggato");
-
+        Utente utenteLoggato = (Utente) session.getAttribute("utenteLoggato");
+        UtenteDAO utenteDAO = new UtenteDAO();
+        
         try {
+            // Le informazioni dell'utente verranno ottenute tramite chiamata al DB usando l'ID utente memorizzato in sessione, per evitare manomissioni dei dati lato client
+            Utente utente = utenteDAO.doRetrieveById(utenteLoggato.getIdUtente());
+
             // 1. Lettura dello stream JSON inviato dal client
             java.io.BufferedReader reader = request.getReader();
             JsonObject jsonBody = gson.fromJson(reader, JsonObject.class);

@@ -68,9 +68,7 @@ public class OrderOwnerFilter implements Filter {
                 return;
             }
 
-            // TODO Una volta implementato l'inserimento dell'utente loggato direttamente nel metodo DAO di getOrdineById, non dovremo più inserirlo manualmente qui. Per ora, lo facciamo per comodità e per evitare di dover modificare subito il DAO.
-            // Invece di far fare un'altra query alla Servlet, completiamo l'oggetto e lo passiamo a lei
-            ordine.setUtente(utenteLoggato); 
+            // Passiamo l'ordine validato alla Servlet tramite attributo della request, così evitiamo di doverlo recuperare di nuovo in Servlet.
             httpRequest.setAttribute("ordineValidato", ordine);
 
             // Lasciamo proseguire la richiesta verso la Servlet

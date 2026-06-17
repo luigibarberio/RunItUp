@@ -40,6 +40,12 @@ public class ProdottoDAO {
             "   THEN v.prezzo * (1 - (pr.percentuale / 100.0)) " +
             "   ELSE v.prezzo " +
             "END) AS prezzo_effettivo_minimo, " +
+            // Calcolo del prezzo scontato MASSIMO per valutare la variabilità
+            "MAX(CASE " +
+            "   WHEN pr.id_promozione IS NOT NULL " +
+            "   THEN v.prezzo * (1 - (pr.percentuale / 100.0)) " +
+            "   ELSE v.prezzo " +
+            "END) AS prezzo_effettivo_massimo, " +
             // Prezzo originale base
             "MIN(v.prezzo) AS prezzo_listino_minimo, " +
             // Flag booleano: se c'è una promo unita, allora è in offerta
@@ -247,9 +253,21 @@ public class ProdottoDAO {
                         // IMPACHETTAMENTO DEL DTO PER IL TRASPORTO VERSO LA VIEW
                         ProdottoDTO dto = new ProdottoDTO();
                         dto.setProdotto(p);
-                        dto.setPrezzoMinimo(rs.getBigDecimal("prezzo_effettivo_minimo"));
+
+                        BigDecimal prezzoMinimo = rs.getBigDecimal("prezzo_effettivo_minimo");
+                        BigDecimal prezzoMassimo = rs.getBigDecimal("prezzo_effettivo_massimo");
+                        
+                        dto.setPrezzoMinimo(prezzoMinimo);
                         dto.setPrezzoOriginale(rs.getBigDecimal("prezzo_listino_minimo"));
                         dto.setScontato(rs.getBoolean("ha_promozione_attiva"));
+
+                        // Calcolo della variabilità dei prezzi tra le varianti
+                        if (prezzoMinimo != null && prezzoMassimo != null) {
+                            // Se il prezzo massimo è strettamente maggiore del minimo, i prezzi variano!
+                            dto.setHaPrezziVariabili(prezzoMassimo.compareTo(prezzoMinimo) > 0);
+                        } else {
+                            dto.setHaPrezziVariabili(false);
+                        }
 
                         // Calcolo booleano dinamico della novità (ultimi 14 giorni)
                         long quattordiciGiorniInMs = 14L * 24 * 60 * 60 * 1000;

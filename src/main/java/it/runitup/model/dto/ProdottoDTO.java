@@ -17,6 +17,7 @@ public class ProdottoDTO implements Serializable {
     private BigDecimal prezzoOriginale; // Prezzo originale della variante a prezzo minimo (senza sconti)
     private boolean isNuovo;
     private boolean isScontato;
+    private boolean haPrezziVariabili; // Indica se il prodotto ha varianti con prezzi diversi
     private List<String> coloriDisponibili; // Lista dei colori disponibili per il prodotto
     private List<String> taglieDisponibili; // Lista delle taglie disponibili per il prodotto
 
@@ -39,6 +40,9 @@ public class ProdottoDTO implements Serializable {
 
     public boolean isScontato() { return isScontato; }
     public void setScontato(boolean isScontato) { this.isScontato = isScontato; }
+
+    public boolean isHaPrezziVariabili() { return haPrezziVariabili; }
+    public void setHaPrezziVariabili(boolean haPrezziVariabili) { this.haPrezziVariabili = haPrezziVariabili; }
 
     public List<String> getColoriDisponibili() { return coloriDisponibili; }
     public void setColoriDisponibili(List<String> coloriDisponibili) { this.coloriDisponibili = coloriDisponibili; }

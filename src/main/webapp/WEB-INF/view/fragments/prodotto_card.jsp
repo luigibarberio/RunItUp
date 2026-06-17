@@ -54,13 +54,20 @@
                     }
                 }
 
+                // Generiamo il prefisso "da " in modo condizionale senza sporcare i tag HTML sotto
+                String prefissoDa = dto.isHaPrezziVariabili() ? "Da " : "";
+
                 if (isPrezzoMinore) { 
             %>
-                <span class="current-price sale-price"><%= valutaFormat.format(dto.getPrezzoMinimo()) %></span>
-                <span class="old-price"><%= valutaFormat.format(dto.getPrezzoOriginale()) %></span>
+                <span class="current-price sale-price">
+                    <%= prefissoDa %><%= valutaFormat.format(dto.getPrezzoMinimo()) %>
+                </span>
+                <span class="old-price">
+                    <%= valutaFormat.format(dto.getPrezzoOriginale()) %>
+                </span>
             <% } else { %>
                 <span class="current-price">
-                    <%= (dto.getPrezzoMinimo() != null) ? valutaFormat.format(dto.getPrezzoMinimo()) : "N/D" %>
+                    <%= (dto.getPrezzoMinimo() != null) ? prefissoDa + valutaFormat.format(dto.getPrezzoMinimo()) : "N/D" %>
                 </span>
             <% } %>
         </div>

@@ -19,7 +19,8 @@
    ========================================= */
 .product-image {
     width: 100%;
-    background-color: #E6E8EA; /* Colore placeholder grigio chiaro tipico */
+    background-color: var(--sfondo-principale);
+    border: 1px solid var(--sfondo-alternativo);
     border-radius: 8px;
     overflow: hidden;
     display: flex;
@@ -30,8 +31,9 @@
 .product-img {
     width: 100%;
     aspect-ratio: 1 / 1;
-    object-fit: cover;
+    object-fit: contain; /* Adatta l'immagine al contenitore senza tagliarla, mantenendo le proporzioni */
     display: block;
+    padding: 20px;
 }
 
 /* =========================================

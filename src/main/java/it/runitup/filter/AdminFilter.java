@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import it.runitup.model.bean.Utente;
 
 // Protegge l'intera area amministrativa (Servlet e JSP mappate sotto /admin/)
-@WebFilter("/admin/*")
+@WebFilter({"/admin", "/admin/*"})
 public class AdminFilter implements Filter {
 
     @Override

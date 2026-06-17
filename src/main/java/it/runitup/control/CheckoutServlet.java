@@ -224,7 +224,6 @@ public class CheckoutServlet extends HttpServlet {
 
             if (idOrdineGenerato > 0) {
                 jsonResponse.addProperty("success", true);
-                // TODO Indichiamo al client di spostarsi alla pagina dei dettagli dell'ordine appena creato, usando l'ID restituito sotto forma di query parameter (es: /ordini/dettaglio?id=123)
                 jsonResponse.addProperty("redirectUrl", request.getContextPath() + "/ordini?id=" + idOrdineGenerato);
                 response.getWriter().write(gson.toJson(jsonResponse));
             } else {

@@ -19,7 +19,7 @@ import it.runitup.model.bean.Utente;
 import it.runitup.model.dao.OrdineDAO;
 
 // Questo filtro si applica alle rotte in cui si cerca di accedere a uno specifico ordine
-@WebFilter({"/ordini/*", "/stampa_fattura/*", "/fattura_pdf/*"})
+@WebFilter({"/ordini" ,"/ordini/*", "/stampa_fattura/*", "/fattura_pdf/*"})
 public class OrderOwnerFilter implements Filter {
 
     private OrdineDAO ordineDAO;

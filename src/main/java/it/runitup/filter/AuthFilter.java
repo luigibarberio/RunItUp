@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 // Filtro di autenticazione per proteggere le pagine riservate agli utenti loggati
-@WebFilter({"/checkout", "/area_personale/*", "/ordini/*", "/stampa_fattura/*", "/fattura_pdf/*"})
+@WebFilter({"/checkout", "/area_personale", "/area_personale/*", "/ordini", "/ordini/*", "/stampa_fattura/*", "/fattura_pdf/*"})
 public class AuthFilter implements Filter {
 
     public void init(FilterConfig fConfig) throws ServletException {

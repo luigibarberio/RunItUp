@@ -25,7 +25,7 @@ public class CarrelloDAO {
         // Query con JOIN per recuperare in un colpo solo Voce, Variante, Prodotto e Brand
         String query = "SELECT vc.id_voce, vc.quantita, " +
                        "vp.id_variante, vp.colore, vp.taglia, vp.prezzo AS prezzo_variante, vp.quantita_magazzino, " +
-                       "p.id_prodotto, p.nome AS nome_prodotto, p.immagine_copertina, " +
+                       "p.id_prodotto, p.nome AS nome_prodotto, " +
                        "b.id_brand, b.nome_brand " +
                        "FROM voce_carrello vc " +
                        "JOIN variante_prodotto vp ON vc.id_variante = vp.id_variante " +
@@ -48,7 +48,6 @@ public class CarrelloDAO {
                     Prodotto prodotto = new Prodotto();
                     prodotto.setIdProdotto(rs.getInt("id_prodotto"));
                     prodotto.setNome(rs.getString("nome_prodotto"));
-                    prodotto.setImmagineCopertina(rs.getBytes("immagine_copertina"));
                     prodotto.setBrand(brand);
 
                     // 3. Mappatura della Variante

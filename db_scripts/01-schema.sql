@@ -50,7 +50,6 @@ CREATE TABLE prodotto (
     nome VARCHAR(255) NOT NULL,
     descrizione TEXT,
     id_brand INT NOT NULL REFERENCES brand(id_brand) ON DELETE CASCADE,
-    immagine_copertina BYTEA,
     genere genere_scarpa NOT NULL,
     tipo_terreno tipo_terreno NOT NULL,
     tipo_appoggio tipo_appoggio NOT NULL,

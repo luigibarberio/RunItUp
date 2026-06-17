@@ -13,7 +13,6 @@ public class Prodotto implements Serializable {
 
     private Brand brand;
     
-    private byte[] immagineCopertina;
     private GenereScarpa genere;
     private TipoTerreno tipoTerreno;
     private TipoAppoggio tipoAppoggio;
@@ -27,14 +26,13 @@ public class Prodotto implements Serializable {
         super();
     }
 
-    public Prodotto(int idProdotto, String nome, String descrizione, Brand brand, byte[] immagineCopertina,
+    public Prodotto(int idProdotto, String nome, String descrizione, Brand brand,
                     GenereScarpa genere, TipoTerreno tipoTerreno, TipoAppoggio tipoAppoggio, TipoPasso tipoPasso,
                     Timestamp dataInserimento, boolean inEvidenza, int totaleVendite) {
         this.idProdotto = idProdotto;
         this.nome = nome;
         this.descrizione = descrizione;
         this.brand = brand;
-        this.immagineCopertina = immagineCopertina;
         this.genere = genere;
         this.tipoTerreno = tipoTerreno;
         this.tipoAppoggio = tipoAppoggio;
@@ -57,9 +55,6 @@ public class Prodotto implements Serializable {
     public Brand getBrand() { return brand; }
     public void setBrand(Brand brand) { this.brand = brand; }
 
-    public byte[] getImmagineCopertina() { return immagineCopertina; }
-    public void setImmagineCopertina(byte[] immagineCopertina) { this.immagineCopertina = immagineCopertina; }
-
     public GenereScarpa getGenere() { return genere; }
     public void setGenere(GenereScarpa genere) { this.genere = genere; }
 
@@ -80,21 +75,6 @@ public class Prodotto implements Serializable {
 
     public int getTotaleVendite() { return totaleVendite; }
     public void setTotaleVendite(int totaleVendite) { this.totaleVendite = totaleVendite; }
-
-    // Metodo di utilità per convertire l'immagine in Base64 per la visualizzazione (o viceversa, per la creazione/modifica)
-    public String getImmagineBase64() {
-        if (this.immagineCopertina != null && this.immagineCopertina.length > 0) {
-            return java.util.Base64.getEncoder().encodeToString(this.immagineCopertina);
-        }
-        return null;
-    }
-    public void setImmagineBase64(String base64) {
-        if (base64 != null && !base64.trim().isEmpty()) {
-            this.immagineCopertina = java.util.Base64.getDecoder().decode(base64);
-        } else {
-            this.immagineCopertina = null;
-        }
-    }
 
     @Override
     public String toString() {

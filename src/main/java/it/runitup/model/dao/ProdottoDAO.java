@@ -217,7 +217,6 @@ public class ProdottoDAO {
                         p.setIdProdotto(rs.getInt("id_prodotto"));
                         p.setNome(rs.getString("nome"));
                         p.setDescrizione(rs.getString("descrizione"));
-                        p.setImmagineCopertina(rs.getBytes("immagine_copertina"));
                         
                         if (rs.getString("genere") != null) {
                             p.setGenere(GenereScarpa.valueOf(rs.getString("genere")));
@@ -309,7 +308,6 @@ public class ProdottoDAO {
                     prodotto.setIdProdotto(rs.getInt("id_prodotto"));
                     prodotto.setNome(rs.getString("nome"));
                     prodotto.setDescrizione(rs.getString("descrizione"));
-                    prodotto.setImmagineCopertina(rs.getBytes("immagine_copertina"));
                     
                     // Enum mapping
                     if (rs.getString("genere") != null)

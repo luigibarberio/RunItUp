@@ -24,7 +24,7 @@ public class VarianteDAO {
         
         // Query con JOIN per estrarre Variante, Prodotto e Brand in un colpo solo
         String query = "SELECT vp.id_variante, vp.colore, vp.taglia, vp.prezzo, vp.quantita_magazzino, " +
-                       "p.id_prodotto, p.nome AS nome_prodotto, p.descrizione, p.immagine_copertina, " +
+                       "p.id_prodotto, p.nome AS nome_prodotto, p.descrizione, " +
                        "p.genere, p.tipo_terreno, p.tipo_appoggio, p.tipo_passo, " +
                        "p.data_inserimento, p.in_evidenza, p.totale_vendite, " +
                        "b.id_brand, b.nome_brand " +
@@ -49,7 +49,6 @@ public class VarianteDAO {
                     prodotto.setIdProdotto(rs.getInt("id_prodotto"));
                     prodotto.setNome(rs.getString("nome_prodotto"));
                     prodotto.setDescrizione(rs.getString("descrizione"));
-                    prodotto.setImmagineCopertina(rs.getBytes("immagine_copertina"));
                     
                     // Gestione Enums (con controlli di sicurezza)
                     if (rs.getString("genere") != null)

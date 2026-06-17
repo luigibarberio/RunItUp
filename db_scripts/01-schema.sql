@@ -18,7 +18,7 @@ CREATE TABLE utente (
     cognome VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    telefono VARCHAR(20),
+    telefono VARCHAR(20) UNIQUE,
     is_admin BOOLEAN DEFAULT FALSE
 );
 

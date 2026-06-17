@@ -48,8 +48,9 @@ public class RegistrazioneServlet extends HttpServlet {
             // Validazione dei parametri
             String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
             String phoneRegex = "^(3\\d{9}|0\\d{6,10})$";
-            String prefissoRegex = "^\\+\\d{1,3}$";
+            String prefissoRegex = "^\\+[1-9]\\d{1,3}$";
 
+            // TODO Centralizzare le regex di validazione in una classe di utilità condivisa, così da evitare duplicazione tra Servlet
             if (nome.length() < 2 || nome.length() > 50 || 
                 cognome.length() < 2 || cognome.length() > 50) {
                 sendError(response, jsonResponse, gson, "Nome e cognome devono avere tra 2 e 50 caratteri.");
@@ -78,6 +79,12 @@ public class RegistrazioneServlet extends HttpServlet {
                 return;
             }
 
+            // Controllo sull'esistenza del numero di telefono solo se l'utente ha inserito un numero
+            if (!numero.isEmpty() && utenteDAO.doRetrieveByTelefono(prefisso + " " + numero) != null) {
+                sendError(response, jsonResponse, gson, "Telefono già registrato.");
+                return;
+            }
+
             Utente nuovoUtente = new Utente();
             nuovoUtente.setNome(nome);
             nuovoUtente.setCognome(cognome);
@@ -88,7 +95,7 @@ public class RegistrazioneServlet extends HttpServlet {
 
             // Gestione Telefono (Prefisso + Numero)
             if (!numero.isEmpty()) {
-                nuovoUtente.setTelefono(prefisso + numero);
+                nuovoUtente.setTelefono(prefisso + " " + numero);
             } else {
                 nuovoUtente.setTelefono(null); // Nel DB è nullable
             }

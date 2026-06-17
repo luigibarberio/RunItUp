@@ -9,14 +9,14 @@
 -- 1. UTENTI
 -- ==============================================================================
 INSERT INTO utente (nome, cognome, email, password_hash, telefono, is_admin) VALUES 
-('Luigi', 'Barberio', 'luigi@runitup.it', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '3331234567', TRUE),
-('Antonio', 'Tolino', 'antonio@runitup.it', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '3339876543', TRUE),
-('Mario', 'Rossi', 'cliente1@example.com', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '3201112233', FALSE),
-('Giulia', 'Bianchi', 'cliente2@example.com', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '3405556677', FALSE),
-('Luca', 'Verdi', 'cliente3@example.com', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '3318889900', FALSE),
-('Martina', 'Neri', 'cliente4@example.com', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '3391231234', FALSE),
+('Luigi', 'Barberio', 'luigi@runitup.it', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '+39 3331234567', TRUE),
+('Antonio', 'Tolino', 'antonio@runitup.it', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '+39 3339876543', TRUE),
+('Mario', 'Rossi', 'cliente1@example.com', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '+39 3201112233', FALSE),
+('Giulia', 'Bianchi', 'cliente2@example.com', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '+39 3405556677', FALSE),
+('Luca', 'Verdi', 'cliente3@example.com', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '+39 3318889900', FALSE),
+('Martina', 'Neri', 'cliente4@example.com', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '+39 3391231234', FALSE),
 ('Alessandro', 'Gialli', 'cliente5@example.com', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', NULL, FALSE),
-('Francesca', 'Marrone', 'cliente6@example.com', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '3334445555', FALSE);
+('Francesca', 'Marrone', 'cliente6@example.com', '$2a$12$3XTnicH5lqc81C3F9RkL5OqDT53ymwQ7x0OWnfmXHkeZSGeS0Fnf6', '+39 3334445555', FALSE);
 
 -- ==============================================================================
 -- 2. BRAND

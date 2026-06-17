@@ -9,18 +9,17 @@
     if (dto != null && dto.getProdotto() != null) {
         NumberFormat valutaFormat = NumberFormat.getCurrencyInstance(Locale.ITALY);
         String linkDettaglio = request.getContextPath() + "/dettaglio?id=" + dto.getProdotto().getIdProdotto();
-        String base64Img = dto.getProdotto().getImmagineBase64();
 %>
 
 <article class="product-card" data-id="<%= dto.getProdotto().getIdProdotto() %>">
     
     <div class="card-image-wrapper">
         <a href="<%= linkDettaglio %>">
-            <% if (base64Img != null && !base64Img.isEmpty()) { %>
-                <img src="data:image/jpeg;base64,<%= base64Img %>" alt="<%= dto.getProdotto().getNome() %>" class="product-img" loading="lazy">
-            <% } else { %>
-                <img src="<%= request.getContextPath() %>/images/placeholder.svg" alt="Immagine di <%= dto.getProdotto().getNome() %> non disponibile" class="product-img" loading="lazy">
-            <% } %>
+            <img src="${pageContext.request.contextPath}/images/prodotti?id=<%= dto.getProdotto().getIdProdotto() %>" 
+                 alt="<%= dto.getProdotto().getNome() %>" 
+                 class="product-img" 
+                 loading="lazy"
+                 onerror="this.src='${pageContext.request.contextPath}/images/placeholder.svg'">
         </a>
         
         <div class="badges-container">

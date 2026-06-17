@@ -146,11 +146,9 @@
                     %>
                         <div class="checkout-item-row">
                             <div class="mini-img-wrapper">
-                                <% if (p.getImmagineBase64() != null) { %>
-                                    <img src="data:image/jpeg;base64,<%= p.getImmagineBase64() %>" alt="<%= p.getNome() %>">
-                                <% } else { %>
-                                    <img src="${pageContext.request.contextPath}/images/placeholder.svg" alt="Placeholder">
-                                <% } %>
+                                <img src="${pageContext.request.contextPath}/images/prodotti?id=<%= p.getIdProdotto() %>" 
+                                     alt="<%= p.getNome() %>" 
+                                     onerror="this.src='${pageContext.request.contextPath}/images/placeholder.svg'">
                             </div>
                             <div class="mini-item-details">
                                 <h4><%= p.getNome() %></h4>

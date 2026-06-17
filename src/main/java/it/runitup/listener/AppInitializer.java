@@ -1,9 +1,11 @@
-package it.runitup.util;
+package it.runitup.listener;
 
 import java.sql.SQLException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+
+import it.runitup.util.ConnectionPool;
 
 @WebListener
 public class AppInitializer implements ServletContextListener {

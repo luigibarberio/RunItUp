@@ -34,6 +34,7 @@ build/
 .env
 *.env.local
 *.properties.local
+/runitup_uploads/ # Cartella creata da docker-compose per gestire i file caricati (es. immagini dei prodotti)
 
 # ==========================================
 # FILE DI SISTEMA OPERATIVO

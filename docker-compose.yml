@@ -33,6 +33,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./.env:/app/.env # Monta il file .env dentro il container
+      - ./runitup_uploads:/root/runitup_media # Monta la cartella "runitup_uploads" dentro il container per gestire i file caricati dagli utenti
     depends_on:
       db: # Vincolo di avvio: Tomcat si accende SOLO dopo che il database è pronto
         condition: service_healthy

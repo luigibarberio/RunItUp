@@ -77,14 +77,11 @@
                                  data-in-promo="<%= varianteDTO.isInPromozione() %>">
                                 
                                 <a href="<%= request.getContextPath() %>/dettaglio?id=<%= prodotto.getIdProdotto() %>" class="product-img-wrapper">
-                                    <% 
-                                        String base64Img = prodotto.getImmagineBase64();
-                                        if (base64Img != null && !base64Img.isEmpty()) { 
-                                    %>
-                                        <img src="data:image/jpeg;base64,<%= base64Img %>" alt="<%= prodotto.getNome() %>" class="product-img" loading="lazy">
-                                    <% } else { %>
-                                        <img src="<%= request.getContextPath() %>/images/placeholder.svg" alt="Immagine non disponibile" class="product-img" loading="lazy">
-                                    <% } %>
+                                    <img src="${pageContext.request.contextPath}/images/prodotti?id=<%= prodotto.getIdProdotto() %>" 
+                                         alt="<%= prodotto.getNome() %>" 
+                                         class="product-img" 
+                                         loading="lazy"
+                                         onerror="this.src='${pageContext.request.contextPath}/images/placeholder.svg'">
                                 </a>
                                 
                                 <div class="product-details">

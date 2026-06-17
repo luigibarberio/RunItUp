@@ -6,9 +6,6 @@
 <%
     Prodotto prodotto = (Prodotto) request.getAttribute("prodotto");
     List<VarianteDTO> varianti = (List<VarianteDTO>) request.getAttribute("varianti");
-    
-    // Recuperiamo il base64 direttamente dal metodo del bean Prodotto
-    String base64Img = prodotto != null ? prodotto.getImmagineBase64() : null;
 %>
 
 <!DOCTYPE html>
@@ -33,11 +30,11 @@
         <div class="product-layout">
 
             <div class="product-image">
-                <% if (base64Img != null && !base64Img.isEmpty()) { %>
-                    <img src="data:image/jpeg;base64,<%= base64Img %>" alt="<%= prodotto.getNome() %>" class="product-img" loading="lazy">
-                <% } else { %>
-                    <img src="${pageContext.request.contextPath}/images/placeholder.svg" alt="Immagine di <%= prodotto.getNome() %> non disponibile" class="product-img" loading="lazy">
-                <% } %>
+                <img src="${pageContext.request.contextPath}/images/prodotti?id=<%= prodotto.getIdProdotto() %>" 
+                     alt="<%= prodotto.getNome() %>" 
+                     class="product-img" 
+                     loading="lazy"
+                     onerror="this.src='${pageContext.request.contextPath}/images/placeholder.svg'">
             </div>
 
             <div class="product-details">

@@ -82,54 +82,75 @@ public class CarrelloServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
+        // 1. Prepariamo una variabile per tracciare il numero totale di pezzi
+        int totalePezzi = 0;
+
         try {
-            // 1. Lettura del body JSON dalla Fetch
             BufferedReader reader = request.getReader();
             JsonObject jsonBody = new Gson().fromJson(reader, JsonObject.class);
             
+            CarrelloManager cartManager = new CarrelloManager(request, carrelloDAO, varianteDAO);
+            
+            // 2. Leggiamo il totale pezzi iniziale prima di fare modifiche (come punto di partenza sicuro)
+            totalePezzi = cartManager.getTotalePezzi();
+
             if (jsonBody == null || !jsonBody.has("idVariante")) {
-                inviaRisposta(response, false, "Dati del carrello non validi.");
+                inviaRisposta(response, false, "Dati del carrello non validi.", totalePezzi);
                 return;
             }
             
             int idVariante = jsonBody.get("idVariante").getAsInt();
-            CarrelloManager cartManager = new CarrelloManager(request, carrelloDAO, varianteDAO);
             
-            // 2. Controllo Azione: Rimozione Esplicita o Aggiornamento Quantità?
+            // Controllo Azione: Rimozione Esplicita o Aggiornamento Quantità?
             if (jsonBody.has("action") && "remove".equalsIgnoreCase(jsonBody.get("action").getAsString())) {
                 
-                // AZIONE A: Rimozione totale dell'articolo (Pulsante "Rimuovi")
+                // AZIONE A: Rimozione totale dell'articolo
                 boolean rimosso = cartManager.rimuoviVoce(idVariante);
                 if (rimosso) {
-                    inviaRisposta(response, true, "Prodotto rimosso dal carrello.");
+                    // 3. SE LA MODIFICA RIESCE: Ricalcoliamo il nuovo totale pezzi dal manager
+                    totalePezzi = cartManager.getTotalePezzi();
+                    // 4. Lo salviamo subito in sessione per i futuri caricamenti di pagina (Sincrono)
+                    request.getSession().setAttribute("cartBadgeCount", totalePezzi);
+                    
+                    inviaRisposta(response, true, "Prodotto rimosso dal carrello.", totalePezzi);
                 } else {
-                    inviaRisposta(response, false, "Impossibile rimuovere il prodotto.");
+                    inviaRisposta(response, false, "Impossibile rimuovere il prodotto.", totalePezzi);
                 }
                 
             } else {
                 
-                // AZIONE B: Variazione di quantità (Pulsanti "+" e "-" o Aggiunta da scheda prodotto)
-                // Se non viene specificato un delta, assumiamo +1
+                // AZIONE B: Variazione di quantità (Pulsanti "+" e "-" o Aggiunta da scheda)
                 int delta = jsonBody.has("delta") ? jsonBody.get("delta").getAsInt() : 1;
                 
                 boolean esito = cartManager.aggiornaQuantita(idVariante, delta);
                 if (esito) {
-                    inviaRisposta(response, true, "Quantità aggiornata nel carrello.");
+                    // 3. SE LA MODIFICA RIESCE: Ricalcoliamo il nuovo totale pezzi dal manager
+                    totalePezzi = cartManager.getTotalePezzi();
+                    // 4. Lo salviamo subito in sessione per i futuri caricamenti di pagina (Sincrono)
+                    request.getSession().setAttribute("cartBadgeCount", totalePezzi);
+                    
+                    inviaRisposta(response, true, "Quantità aggiornata nel carrello.", totalePezzi);
                 } else {
-                    inviaRisposta(response, false, "Quantità richiesta non disponibile in magazzino.");
+                    inviaRisposta(response, false, "Quantità richiesta non disponibile in magazzino.", totalePezzi);
                 }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            inviaRisposta(response, false, "Errore interno durante la modifica del carrello.");
+            inviaRisposta(response, false, "Errore interno durante la modifica del carrello.", totalePezzi);
         }
     }
 
-    private void inviaRisposta(HttpServletResponse response, boolean success, String message) throws IOException {
+    // Abbiamo aggiunto il parametro "int cartCount" alla firma del metodo helper
+    private void inviaRisposta(HttpServletResponse response, boolean success, String message, int cartCount) throws IOException {
         JsonObject jsonResponse = new JsonObject();
         jsonResponse.addProperty("success", success);
         jsonResponse.addProperty("message", message);
+        
+        // 5. Inseriamo il numero aggiornato nel JSON finale diretto alla Fetch (Asincrono)
+        jsonResponse.addProperty("cartCount", cartCount); 
+        
         response.getWriter().write(new Gson().toJson(jsonResponse));
     }
+    
 }

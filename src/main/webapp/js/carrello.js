@@ -51,7 +51,12 @@ async function modificaQuantita(idVariante, delta) {
             // 3. Ricalcoliamo il totale complessivo del carrello e la spedizione
             aggiornaTotaleCarrelloCompleto();
 
-            // 4. Gestione dinamica dello stato di disabilitazione del tasto "-"
+            // 4. Aggiornamento dinamico del badge rosso nell'header
+            if (window.updateCartBadge && data.cartCount !== undefined) {
+                window.updateCartBadge(data.cartCount);
+            }
+
+            // 5. Gestione dinamica dello stato di disabilitazione del tasto "-"
             if (btnMinus) {
                 btnMinus.disabled = (nuovaQty <= 1);
             }
@@ -91,6 +96,11 @@ async function rimuoviArticolo(idVariante) {
 
             // Ricalcoliamo il totale generale
             aggiornaTotaleCarrelloCompleto();
+            
+            // Aggiornamento dinamico del badge rosso nell'header
+            if (window.updateCartBadge && data.cartCount !== undefined) {
+                window.updateCartBadge(data.cartCount);
+            }
 
             // Ricaricamento per mostrare il messaggio "Carrello Vuoto" se necessario
             const rimasti = document.querySelectorAll('.cart-item');

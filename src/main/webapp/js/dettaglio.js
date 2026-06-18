@@ -94,6 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (data.success) {
                 if (window.showToast) window.showToast("Prodotto aggiunto al carrello!", "success");
+                
+                // Aggiorniamo il badge del carrello leggendo il nuovo totale dal JSON
+                if (window.updateCartBadge && data.cartCount !== undefined) {
+                    window.updateCartBadge(data.cartCount);
+                }
             } else {
                 if (window.showToast) window.showToast(data.message || "Impossibile aggiungere il prodotto.", "error");
             }

@@ -61,8 +61,17 @@
             </div>
 
             <%-- Icona Carrello --%>
-            <a href="${pageContext.request.contextPath}/carrello" class="action-link" aria-label="Carrello">
-                <img src="${pageContext.request.contextPath}/images/common/cart.svg" alt="Carrello" class="icon-svg">
+            <a href="${pageContext.request.contextPath}/carrello" class="action-link cart-icon-wrapper" aria-label="Carrello">
+                <img src="${pageContext.request.contextPath}/images/common/cart.svg" alt="Carrello" class="icon-svg cart-icon">
+                
+                <%-- Leggiamo il numero dalla sessione. Se è > 0, lo mostriamo, altrimenti nascondiamo il badge --%>
+                <% 
+                    Integer cartCount = (Integer) session.getAttribute("cartBadgeCount");
+                    int countValue = (cartCount != null) ? cartCount : 0;
+                %>
+                <span id="cartBadge" class="cart-badge <%= (countValue == 0) ? "hidden" : "" %>">
+                    <%= countValue %>
+                </span>
             </a>
 
             <%-- Trigger Hamburger (Solo Mobile - Estrema Destra) --%>

@@ -1,3 +1,22 @@
+// Funzione esposta globalmente per aggiornare il badge del carrello
+window.updateCartBadge = function(newCount) {
+    const badge = document.getElementById('cartBadge');
+    if (!badge) return;
+
+    if (newCount > 0) {
+        badge.textContent = newCount;
+        badge.classList.remove('hidden');
+        
+        // Animazione di "pop"
+        badge.classList.add('bump');
+        setTimeout(() => {
+            badge.classList.remove('bump');
+        }, 250);
+    } else {
+        badge.classList.add('hidden');
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     // ----------------======================================================
     // 1. SCROLL DETECT (Nascondi header allo scroll down)

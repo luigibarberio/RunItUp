@@ -187,5 +187,15 @@ public class CarrelloManager {
             return rimosso;
         }
     }
-    
+
+    // Metodo per calcolare il numero totale di PEZZI nel carrello (somma delle quantità)
+    public int getTotalePezzi() throws SQLException {
+        int totale = 0;
+        List<VoceCarrello> voci = getVociCarrello();
+        for (VoceCarrello voce : voci) {
+            totale += voce.getQuantita();
+        }
+        return totale;
+    }
+
 }

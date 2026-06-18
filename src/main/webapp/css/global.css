@@ -104,3 +104,16 @@ a:hover {
     0% { transform: scale(0.8); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
 }
+
+/* =========================================
+   UTILITY CLASSES GLOBALI PER RESPONSIVE
+   ========================================= */
+@media (min-width: 992px) {
+    /* Su desktop, tutto ciò che è per mobile scompare */
+    .mobile-only { display: none !important; }
+}
+
+@media (max-width: 991px) {
+    /* Su mobile, tutto ciò che è per desktop scompare */
+    .desktop-only { display: none !important; }
+}

@@ -30,8 +30,16 @@ public class LogoutServlet extends HttpServlet {
             session.invalidate(); // Distrugge la sessione corrente
         }
         
-        // Reindirizzamento classico alla Home Page
-        response.sendRedirect(request.getContextPath() + "/");
+        // Si verifica se esiste un url di referrer per reindirizzare l'utente alla pagina precedente al logout, se esiste
+        String referrer = request.getHeader("Referer");
+        if (referrer != null && !referrer.contains("/logout")) { // Evitiamo di creare un loop di logout
+            response.sendRedirect(referrer);
+            return;
+        } else {        
+            // Se non c'è un referrer valido, reindirizziamo alla home page
+            response.sendRedirect(request.getContextPath() + "/");
+            return;
+        }
     }
 
     // Endpoint Asincrono: Intercetta la richiesta POST inviata dal file JS "logout.js" quando l'utente clicca sul bottone "Logout" nella dashboard

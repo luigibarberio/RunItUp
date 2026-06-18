@@ -156,11 +156,6 @@
 .btn-secondary { background-color: var(--sfondo-alternativo); color: var(--testo-principale); }
 .btn-secondary:hover { background-color: #d1d5d8; }
 
-/* Nasconde di default i bottoni che servono solo su mobile */
-.mobile-only {
-    display: none;
-}
-
 /* ==========================================================================
    GRIGLIA PRODOTTI
    ========================================================================== */
@@ -359,11 +354,6 @@
     /* L'header mostra il bottone "Filtri" a sinistra e la "Select" a destra */
     .catalogo-header {
         justify-content: space-between;
-    }
-    
-    /* Mostriamo il bottone Filtri */
-    .mobile-only {
-        display: block;
     }
 
     /* TRASFORMAZIONE DELLA SIDEBAR IN CASSETTO MOBILE */

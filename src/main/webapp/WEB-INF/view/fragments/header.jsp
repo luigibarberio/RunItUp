@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <%
     Boolean nascondiPromo = (Boolean) request.getAttribute("nascondiPromo");
     if (nascondiPromo == null || !nascondiPromo) {
@@ -7,57 +6,170 @@
     <jsp:include page="/WEB-INF/view/fragments/promo_banner.jsp" />
 <%
     }
+    // Controllo dello stato di login
+    Object utenteLoggato = (session != null) ? session.getAttribute("utenteLoggato") : null;
+    boolean isLoggato = (utenteLoggato != null);
 %>
 
 <header class="main-header">
+    <%-- HEADER TOP: Barra Principale --%>
     <div class="header-top">
-        <button class="mobile-menu-btn" aria-label="Menu">
-            &#9776;
-        </button>
-
+        <%-- SINISTRA: Logo --%>
         <a href="${pageContext.request.contextPath}/" class="logo">
-            <span class="logo-text">@ RunItUp</span>
+            <img src="${pageContext.request.contextPath}/images/common/logo-runitup.svg" alt="RunItUp Logo" class="logo-img">
         </a>
 
-        <%-- Container relativo per posizionare correttamente i suggerimenti --%>
+        <%-- CENTRO: Ricerca Avanzata AJAX (Solo Desktop) --%>
         <div class="search-wrapper desktop-only">
             <div class="search-bar">
                 <form action="${pageContext.request.contextPath}/catalogo" method="GET" id="searchForm">
-                    <input type="text" name="q" id="searchInput" placeholder="Cerca i prodotti..." autocomplete="off">
-                    <button type="submit" class="search-btn">&#128269;</button>
+                    <input type="text" name="q" id="searchInput" placeholder="Cerca scarpe, brand, categorie..." autocomplete="off">
+                    <button type="submit" class="search-btn">
+                        <img src="${pageContext.request.contextPath}/images/common/search.svg" alt="Cerca" class="icon-svg">
+                    </button>
                 </form>
             </div>
-            
-            <%-- Il div invisibile che si aprirà con i suggerimenti AJAX --%>
-            <div id="searchSuggestions" class="search-suggestions-box hidden" data-context="${pageContext.request.contextPath}">
-                <%-- I risultati verranno iniettati qui dal JS --%>
-            </div>
+            <div id="searchSuggestions" class="search-suggestions-box hidden" data-context="${pageContext.request.contextPath}"></div>
         </div>
 
+        <%-- DESTRA: Azioni Utente, Carrello e Hamburger Mobile --%>
         <div class="header-actions">
-            <button class="mobile-search-btn mobile-only" aria-label="Cerca">
-                &#128269;
+            <%-- Icona Ricerca Mobile (Attiva overlay) --%>
+            <button class="mobile-search-trigger mobile-only" id="mobileSearchOpenBtn" aria-label="Apri ricerca">
+                <img src="${pageContext.request.contextPath}/images/common/search.svg" alt="Cerca" class="icon-svg">
             </button>
-            <a href="${pageContext.request.contextPath}/login" aria-label="Accedi">
-                &#128100;
+
+            <%-- Wrapper Profilo con Dropdown (Desktop) --%>
+            <div class="profile-dropdown-wrapper desktop-only">
+                <% if (!isLoggato) { %>
+                    <a href="${pageContext.request.contextPath}/login" class="action-link text-link">
+                        <img src="${pageContext.request.contextPath}/images/common/user.svg" alt="Accedi" class="icon-svg">
+                        <span class="action-text">Accedi</span>
+                    </a>
+                <% } else { %>
+                    <div class="action-link text-link content-hover">
+                        <img src="${pageContext.request.contextPath}/images/common/user.svg" alt="Profilo" class="icon-svg">
+                        <span class="action-text">Profilo</span>
+                        <%-- Dropdown Desktop --%>
+                        <div class="desktop-dropdown-menu">
+                            <a href="${pageContext.request.contextPath}/area_personale">Dashboard</a>
+                            <a href="${pageContext.request.contextPath}/area_personale/ordini">I miei Ordini</a>
+                            <a href="${pageContext.request.contextPath}/logout" class="logout-text">Logout</a>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+            <%-- Icona Carrello --%>
+            <a href="${pageContext.request.contextPath}/carrello" class="action-link" aria-label="Carrello">
+                <img src="${pageContext.request.contextPath}/images/common/cart.svg" alt="Carrello" class="icon-svg">
             </a>
-            <a href="${pageContext.request.contextPath}/carrello" aria-label="Carrello">
-                &#128722;
-            </a>
+
+            <%-- Trigger Hamburger (Solo Mobile - Estrema Destra) --%>
+            <button class="mobile-menu-toggle mobile-only" id="mobileMenuOpenBtn" aria-label="Apri menu">
+                <img src="${pageContext.request.contextPath}/images/common/menu.svg" alt="Menu" class="icon-svg">
+            </button>
         </div>
     </div>
 
+    <%-- HEADER BOTTOM: Menu di Navigazione Distribuito (Solo Desktop) --%>
     <nav class="header-bottom desktop-only">
-        <ul class="nav-links">
-            <li><a href="${pageContext.request.contextPath}/categoria/uomo">Uomo</a></li>
-            <li><a href="${pageContext.request.contextPath}/categoria/donna">Donna</a></li>
-            <li><a href="${pageContext.request.contextPath}/categoria/bambino">Bambino</a></li>
-            <li><a href="${pageContext.request.contextPath}/promozioni" class="text-promo">Promozioni</a></li>
-        </ul>
-        <ul class="nav-links-right">
-            <li><a href="${pageContext.request.contextPath}/assistenza">Assistenza</a></li>
-        </ul>
+        <%-- Gruppo Categorie (Sinistra) --%>
+        <div class="nav-group nav-categories">
+            <a href="${pageContext.request.contextPath}/catalogo?genere=UOMO">Uomo</a>
+            <a href="${pageContext.request.contextPath}/catalogo?genere=DONNA">Donna</a>
+            <a href="${pageContext.request.contextPath}/catalogo?genere=UNISEX">Unisex</a>
+        </div>
+
+        <%-- Gruppo Highlights (Centro) --%>
+        <div class="nav-group nav-highlights">
+            <a href="${pageContext.request.contextPath}/catalogo?inOfferta=true" class="highlight-promo">Promozioni</a>
+            <a href="${pageContext.request.contextPath}/catalogo?inEvidenza=true">In Evidenza</a>
+            <a href="${pageContext.request.contextPath}/catalogo?nuoviArrivi=true">Nuovi Arrivi</a>
+        </div>
+
+        <%-- Gruppo Utilities (Destra) --%>
+        <div class="nav-group nav-utilities">
+            <a href="${pageContext.request.contextPath}/shoefinder" class="btn-shoefinder">Shoe Finder</a>
+            <div class="utility-dropdown">
+                <span class="utility-trigger">Aiuto & Contatti</span>
+                <div class="desktop-dropdown-menu">
+                    <a href="${pageContext.request.contextPath}/assistenza">Assistenza</a>
+                    <a href="${pageContext.request.contextPath}/chi-siamo">Chi Siamo</a>
+                    <a href="${pageContext.request.contextPath}/faq">FAQ</a>
+                </div>
+            </div>
+        </div>
     </nav>
 </header>
+
+<%-- MOBILE SEARCH OVERLAY (Cala dall'alto al click sulla lente mobile) --%>
+<div class="mobile-search-overlay mobile-only" id="mobileSearchOverlay">
+    <div class="mobile-search-container">
+        <form action="${pageContext.request.contextPath}/catalogo" method="GET">
+            <input type="text" name="q" id="mobileSearchInput" placeholder="Cerca prodotti..." autocomplete="off">
+            <button type="submit" class="search-submit-btn">&#128269;</button>
+        </form>
+        <button class="mobile-search-close" id="mobileSearchCloseBtn">Annulla</button>
+    </div>
+</div>
+
+<%-- MOBILE DRAWER: Cassetto Off-Canvas Destro --%>
+<div class="mobile-drawer-overlay mobile-only" id="mobileDrawerOverlay"></div>
+<aside class="mobile-navigation-drawer mobile-only" id="mobileNavigationDrawer">
+    <div class="drawer-header">
+        <span class="drawer-title">Menu</span>
+        <button class="drawer-close-btn" id="mobileMenuCloseBtn" aria-label="Chiudi menu">
+            <img src="${pageContext.request.contextPath}/images/common/close.svg" alt="Chiudi" class="icon-svg">
+        </button>
+    </div>
+
+    <div class="drawer-content">
+        <%-- Sezione Profilo Mobile --%>
+        <div class="drawer-section drawer-profile-box">
+            <% if (!isLoggato) { %>
+                <a href="${pageContext.request.contextPath}/login" class="drawer-btn-login">Accedi / Registrati</a>
+            <% } else { %>
+                <div class="drawer-user-info">
+                    <p class="drawer-welcome">Bentornato nel club!</p>
+                    <a href="${pageContext.request.contextPath}/area_personale" class="drawer-link">Il mio Profilo</a>
+                    <a href="${pageContext.request.contextPath}/area_personale/ordini" class="drawer-link">I miei Ordini</a>
+                    <a href="${pageContext.request.contextPath}/logout" class="drawer-link text-danger">Logout</a>
+                </div>
+            <% } %>
+        </div>
+
+        <%-- Categorie --%>
+        <div class="drawer-section">
+            <p class="drawer-section-title">Collezioni</p>
+            <nav class="drawer-links-list">
+                <a href="${pageContext.request.contextPath}/catalogo?genere=UOMO">Uomo</a>
+                <a href="${pageContext.request.contextPath}/catalogo?genere=DONNA">Donna</a>
+                <a href="${pageContext.request.contextPath}/catalogo?genere=UNISEX">Unisex</a>
+            </nav>
+        </div>
+
+        <%-- Highlights & Strumenti --%>
+        <div class="drawer-section">
+            <p class="drawer-section-title">In Evidenza</p>
+            <nav class="drawer-links-list">
+                <a href="${pageContext.request.contextPath}/shoefinder" class="drawer-highlight-finder">Trova la tua Scarpa (Shoe Finder)</a>
+                <a href="${pageContext.request.contextPath}/catalogo?inOfferta=true" class="text-danger">Promozioni</a>
+                <a href="${pageContext.request.contextPath}/catalogo?inEvidenza=true">In Evidenza</a>
+                <a href="${pageContext.request.contextPath}/catalogo?nuoviArrivi=true">Nuovi Arrivi</a>
+            </nav>
+        </div>
+
+        <%-- Supporto --%>
+        <div class="drawer-section">
+            <p class="drawer-section-title">Supporto</p>
+            <nav class="drawer-links-list">
+                <a href="${pageContext.request.contextPath}/assistenza">Assistenza Clienti</a>
+                <a href="${pageContext.request.contextPath}/chi-siamo">Chi Siamo</a>
+                <a href="${pageContext.request.contextPath}/faq">Domande Frequenti</a>
+            </nav>
+        </div>
+    </div>
+</aside>
 
 <script src="${pageContext.request.contextPath}/js/header.js" defer></script>

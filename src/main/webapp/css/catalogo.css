@@ -26,9 +26,12 @@
     display: flex;
     justify-content: flex-end; /* Allinea a destra */
     align-items: center;
+    gap: 15px;
+    flex-wrap: wrap; /* Se lo schermo è piccolo, va a capo */
 }
 
 .catalogo-header select {
+    margin-left: auto; /* Allinea a destra */
     padding: 10px 15px;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -295,16 +298,17 @@
     background-color: #E0F2FE;
     border-left: 4px solid var(--colore-primario);
     border-radius: 6px;
-    padding: 16px 20px;
+    padding: 8px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    gap: 12px;
 }
 
 .search-active-badge h3 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     color: var(--colore-primario);
     font-weight: 500;
 }

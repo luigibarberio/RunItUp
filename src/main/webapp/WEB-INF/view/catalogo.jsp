@@ -45,6 +45,14 @@
             ☰ Filtri
         </button>
 
+        <%-- BADGE DI RICERCA TESTUALE ATTIVA --%>
+        <% if (hasRicerca) { %>
+            <div class="search-active-badge">
+                <h3>Risultati per: <span>"<%= queryRicerca %>"</span></h3>
+                <a href="${pageContext.request.contextPath}/catalogo" class="clear-search-btn">Rimuovi ✕</a>
+            </div>
+        <% } %>
+
         <select id="ordinaSelect" name="ordina" form="filtriForm" onchange="submitFiltri()">
             <option value="vendite" <%= (filtri != null && "vendite".equals(filtri.getOrdinamento())) ? "selected" : "" %>>I più venduti</option>
             <option value="prezzo_asc" <%= (filtri != null && "prezzo_asc".equals(filtri.getOrdinamento())) ? "selected" : "" %>>Prezzo: dal più basso</option>
@@ -169,14 +177,6 @@
 
     <%-- Wrapper aggiunto per isolare la griglia prodotti dai banner soprastanti --%>
     <div class="catalogo-content-area">
-        
-        <%-- BADGE DI RICERCA TESTUALE ATTIVA --%>
-        <% if (hasRicerca) { %>
-            <div class="search-active-badge">
-                <h3>Risultati per: <span>"<%= queryRicerca %>"</span></h3>
-                <a href="${pageContext.request.contextPath}/catalogo" class="clear-search-btn">Rimuovi Ricerca ✕</a>
-            </div>
-        <% } %>
 
         <section class="catalogo-prodotti">
             <%

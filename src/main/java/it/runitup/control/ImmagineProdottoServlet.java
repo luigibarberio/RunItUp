@@ -28,8 +28,8 @@ public class ImmagineProdottoServlet extends HttpServlet {
         // Costruiamo il path System-Agnostic basato sulla Home dell'utente
         String uploadRoot = System.getProperty("user.home") + File.separator + "runitup_media" + File.separator + "prodotti";
         
-        // Creiamo il riferimento al file esatto (es. prodotto_5.png)
-        File imageFile = new File(uploadRoot + File.separator + "prodotto_" + idParam + ".png");
+        // Creiamo il riferimento al file esatto (es. prodotto_5_0.png)
+        File imageFile = new File(uploadRoot + File.separator + "prodotto_" + idParam + "_0" + ".png");
 
         // Se il file non esiste sul disco, restituiamo un errore 404 (Not Found).
         // Questo dirà al browser di usare l'attributo 'onerror' della JSP (il placeholder).

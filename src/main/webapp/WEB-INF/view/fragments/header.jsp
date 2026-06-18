@@ -53,7 +53,7 @@
                         <%-- Dropdown Desktop --%>
                         <div class="desktop-dropdown-menu">
                             <a href="${pageContext.request.contextPath}/area_personale">Dashboard</a>
-                            <a href="${pageContext.request.contextPath}/area_personale/ordini">I miei Ordini</a>
+                            <a href="${pageContext.request.contextPath}/ordini">I miei Ordini</a>
                             <a href="${pageContext.request.contextPath}/logout" class="logout-text">Logout</a>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                 <div class="drawer-user-info">
                     <p class="drawer-welcome">Bentornato nel club!</p>
                     <a href="${pageContext.request.contextPath}/area_personale" class="drawer-link">Il mio Profilo</a>
-                    <a href="${pageContext.request.contextPath}/area_personale/ordini" class="drawer-link">I miei Ordini</a>
+                    <a href="${pageContext.request.contextPath}/ordini" class="drawer-link">I miei Ordini</a>
                     <a href="${pageContext.request.contextPath}/logout" class="drawer-link text-danger">Logout</a>
                 </div>
             <% } %>

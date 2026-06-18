@@ -66,6 +66,15 @@ public class ProdottoDAO {
         );
 
         // 2. COSTRUZIONE DINAMICA DELLE CLAUSOLE WHERE
+        if (filtri.getRicercaTestuale() != null && !filtri.getRicercaTestuale().isEmpty()) {
+            // Usiamo ILIKE (PostgreSQL) per una ricerca case-insensitive
+            query.append(" AND (p.nome ILIKE ? OR b.nome_brand ILIKE ?)");
+            // Aggiungiamo i % per far sì che trovi la parola in qualsiasi punto della stringa
+            String searchPattern = "%" + filtri.getRicercaTestuale() + "%";
+            parametri.add(searchPattern);
+            parametri.add(searchPattern);
+        }
+
         // Filtro Brand (Multi-selezione)
         if (filtri.getBrandIds() != null && !filtri.getBrandIds().isEmpty()) {
             query.append(" AND p.id_brand IN (?");
@@ -401,6 +410,45 @@ public class ProdottoDAO {
             }
         }
         return listaVarianti;
+    }
+
+    // Recupera una lista veloce di prodotti per i suggerimenti della barra di ricerca AJAX
+    public List<Prodotto> doRetrieveSuggerimenti(String queryTestuale) throws SQLException {
+        List<Prodotto> suggerimenti = new ArrayList<>();
+        
+        // Estraiamo solo i dati strettamente necessari per il menu a tendina
+        String query = "SELECT p.id_prodotto, p.nome, b.nome_brand " +
+                       "FROM prodotto p " +
+                       "JOIN brand b ON p.id_brand = b.id_brand " +
+                       "WHERE p.nome ILIKE ? OR b.nome_brand ILIKE ? " +
+                       "LIMIT 5";
+
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            // Aggiungiamo i % per cercare la sottostringa in qualsiasi posizione
+            String pattern = "%" + queryTestuale + "%";
+            ps.setString(1, pattern);
+            ps.setString(2, pattern);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Prodotto p = new Prodotto();
+                    p.setIdProdotto(rs.getInt("id_prodotto"));
+                    p.setNome(rs.getString("nome"));
+                    
+                    Brand b = new Brand();
+                    b.setNomeBrand(rs.getString("nome_brand"));
+                    p.setBrand(b);
+                    
+                    suggerimenti.add(p);
+                }
+            }
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
+        return suggerimenti;
     }
 
 }

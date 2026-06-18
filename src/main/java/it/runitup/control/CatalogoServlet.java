@@ -32,6 +32,12 @@ public class CatalogoServlet extends HttpServlet {
         // Istanziamo il nostro contenitore per i criteri di ricerca
         FiltroCatalogo filtri = new FiltroCatalogo();
 
+        // 0. ESTRAZIONE DELLA QUERY DI RICERCA TESTUALE (SE PRESENTE)
+        String queryRicerca = request.getParameter("q");
+        if (queryRicerca != null && !queryRicerca.trim().isEmpty()) {
+            filtri.setRicercaTestuale(queryRicerca.trim());
+        }
+
         // 1. ESTRAZIONE E PARSING DEI FILTRI MULTI-SELEZIONE (BRAND)
         String[] brandParams = request.getParameterValues("brand");
         if (brandParams != null && brandParams.length > 0) {

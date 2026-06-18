@@ -164,8 +164,16 @@
 /* ==========================================================================
    GRIGLIA PRODOTTI
    ========================================================================== */
-.catalogo-prodotti {
+/* Wrapper principale della colonna destra */
+.catalogo-content-area {
     grid-area: products;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Griglia dei prodotti vera e propria */
+.catalogo-prodotti {
     display: grid;
     /* Crea colonne che si adattano dinamicamente, minimo 260px l'una */
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -283,6 +291,60 @@
 /* ==========================================================================
    RESPONSIVE DESIGN (Smartphone e Tablet - Max 991px)
    ========================================================================== */
+
+
+/* ==========================================================================
+   BADGE DI RICERCA E AVVISI
+   ========================================================================== */
+.search-active-badge {
+    background-color: #E0F2FE;
+    border-left: 4px solid var(--colore-primario);
+    border-radius: 6px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.search-active-badge h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--colore-primario);
+    font-weight: 500;
+}
+
+.search-active-badge h3 span {
+    font-weight: 700;
+}
+
+.clear-search-btn {
+    text-decoration: none;
+    color: #64748B;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    background-color: rgba(255,255,255,0.6);
+}
+
+.clear-search-btn:hover {
+    color: var(--promozioni); /* Rosso in hover */
+    background-color: #FFFFFF;
+}
+
+.no-products-msg {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: #64748B;
+    font-size: 1.1rem;
+    background: #FFFFFF;
+    border-radius: 8px;
+    border: 1px dashed #CBD5E1;
+}
+
 @media (max-width: 991px) {
     .catalogo-main {
         grid-template-columns: 1fr;

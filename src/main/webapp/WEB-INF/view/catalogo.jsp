@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*" %>
+<%@ page import="java.net.URLEncoder" %>
 <%@ page import="it.runitup.model.bean.*" %>
 <%@ page import="it.runitup.model.dto.ProdottoDTO" %>
 <%@ page import="it.runitup.model.filter.FiltroCatalogo" %>
@@ -15,8 +16,9 @@
     Boolean isPaginaSuccAttr = (Boolean) request.getAttribute("isPaginaSuccessiva");
     boolean isPaginaSuccessiva = (isPaginaSuccAttr != null && isPaginaSuccAttr);
     
-    // TODO Impostare direttamente nella jsp il check dei filtri selezionati, in base ai filtri correnti ottenuti in input, in modo da non farlo inutilmente nel js
-
+    // Controlliamo se è attiva una ricerca testuale
+    boolean hasRicerca = filtri != null && filtri.getRicercaTestuale() != null && !filtri.getRicercaTestuale().trim().isEmpty();
+    String queryRicerca = hasRicerca ? filtri.getRicercaTestuale() : "";
 %>
 
 <!DOCTYPE html>
@@ -53,6 +55,12 @@
     
     <aside class="catalogo-filters" id="sidebarFiltri">
         <form id="filtriForm" class="filters-form" method="get" action="${pageContext.request.contextPath}/catalogo" onsubmit="pulisciCampiVuoti()">
+            
+            <%-- CAMPO NASCOSTO PER LA RICERCA TESTUALE (Persistenza dello stato) --%>
+            <% if (hasRicerca) { %>
+                <input type="hidden" name="q" value="<%= queryRicerca.replace("\"", "&quot;") %>">
+            <% } %>
+
             <%-- Bottone Chiudi visibile solo su mobile --%>
             <button type="button" class="mobile-only" onclick="toggleFiltri()" 
                     style="width: 100%; padding: 12px; margin-bottom: 20px; background: var(--sfondo-alternativo); border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
@@ -152,34 +160,46 @@
             <%-- BOTTONI SUBMIT/RESET --%>
             <div class="filter-actions">
                 <button type="submit" class="btn-primary">Applica Filtri</button>
-                <a href="${pageContext.request.contextPath}/catalogo" class="btn-secondary">Reset Filtri</a>
+                <%-- Modifica del link Reset per mantenere la stringa di ricerca se presente --%>
+                <a href="${pageContext.request.contextPath}/catalogo<%= hasRicerca ? "?q=" + URLEncoder.encode(queryRicerca, "UTF-8") : "" %>" class="btn-secondary">Reset Filtri</a>
             </div>
 
         </form>
     </aside>
 
-    <section class="catalogo-prodotti">
-        <%
-            if (prodotti != null && !prodotti.isEmpty()) {
-                for (ProdottoDTO prodotto : prodotti) {
-                    request.setAttribute("prodottoDto", prodotto);
-        %>
-                    <jsp:include page="/WEB-INF/view/fragments/prodotto_card.jsp" />
-        <%
-                }
-            } else {
-        %>
-            <p>Nessun prodotto trovato con questi filtri.</p>
+    <%-- Wrapper aggiunto per isolare la griglia prodotti dai banner soprastanti --%>
+    <div class="catalogo-content-area">
+        
+        <%-- BADGE DI RICERCA TESTUALE ATTIVA --%>
+        <% if (hasRicerca) { %>
+            <div class="search-active-badge">
+                <h3>Risultati per: <span>"<%= queryRicerca %>"</span></h3>
+                <a href="${pageContext.request.contextPath}/catalogo" class="clear-search-btn">Rimuovi Ricerca ✕</a>
+            </div>
         <% } %>
-    </section>
+
+        <section class="catalogo-prodotti">
+            <%
+                if (prodotti != null && !prodotti.isEmpty()) {
+                    for (ProdottoDTO prodotto : prodotti) {
+                        request.setAttribute("prodottoDto", prodotto);
+            %>
+                        <jsp:include page="/WEB-INF/view/fragments/prodotto_card.jsp" />
+            <%
+                    }
+                } else {
+            %>
+                <p class="no-products-msg">Nessun prodotto trovato con questi filtri di ricerca.</p>
+            <% } %>
+        </section>
+        
+    </div>
 
     <nav class="catalogo-pagination">
         <ul>
-            <%-- Corretto: disabilita Precedente se siamo a pagina 1 --%>
             <li class="pagination-item <%= paginaCorrente <= 1 ? "disabled" : "" %>">
                 <button type="submit" form="filtriForm" name="page" value="<%= paginaCorrente - 1 %>" <%= paginaCorrente <= 1 ? "disabled" : "" %>>Precedente</button>
             </li>
-            <%-- Corretto: usa il flag calcolato dal Controller --%>
             <li class="pagination-item <%= !isPaginaSuccessiva ? "disabled" : "" %>">
                 <button type="submit" form="filtriForm" name="page" value="<%= paginaCorrente + 1 %>" <%= !isPaginaSuccessiva ? "disabled" : "" %>>Successiva</button>
             </li>            

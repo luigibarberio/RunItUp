@@ -30,10 +30,13 @@ public class FiltroCatalogo implements Serializable {
     private List<String> taglie;
     private List<String> colori;
 
-    // --- Filtri Testuali (Sezioni specifiche della scarpa) ---
+    // --- Filtri per caratteristiche della scarpa (Sezioni specifiche della scarpa) ---
     private List<TipoTerreno> tipiTerreno;
     private List<TipoAppoggio> tipiAppoggio;
     private List<TipoPasso> tipiPasso;
+
+    // --- Filtro di Ricerca (Campo di testo) ---
+    private String ricercaTestuale;
 
     // --- Logiche di Visualizzazione ---
     private String ordinamento;
@@ -83,6 +86,9 @@ public class FiltroCatalogo implements Serializable {
 
     public List<TipoPasso> getTipiPasso() { return tipiPasso; }
     public void setTipiPasso(List<TipoPasso> tipiPasso) { this.tipiPasso = tipiPasso; }
+
+    public String getRicercaTestuale() { return ricercaTestuale; }
+    public void setRicercaTestuale(String ricercaTestuale) { this.ricercaTestuale = ricercaTestuale; }
 
     public String getOrdinamento() { return ordinamento; }
     public void setOrdinamento(String ordinamento) { this.ordinamento = ordinamento; }

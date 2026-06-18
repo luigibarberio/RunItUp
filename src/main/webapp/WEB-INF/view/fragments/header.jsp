@@ -19,11 +19,19 @@
             <span class="logo-text">@ RunItUp</span>
         </a>
 
-        <div class="search-bar desktop-only">
-            <form action="${pageContext.request.contextPath}/search" method="GET">
-                <input type="text" name="q" placeholder="Cerca i prodotti...">
-                <button type="submit" class="search-btn">&#128269;</button>
-            </form>
+        <%-- Container relativo per posizionare correttamente i suggerimenti --%>
+        <div class="search-wrapper desktop-only">
+            <div class="search-bar">
+                <form action="${pageContext.request.contextPath}/catalogo" method="GET" id="searchForm">
+                    <input type="text" name="q" id="searchInput" placeholder="Cerca i prodotti..." autocomplete="off">
+                    <button type="submit" class="search-btn">&#128269;</button>
+                </form>
+            </div>
+            
+            <%-- Il div invisibile che si aprirà con i suggerimenti AJAX --%>
+            <div id="searchSuggestions" class="search-suggestions-box hidden" data-context="${pageContext.request.contextPath}">
+                <%-- I risultati verranno iniettati qui dal JS --%>
+            </div>
         </div>
 
         <div class="header-actions">

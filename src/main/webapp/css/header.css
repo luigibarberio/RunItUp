@@ -43,9 +43,15 @@
     letter-spacing: -0.5px;
 }
 
-.search-bar {
+/* Wrapper per contenere barra e suggerimenti in colonna */
+.search-wrapper {
     flex-grow: 1;
     max-width: 500px;
+    position: relative; /* FONDAMENTALE per i suggerimenti assoluti */
+}
+
+.search-bar {
+    width: 100%;
 }
 
 .search-bar form {
@@ -116,6 +122,70 @@
 
 .text-promo {
     color: var(--promozioni) !important;
+}
+
+
+
+/* ==========================================================================
+   SUGGERIMENTI RICERCA AJAX (Dropdown)
+   ========================================================================== */
+.search-suggestions-box {
+    position: absolute;
+    top: calc(100% + 8px); /* Appena sotto la barra */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--sfondo-alternativo);
+    overflow: hidden;
+    z-index: 2000;
+    
+    /* Animazione a comparsa morbida */
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.search-suggestions-box.hidden {
+    display: block; /* Manteniamo il blocco per l'animazione, giochiamo su opacity e pointer-events */
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+}
+
+.suggestion-item {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    color: var(--testo-principale);
+    cursor: pointer;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: var(--sfondo-principale);
+}
+
+.suggestion-item strong {
+    color: #64748B;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.suggestion-empty {
+    padding: 16px;
+    text-align: center;
+    color: #64748B;
+    font-size: 0.95rem;
+    font-style: italic;
 }
 
 .mobile-only {

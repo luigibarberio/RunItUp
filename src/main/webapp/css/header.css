@@ -328,4 +328,13 @@
     .mobile-search-container form { flex-grow: 1; display: flex; background: var(--sfondo-alternativo); border-radius: 20px; padding: 2px 10px; }
     .mobile-search-container input { flex-grow: 1; border: none; background: transparent; padding: 8px; outline: none; }
     .mobile-search-close { background: transparent; border: none; color: #64748B; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
+    .search-suggestions-box {
+        position: static;
+        margin-top: 15px;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+    }
+
 }

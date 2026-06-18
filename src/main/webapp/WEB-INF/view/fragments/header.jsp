@@ -23,13 +23,13 @@
         <div class="search-wrapper desktop-only">
             <div class="search-bar">
                 <form action="${pageContext.request.contextPath}/catalogo" method="GET" id="searchForm">
-                    <input type="text" name="q" id="searchInput" placeholder="Cerca scarpe, brand, categorie..." autocomplete="off">
+                    <input type="text" name="q" id="desktopSearchInput" placeholder="Cerca scarpe, brand, categorie..." autocomplete="off">
                     <button type="submit" class="search-btn">
                         <img src="${pageContext.request.contextPath}/images/common/search.svg" alt="Cerca" class="icon-svg">
                     </button>
                 </form>
             </div>
-            <div id="searchSuggestions" class="search-suggestions-box hidden" data-context="${pageContext.request.contextPath}"></div>
+            <div id="desktopSearchSuggestions" class="search-suggestions-box hidden" data-context="${pageContext.request.contextPath}"></div>
         </div>
 
         <%-- DESTRA: Azioni Utente, Carrello e Hamburger Mobile --%>
@@ -108,10 +108,13 @@
     <div class="mobile-search-container">
         <form action="${pageContext.request.contextPath}/catalogo" method="GET">
             <input type="text" name="q" id="mobileSearchInput" placeholder="Cerca prodotti..." autocomplete="off">
-            <button type="submit" class="search-submit-btn">&#128269;</button>
+            <button type="submit" class="search-btn">
+                <img src="${pageContext.request.contextPath}/images/common/search.svg" alt="Cerca" class="icon-svg">
+            </button>
         </form>
         <button class="mobile-search-close" id="mobileSearchCloseBtn">Annulla</button>
     </div>
+    <div id="mobileSearchSuggestions" class="search-suggestions-box hidden" data-context="${pageContext.request.contextPath}"></div>
 </div>
 
 <%-- MOBILE DRAWER: Cassetto Off-Canvas Destro --%>

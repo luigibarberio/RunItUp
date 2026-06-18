@@ -1,75 +1,199 @@
+/* ==========================================================================
+   RUNITUP - FAT FOOTER ARCHITECTURE (footer.css)
+   ========================================================================== */
+
 .main-footer {
     background-color: var(--sfondo-alternativo);
     color: var(--testo-principale);
-    padding: 50px 20px 20px;
-    margin-top: 60px; /* Distanza dal contenuto principale della pagina */
+    padding: 60px 0 0 0; /* Rimosso padding bottom per attaccare la fascia bottom */
+    margin-top: 8px; /* Spazio controllato dal contenuto superiore dopo la sezione */
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .footer-container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 40px 50px 40px;
     display: grid;
-    /* Crea automaticamente le colonne in base allo spazio */
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 30px;
-    padding-bottom: 40px;
-    border-bottom: 1px solid #dcdcdc; /* Linea di separazione interna */
+    /* Struttura a 4 colonne simmetriche bilanciate */
+    grid-template-columns: 1.2fr repeat(3, 1fr);
+    gap: 40px;
 }
 
+/* ==========================================================================
+   STILE DELLE COLONNE E DEI LINK
+   ========================================================================== */
 .footer-column h3 {
-    font-size: 1.1rem;
-    margin-bottom: 15px;
+    font-size: 0.9rem;
+    margin-bottom: 22px;
     font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--testo-principale);
 }
 
 .footer-column ul {
     list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .footer-column ul li {
-    margin-bottom: 12px;
+    margin-bottom: 4px;
 }
 
 .footer-column a {
     color: var(--testo-secondario);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
 }
 
 .footer-column a:hover {
     color: var(--colore-primario);
+    transform: translateX(3px); /* Leggero scivolamento in hover per feedback dinamico */
 }
 
+/* Evidenze semantiche coerenti con l'header */
+.footer-promo-link {
+    color: var(--promozioni) !important;
+    font-weight: 600 !important;
+}
+
+.footer-highlight-link {
+    color: var(--conferme) !important;
+    font-weight: 600 !important;
+}
+
+/* ==========================================================================
+   COLONNA BRAND E PROFILI SOCIAL
+   ========================================================================== */
+.brand-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.footer-logo {
+    display: inline-flex;
+    align-items: center;
+}
+
+.footer-logo-img {
+    height: 64px;
+    width: auto;
+}
+
+.footer-brand-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #475569; /* Grigio ardesia morbido per non appesantire */
+    margin: 0;
+}
+
+.footer-social-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 6px;
+}
+
+.social-icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    object-fit: contain;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.social-icon:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* ==========================================================================
+   FASCIA BOTTOM: COPYRIGHT E CIRCUITI DI PAGAMENTO
+   ========================================================================== */
 .footer-bottom {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    background-color: rgba(0, 0, 0, 0.02); /* Leggermente ombreggiata per staccare visivamente */
+    padding: 24px 0;
+}
+
+.footer-bottom-container {
     max-width: 1200px;
-    margin: 20px auto 0;
+    margin: 0 auto;
+    padding: 0 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 15px;
-    font-size: 0.85rem;
-    color: var(--testo-secondario);
+    gap: 20px;
 }
 
-@media (max-width: 768px) {
-    .main-footer {
-        padding: 40px 15px 15px;
-    }
+.footer-copyright {
+    font-size: 0.85rem;
+    color: #64748B;
+    font-weight: 500;
+    margin: 0;
+}
 
+.footer-payment-methods {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.payment-icon {
+    height: 24px;
+    width: auto;
+    max-width: 60px; /* Previene esplosioni di proporzioni */
+    object-fit: contain;
+    display: block;
+    filter: grayscale(20%); /* Leggermente desaturate per fondersi col tema, 100% in hover */
+    transition: filter 0.2s ease;
+}
+
+.payment-icon:hover {
+    filter: grayscale(0%);
+}
+
+/* ==========================================================================
+   MEDIA QUERIES - RESPONSIVE DESIGN NATIVO (Checklist d'esame)
+   ========================================================================== */
+@media (max-width: 991px) {
     .footer-container {
-        grid-template-columns: 1fr; /* Colonna singola su mobile */
-        gap: 20px;
+        grid-template-columns: 1fr 1fr; /* Collassa a 2 colonne sui tablet */
+        gap: 40px 30px;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-container {
+        grid-template-columns: 1fr; /* Una sola colonna verticale pulita su smartphone */
+        gap: 30px;
+        padding-bottom: 35px;
+        text-align: center; /* Centra tutto su mobile per un aspetto più compatto */
     }
 
-    .footer-column h3 {
-        border-bottom: 1px solid #dcdcdc;
-        padding-bottom: 10px;
-        margin-bottom: 10px;
+    .footer-social-wrapper {
+        justify-content: center; /* Centra i social su mobile */
     }
-
-    .footer-bottom {
-        flex-direction: column;
+    
+    .footer-bottom-container {
+        flex-direction: column; /* Centra testo e pagamenti verticalmente su mobile */
         text-align: center;
+        gap: 15px;
+    }
+    
+    .footer-column h3 {
+        margin-bottom: 8px;
+    }
+    
+    .footer-column a:hover {
+        transform: none; /* Elimina lo spostamento laterale su touch screen */
     }
 }

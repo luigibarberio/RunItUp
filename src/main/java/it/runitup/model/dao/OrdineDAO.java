@@ -121,6 +121,8 @@ public class OrdineDAO {
                     psDet.executeUpdate();
                 }
             }
+            
+            // TODO Incrementare contatore vendite per prodotto!!!
 
             // 3. SVUOTAMENTO DEL CARRELLO DELL'UTENTE
             try (PreparedStatement psCart = con.prepareStatement(svuotaCarrello)) {

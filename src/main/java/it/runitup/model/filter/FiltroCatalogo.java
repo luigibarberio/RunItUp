@@ -46,7 +46,7 @@ public class FiltroCatalogo implements Serializable {
     public FiltroCatalogo() {
         super();
         // Inizializzazione dei valori di default
-        this.limit = 20;
+        this.limit = 21;
         this.offset = 0;
     }
 

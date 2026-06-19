@@ -107,6 +107,11 @@
     cursor: pointer;
 }
 
+.search-btn img {
+    width: 24px;
+    height: 24px;
+}
+
 .search-suggestions-box {
     position: absolute;
     top: calc(100% + 8px);
@@ -254,6 +259,11 @@
    ========================================================================== */
 @media (max-width: 991px) {
     .header-top { padding: 12px 15px; }
+
+    .logo-img {
+        max-height: 32px;
+        width: auto;
+    }
 
     /* MOBILE DRAWER (Destro per accessibilità destrorsi) */
     .mobile-drawer-overlay {

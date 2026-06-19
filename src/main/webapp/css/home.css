@@ -1,0 +1,405 @@
+/* ==========================================================================
+   RUNITUP - STILI HOME PAGE (home.css)
+   ========================================================================== */
+
+/* Contenitore base per le sezioni */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+}
+
+/* ==========================================================================
+   2. HERO SECTION
+   ========================================================================== */
+.hero-section {
+    position: relative;
+    height: 70vh; /* Altezza adattiva */
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1E293B; /* Fallback scuro ed elegante */
+    background-image: url('../images/common/hero-bg.jpg');
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(17, 17, 17, 0.6); /* Scurisce l'immagine per far leggere il testo */
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    padding: 0 20px;
+    animation: fadeInUP 0.8s ease-out;
+}
+
+.hero-content a {
+    margin-top: 30px;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    letter-spacing: -1px;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin-bottom: 30px;
+    color: #E2E8F0; /* Grigio chiarissimo per contrasto */
+}
+
+/* ==========================================================================
+   3. SHOP BY CATEGORY (Uomo, Donna, Unisex)
+   ========================================================================== */
+.category-section {
+    padding-top: 80px; /* Più respiro dopo l'header */
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.category-card {
+    position: relative;
+    display: block;
+    height: 350px;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.category-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.category-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Sfondo sfumato per far leggere la label */
+.category-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; width: 100%; height: 50%;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+}
+
+.category-label {
+    position: absolute;
+    bottom: 25px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 1.5rem;
+    font-weight: 700;
+    z-index: 2;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   4 & 7. CAROSELLI (Nuovi Arrivi, In Evidenza)
+   ========================================================================== */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--sfondo-alternativo);
+}
+
+.section-title {
+    font-size: 1.8rem;
+    color: var(--testo-principale);
+    font-weight: 800;
+    margin: 0;
+}
+
+.link-vedi-tutti {
+    font-weight: 600;
+    color: var(--colore-primario);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+}
+
+.link-vedi-tutti:hover {
+    color: var(--colore-secondario);
+}
+
+/* Il trucco dello Snap Scroller nativo CSS */
+.carousel-container.snap-x {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 20px;
+    padding-bottom: 20px; /* Spazio per l'ombra delle card e la scrollbar */
+    /* Nascondi la scrollbar standard mantenendo la funzionalità */
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.carousel-container.snap-x::-webkit-scrollbar {
+    height: 6px;
+}
+.carousel-container.snap-x::-webkit-scrollbar-track {
+    background: transparent;
+}
+.carousel-container.snap-x::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+
+.carousel-item {
+    flex: 0 0 calc(25% - 15px); /* Su desktop 4 card alla volta */
+    scroll-snap-align: start;
+    min-width: 250px; /* Previene schiacciamenti */
+}
+
+/* ==========================================================================
+   5. SEZIONE COUPON (Asimmetrica)
+   ========================================================================== */
+.coupon-section {
+    padding: 40px 20px;
+}
+
+.coupon-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.coupon-grid-asymmetric {
+    grid-template-columns: 2fr 1fr; /* Magia asimmetrica 2/3 - 1/3 */
+}
+
+.coupon-grid-single {
+    grid-template-columns: 1fr;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.coupon-card {
+    background-color: #E2E8F0; /* Grigio carta */
+    border-radius: 12px;
+    position: relative;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    border: 2px dashed #94A3B8; /* Effetto ticket ritagliabile */
+}
+
+.coupon-card.coupon-large {
+    background-color: var(--sfondo-principale);
+    border-color: var(--colore-primario);
+    box-shadow: 0 10px 30px rgba(12, 89, 207, 0.08);
+}
+
+.coupon-large .coupon-value { color: var(--colore-primario); font-size: 3rem; }
+.coupon-small .coupon-value { color: var(--testo-principale); font-size: 2rem; }
+
+.coupon-badge {
+    display: inline-block;
+    background: var(--testo-principale);
+    color: #FFF;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    align-self: flex-start;
+}
+
+.coupon-value {
+    font-weight: 900;
+    margin: 0 0 10px 0;
+    line-height: 1;
+}
+
+.coupon-code-box {
+    font-size: 1.1rem;
+    color: var(--testo-secondario);
+    margin-bottom: 5px;
+}
+
+.coupon-code-box strong {
+    background: #FFF;
+    padding: 4px 12px;
+    border-radius: 6px;
+    letter-spacing: 2px;
+    color: var(--testo-principale);
+    border: 1px solid #CBD5E1;
+}
+
+.coupon-expiry {
+    font-size: 0.85rem;
+    color: #64748B;
+    margin: 0;
+}
+
+/* ==========================================================================
+   6. BENTO BANNER SHOEFINDER
+   ========================================================================== */
+.bento-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+}
+
+.bento-image-col img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 300px;
+}
+
+.bento-text-col {
+    padding: 50px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: var(--sfondo-alternativo);
+}
+
+.bento-text-col h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: var(--testo-principale);
+}
+
+.bento-text-col p {
+    font-size: 1rem;
+    color: var(--testo-secondario);
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   8. GRIGLIA PROMOZIONI FISSA
+   ========================================================================== */
+.promo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+/* Fallback Messaggi Vuoti */
+.empty-section-msg {
+    text-align: center;
+    color: #64748B;
+    font-size: 1.1rem;
+    padding: 40px 0;
+    background: #FFFFFF;
+    border-radius: 8px;
+    border: 1px dashed #CBD5E1;
+}
+
+/* ==========================================================================
+   MEDIA QUERIES (Responsive Checklist Esame)
+   ========================================================================== */
+@media (max-width: 991px) {
+    .hero-title { font-size: 2.8rem; }
+    
+    .category-grid { grid-template-columns: repeat(2, 1fr); }
+    .category-card:last-child { grid-column: span 2; height: 250px; } /* L'ultimo prende due colonne */
+
+    .carousel-item { flex: 0 0 calc(33.333% - 14px); }
+    
+    .coupon-grid-asymmetric { grid-template-columns: 1fr; } /* Collassa i coupon su tablet */
+    
+    .bento-wrapper { grid-template-columns: 1fr; } /* Stack verticale per il bento */
+    
+    .promo-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .hero-title { font-size: 2.2rem; }
+    .carousel-item { flex: 0 0 calc(50% - 10px); }
+}
+
+@media (max-width: 576px) {
+    .container { padding: 40px 15px; }
+    
+    .category-grid { grid-template-columns: 1fr; }
+    .category-card:last-child { grid-column: span 1; height: 350px; }
+
+    .carousel-item { flex: 0 0 80%; } /* Lascia intravedere la card successiva per invitare allo swipe */
+    
+    .promo-grid { grid-template-columns: 1fr; } /* Promozioni una sotto l'altra */
+    
+    .section-title { font-size: 1.4rem; }
+    .bento-text-col { padding: 30px 20px; }
+}
+
+/* Animazioni */
+@keyframes fadeInUP {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* ==========================================================================
+   STILE BOTTONI (Ancore e Button reali)
+   ========================================================================== */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--colore-primario);
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 14px 32px;
+    border-radius: 50px; /* Design "a pillola" sportivo e moderno */
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(12, 89, 207, 0.3);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--colore-secondario);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(12, 89, 207, 0.45);
+    color: #FFFFFF;
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 10px rgba(12, 89, 207, 0.2);
+}
+
+/* Modificatore specifico per il bottone gigante della Hero Section */
+.hero-btn {
+    font-size: 1.15rem;
+    padding: 14px 45px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background-color: rgba(12, 129, 207, 0.6); /* Colore semi-trasparente per un effetto più leggero nell'hero section */
+}

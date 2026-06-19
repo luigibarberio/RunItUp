@@ -35,7 +35,7 @@
         <%-- DESTRA: Azioni Utente, Carrello e Hamburger Mobile --%>
         <div class="header-actions">
             <%-- Icona Ricerca Mobile (Attiva overlay) --%>
-            <button class="mobile-search-trigger mobile-only" id="mobileSearchOpenBtn" aria-label="Apri ricerca">
+            <button class="mobile-search-trigger search-btn mobile-only" id="mobileSearchOpenBtn" aria-label="Apri ricerca">
                 <img src="${pageContext.request.contextPath}/images/common/search.svg" alt="Cerca" class="icon-svg">
             </button>
 
@@ -99,7 +99,7 @@
 
         <%-- Gruppo Utilities (Destra) --%>
         <div class="nav-group nav-utilities">
-            <a href="${pageContext.request.contextPath}/shoefinder" class="btn-shoefinder">Shoe Finder</a>
+            <a href="${pageContext.request.contextPath}/findmyshoes" class="btn-shoefinder">FindMyShoes</a>
             <div class="utility-dropdown">
                 <span class="utility-trigger">Aiuto & Contatti</span>
                 <div class="desktop-dropdown-menu">
@@ -165,7 +165,7 @@
         <div class="drawer-section">
             <p class="drawer-section-title">In Evidenza</p>
             <nav class="drawer-links-list">
-                <a href="${pageContext.request.contextPath}/shoefinder" class="drawer-highlight-finder">Trova la tua Scarpa (Shoe Finder)</a>
+                <a href="${pageContext.request.contextPath}/findmyshoes" class="drawer-highlight-finder">Trova la tua Scarpa (FindMyShoes)</a>
                 <a href="${pageContext.request.contextPath}/catalogo?inOfferta=true" class="text-danger">Promozioni</a>
                 <a href="${pageContext.request.contextPath}/catalogo?inEvidenza=true">In Evidenza</a>
                 <a href="${pageContext.request.contextPath}/catalogo?nuoviArrivi=true">Nuovi Arrivi</a>

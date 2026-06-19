@@ -261,44 +261,97 @@
 }
 
 /* ==========================================================================
-   6. BENTO BANNER SHOEFINDER
+   6. BENTO BANNER SHOEFINDER (True Bento Layout)
    ========================================================================== */
+/* Il contenitore fa da "cornice" e da outline */
 .bento-wrapper {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    background-color: #FFFFFF;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+    grid-template-columns: 1fr 1fr; /* Due colonne uguali (Sinistra e Destra) */
+    grid-template-rows: 1fr auto;   /* Riga 1 elastica (Testo), Riga 2 automatica (Bottone) */
+    gap: 8px;
+    background-color: var(--sfondo-alternativo);
+    
+    /* Arrotondamento e bordo esterno */
+    border: 2px solid #94a3b880;
+    border-radius: 40px;
+    overflow: hidden; /* Taglia gli angoli delle celle interne per seguire il bordo arrotondato */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    padding: 10px;
 }
 
-.bento-image-col img {
+/* Stile comune per tutte le sezioni del bento */
+.bento-cell {
+        background-color: var(--sfondo-principale); /* Nasconde lo sfondo del wrapper, tranne nei punti di 'gap' */
+        border-radius: 34px;
+}
+
+/* --- CELLA 1: Immagine --- */
+.bento-image-cell {
+    grid-column: 1 / 2; /* Parte dalla colonna 1 e finisce alla 2 */
+    grid-row: 1 / 3;    /* Si espande dalla riga 1 alla 3 (occupando tutto lo spazio verticale) */
+    position: relative;
+    overflow: hidden; /* Assicura che l'immagine non esca dai bordi arrotondati */
+}
+
+.bento-image-cell img {
+    position: absolute; /* Fa sì che l'immagine riempia perfettamente l'altezza dettata dalla colonna di destra */
+    top: 0; left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    min-height: 300px;
 }
 
-.bento-text-col {
+/* --- CELLA 2: Testo --- */
+.bento-text-cell {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
     padding: 50px 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
-    background-color: var(--sfondo-alternativo);
 }
 
-.bento-text-col h2 {
+.bento-text-cell h2 {
     font-size: 2rem;
     margin-bottom: 15px;
     color: var(--testo-principale);
 }
 
-.bento-text-col p {
-    font-size: 1rem;
+.bento-text-cell p {
+    font-size: 1.05rem;
     color: var(--testo-secondario);
-    margin-bottom: 25px;
+    margin: 0;
     line-height: 1.6;
+}
+
+/* --- CELLA 3: Pulsante Gigante Cliccabile --- */
+.bento-btn-cell {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 40px;
+    background-color: var(--colore-primario);
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    transition: background-color 0.3s ease;
+}
+
+.bento-btn-cell:hover {
+    background-color: var(--colore-secondario);
+    color: #FFFFFF;
+}
+
+.bento-btn-icon {
+    font-size: 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.bento-btn-cell:hover .bento-btn-icon {
+    transform: translateX(8px); /* Freccetta che si muove al passaggio del mouse */
 }
 
 /* ==========================================================================
@@ -337,6 +390,30 @@
     .bento-wrapper { grid-template-columns: 1fr; } /* Stack verticale per il bento */
     
     .promo-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .bento-wrapper {
+        grid-template-columns: 1fr; /* Una singola colonna */
+        grid-template-rows: 300px auto auto; /* 1. Immagine (300px), 2. Testo, 3. Bottone */
+    }
+
+    .bento-image-cell {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+    }
+
+    .bento-text-cell {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+        padding: 35px 25px;
+    }
+
+    .bento-btn-cell {
+        grid-column: 1 / 2;
+        grid-row: 3 / 4;
+        padding: 25px;
+        font-size: 1.1rem;
+    }
+
 }
 
 @media (max-width: 768px) {

@@ -129,17 +129,23 @@
         <%-- 6. BENTO BANNER SHOEFINDER --%>
         <section class="bento-shoefinder-section container">
             <div class="bento-wrapper">
-                <div class="bento-image-col">
+                
+                <div class="bento-cell bento-image-cell">
                     <img src="${pageContext.request.contextPath}/images/common/shoefinder-banner.jpg" alt="Trova la scarpa perfetta" loading="lazy">
                 </div>
-                <div class="bento-text-col">
+
+                <div class="bento-cell bento-text-cell">
                     <h2>Non sai quale scegliere?</h2>
                     <p>
-                        Passo, appoggio, terreno e frequenza d'allenamento. 
                         Rispondi a 4 semplici domande e lascia che il nostro algoritmo trovi la compagna di corsa perfetta per te.
                     </p>
-                    <a href="${pageContext.request.contextPath}/findmyshoes" class="btn-primary">Avvia FindMyShoes</a>
                 </div>
+
+                <a href="${pageContext.request.contextPath}/findmyshoes" class="bento-cell bento-btn-cell">
+                    <span class="bento-btn-text">Avvia FindMyShoes</span>
+                    <span class="bento-btn-icon">&rarr;</span>
+                </a>
+
             </div>
         </section>
 

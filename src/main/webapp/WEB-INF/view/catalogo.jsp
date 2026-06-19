@@ -26,6 +26,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Catalogo - RunItUp</title>
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/common/favicon.png">
+    
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">

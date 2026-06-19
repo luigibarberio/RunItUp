@@ -26,6 +26,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RunItUp - Supera i tuoi limiti</title>
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/common/favicon.png">
     
     <%-- I CSS verranno collegati qui. Per ora mettiamo i riferimenti standard --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">

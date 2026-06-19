@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="it.runitup.model.bean.Utente" %>
 <%
     Boolean nascondiPromo = (Boolean) request.getAttribute("nascondiPromo");
     if (nascondiPromo == null || !nascondiPromo) {
@@ -7,7 +8,7 @@
 <%
     }
     // Controllo dello stato di login
-    Object utenteLoggato = (session != null) ? session.getAttribute("utenteLoggato") : null;
+    Utente utenteLoggato = (Utente) session.getAttribute("utenteLoggato");
     boolean isLoggato = (utenteLoggato != null);
 %>
 
@@ -143,7 +144,12 @@
                 <a href="${pageContext.request.contextPath}/login" class="drawer-btn-login">Accedi / Registrati</a>
             <% } else { %>
                 <div class="drawer-user-info">
-                    <p class="drawer-welcome">Bentornato nel club!</p>
+                    <%-- Controllo sul nome dell'utente per evitare di mostrare un messaggio vuoto --%>
+                    <% if (utenteLoggato.getNome() != null && !utenteLoggato.getNome().isEmpty()) { %>
+                        <p class="drawer-welcome">Bentornato nel club, ${utenteLoggato.getNome()}!</p>
+                    <% } else { %>
+                        <p class="drawer-welcome">Bentornato nel club!</p>
+                    <% } %>
                     <a href="${pageContext.request.contextPath}/area_personale" class="drawer-link">Il mio Profilo</a>
                     <a href="${pageContext.request.contextPath}/ordini" class="drawer-link">I miei Ordini</a>
                     <a href="${pageContext.request.contextPath}/logout" class="drawer-link text-danger">Logout</a>

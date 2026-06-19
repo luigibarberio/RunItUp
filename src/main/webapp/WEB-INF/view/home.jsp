@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="it.runitup.model.dto.ProdottoDTO" %>
+<%@ page import="it.runitup.model.bean.Utente" %>
 <%@ page import="it.runitup.model.bean.Coupon" %>
 <%@ page import="it.runitup.model.bean.TipoScontoCoupon" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
@@ -16,6 +17,10 @@
     @SuppressWarnings("unchecked")
     List<Coupon> couponHome = (List<Coupon>) request.getAttribute("couponHome");
     
+    // Recupero dell'utente loggato
+    Utente utenteLoggato = (Utente) session.getAttribute("utenteLoggato");
+    boolean isLoggato = (utenteLoggato != null);
+
     // Formattatore per l'eventuale data di scadenza dei coupon
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 %>
@@ -47,9 +52,14 @@
         <section class="hero-section">
             <div class="hero-overlay"></div>
             <div class="hero-content">
-                <h1 class="hero-title">Supera i tuoi limiti.</h1>
+                <%-- Se l'utente è loggato e ha un nome, mostra un messaggio di benvenuto --%>
+                <% if (isLoggato && utenteLoggato.getNome() != null && !utenteLoggato.getNome().isEmpty()) { %>
+                    <h1 class="hero-title">Supera i tuoi limiti, ${utenteLoggato.getNome()}!</h1>
+                <% } else { %>
+                    <h1 class="hero-title">Supera i tuoi limiti.</h1>
+                <% } %>
                 <p class="hero-subtitle">Scopri la nuova collezione running e trova il ritmo perfetto per la tua corsa.</p>
-                <a href="${pageContext.request.contextPath}/catalogo" class="btn-primary hero-btn">Esplora la Collezione</a>
+                <a href="${pageContext.request.contextPath}/catalogo" class="btn-primary hero-btn bounce-element">Esplora la Collezione</a>
             </div>
         </section>
 

@@ -440,6 +440,24 @@
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+.bounce-element {
+  /* Imposta l'animazione: nome, durata, ripetizione infinita */
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px); /* L'elemento salta verso l'alto */
+  }
+  60% {
+    transform: translateY(-3px); /* Rimbalzo più piccolo */
+  }
+}
+
 /* ==========================================================================
    STILE BOTTONI (Ancore e Button reali)
    ========================================================================== */
@@ -478,5 +496,5 @@
     padding: 14px 45px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    background-color: rgba(12, 129, 207, 0.6); /* Colore semi-trasparente per un effetto più leggero nell'hero section */
+    background-color: #0c5acfbc; /* Colore semi-trasparente per un effetto più leggero nell'hero section */
 }

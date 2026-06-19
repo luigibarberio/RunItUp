@@ -62,8 +62,8 @@ public class OrderOwnerFilter implements Filter {
                 return;
             }
 
-            // 2. Controllo IDOR: L'utente loggato è il proprietario?
-            if (ordine.getUtente().getIdUtente() != utenteLoggato.getIdUtente()) {
+            // 2. Controllo IDOR: L'utente loggato è il proprietario o è un admin?
+            if (!utenteLoggato.isAdmin() && ordine.getUtente().getIdUtente() != utenteLoggato.getIdUtente()) {
                 httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Accesso negato: non sei il proprietario di questo documento.");
                 return;
             }

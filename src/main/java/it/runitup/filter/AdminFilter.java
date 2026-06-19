@@ -33,6 +33,18 @@ public class AdminFilter implements Filter {
 
         // Hard Check: L'utente deve esistere e il metodo isAdmin() deve restituire TRUE
         if (utente != null && utente.isAdmin()) {
+
+            String path = httpRequest.getServletPath();
+
+            // Logica centralizzata: assegna l'attributo basandosi sul path
+            String activePage = "prodotti"; // default
+            if (path.contains("/admin/ordini")) {
+                activePage = "ordini";
+            }
+
+            // Passa l'attributo a TUTTE le pagine admin automaticamente
+            httpRequest.setAttribute("activePage", activePage);
+
             // Autorizzazione confermata, procedi verso la risorsa admin richiesta
             chain.doFilter(request, response);
         } else {
@@ -51,7 +63,7 @@ public class AdminFilter implements Filter {
                 newSession.setAttribute("redirectDopoLogin", urlDiDestinazione);
 
                 // Reindirizziamo l'utente alla pagina di login
-                httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
+                httpResponse.sendRedirect(httpRequest.getContextPath() + "/login?redirected=true");
             }else {
                 // L'utente è loggato ma non ha i permessi admin, quindi restituiamo un errore 403
                 httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Accesso negato: area riservata agli amministratori.");

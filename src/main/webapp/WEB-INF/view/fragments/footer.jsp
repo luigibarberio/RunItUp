@@ -6,7 +6,7 @@
         <%-- COLONNA 1: BRAND, LOGO E SOCIAL --%>
         <div class="footer-column brand-column">
             <a href="${pageContext.request.contextPath}/" class="footer-logo">
-                <img src="${pageContext.request.contextPath}/images/common/logo-runitup.svg" alt="RunItUp Logo" class="footer-logo-img">
+                <img src="${pageContext.request.contextPath}/images/common/icons/logo-runitup.svg" alt="RunItUp Logo" class="footer-logo-img">
             </a>
             <p class="footer-brand-description">
                 La tua corsa inizia da qui. Le migliori scarpe da running selezionate dai professionisti per superare ogni tuo limite.

@@ -10,6 +10,13 @@
     // Controllo dello stato di login
     Utente utenteLoggato = (Utente) session.getAttribute("utenteLoggato");
     boolean isLoggato = (utenteLoggato != null);
+
+    // Controllo se l'utente è un admin
+    boolean isAdmin = false;
+    if (isLoggato) {
+        isAdmin = utenteLoggato.isAdmin();
+    }
+
 %>
 
 <header class="main-header">
@@ -17,7 +24,7 @@
     <div class="header-top">
         <%-- SINISTRA: Logo --%>
         <a href="${pageContext.request.contextPath}/" class="logo">
-            <img src="${pageContext.request.contextPath}/images/common/logo-runitup.svg" alt="RunItUp Logo" class="logo-img">
+            <img src="${pageContext.request.contextPath}/images/common/icons/logo-runitup.svg" alt="RunItUp Logo" class="logo-img">
         </a>
 
         <%-- CENTRO: Ricerca Avanzata AJAX (Solo Desktop) --%>
@@ -26,7 +33,7 @@
                 <form action="${pageContext.request.contextPath}/catalogo" method="GET" id="searchForm">
                     <input type="text" name="q" id="desktopSearchInput" placeholder="Cerca scarpe, brand, categorie..." autocomplete="off">
                     <button type="submit" class="search-btn">
-                        <img src="${pageContext.request.contextPath}/images/common/search.svg" alt="Cerca" class="icon-svg">
+                        <img src="${pageContext.request.contextPath}/images/common/icons/search.svg" alt="Cerca" class="icon-svg">
                     </button>
                 </form>
             </div>
@@ -37,19 +44,27 @@
         <div class="header-actions">
             <%-- Icona Ricerca Mobile (Attiva overlay) --%>
             <button class="mobile-search-trigger search-btn mobile-only" id="mobileSearchOpenBtn" aria-label="Apri ricerca">
-                <img src="${pageContext.request.contextPath}/images/common/search.svg" alt="Cerca" class="icon-svg">
+                <img src="${pageContext.request.contextPath}/images/common/icons/search.svg" alt="Cerca" class="icon-svg">
             </button>
+
+            <%-- Aggiunta del pulsante admin solo se l'utente è loggato e ha i privilegi di admin --%>
+            <% if (isLoggato && isAdmin) { %>
+                <a href="${pageContext.request.contextPath}/admin" class="action-link admin-link" aria-label="Pannello Admin">
+                    <img src="${pageContext.request.contextPath}/images/common/icons/admin-icon.svg" alt="Admin" class="icon-svg">
+                    <span class="action-text">Admin</span>
+                </a>
+            <% } %>
 
             <%-- Wrapper Profilo con Dropdown (Desktop) --%>
             <div class="profile-dropdown-wrapper desktop-only">
                 <% if (!isLoggato) { %>
                     <a href="${pageContext.request.contextPath}/login" class="action-link text-link">
-                        <img src="${pageContext.request.contextPath}/images/common/user.svg" alt="Accedi" class="icon-svg">
+                        <img src="${pageContext.request.contextPath}/images/common/icons/user.svg" alt="Accedi" class="icon-svg">
                         <span class="action-text">Accedi</span>
                     </a>
                 <% } else { %>
                     <div class="action-link text-link content-hover">
-                        <img src="${pageContext.request.contextPath}/images/common/user.svg" alt="Profilo" class="icon-svg">
+                        <img src="${pageContext.request.contextPath}/images/common/icons/user.svg" alt="Profilo" class="icon-svg">
                         <span class="action-text">Profilo</span>
                         <%-- Dropdown Desktop --%>
                         <div class="desktop-dropdown-menu">
@@ -63,7 +78,7 @@
 
             <%-- Icona Carrello --%>
             <a href="${pageContext.request.contextPath}/carrello" class="action-link cart-icon-wrapper" aria-label="Carrello">
-                <img src="${pageContext.request.contextPath}/images/common/cart.svg" alt="Carrello" class="icon-svg cart-icon">
+                <img src="${pageContext.request.contextPath}/images/common/icons/cart.svg" alt="Carrello" class="icon-svg cart-icon">
                 
                 <%-- Leggiamo il numero dalla sessione. Se è > 0, lo mostriamo, altrimenti nascondiamo il badge --%>
                 <% 
@@ -77,7 +92,7 @@
 
             <%-- Trigger Hamburger (Solo Mobile - Estrema Destra) --%>
             <button class="mobile-menu-toggle mobile-only" id="mobileMenuOpenBtn" aria-label="Apri menu">
-                <img src="${pageContext.request.contextPath}/images/common/menu.svg" alt="Menu" class="icon-svg">
+                <img src="${pageContext.request.contextPath}/images/common/icons/menu.svg" alt="Menu" class="icon-svg">
             </button>
         </div>
     </div>
@@ -119,7 +134,7 @@
         <form action="${pageContext.request.contextPath}/catalogo" method="GET">
             <input type="text" name="q" id="mobileSearchInput" placeholder="Cerca prodotti..." autocomplete="off">
             <button type="submit" class="search-btn">
-                <img src="${pageContext.request.contextPath}/images/common/search.svg" alt="Cerca" class="icon-svg">
+                <img src="${pageContext.request.contextPath}/images/common/icons/search.svg" alt="Cerca" class="icon-svg">
             </button>
         </form>
         <button class="mobile-search-close" id="mobileSearchCloseBtn">Annulla</button>
@@ -133,7 +148,7 @@
     <div class="drawer-header">
         <span class="drawer-title">Menu</span>
         <button class="drawer-close-btn" id="mobileMenuCloseBtn" aria-label="Chiudi menu">
-            <img src="${pageContext.request.contextPath}/images/common/close.svg" alt="Chiudi" class="icon-svg">
+            <img src="${pageContext.request.contextPath}/images/common/icons/close.svg" alt="Chiudi" class="icon-svg">
         </button>
     </div>
 
@@ -152,6 +167,10 @@
                     <% } %>
                     <a href="${pageContext.request.contextPath}/area_personale" class="drawer-link">Il mio Profilo</a>
                     <a href="${pageContext.request.contextPath}/ordini" class="drawer-link">I miei Ordini</a>
+                    <%-- Se l'utente è un admin, mostriamo il link all'area admin --%>
+                    <% if (isAdmin) { %>
+                        <a href="${pageContext.request.contextPath}/admin" class="drawer-link text-warning">Area Admin</a>
+                    <% } %>
                     <a href="${pageContext.request.contextPath}/logout" class="drawer-link text-danger">Logout</a>
                 </div>
             <% } %>

@@ -316,6 +316,7 @@
     }
     .drawer-highlight-finder { color: var(--conferme) !important; }
     .text-danger { color: var(--promozioni) !important; }
+    .text-warning { color: var(--colore-secondario) !important; }
 
     /* Box Profilo nel Drawer */
     .drawer-profile-box { background: var(--sfondo-principale); padding: 16px; border-radius: 8px; border: 1px solid var(--sfondo-alternativo); }

@@ -43,6 +43,64 @@ public class BrandDAO {
         return brands;
     }
 
-    // Qui in futuro potremo aggiungere i metodi CRUD per l'Area Admin (create, update, delete brand)
+    // Metodo per recuperare un brand specifico dal database in base al nome
+    public Brand doRetrieveByNome(String nomeBrand) throws SQLException {
+        Brand brand = null;
+        
+        String query = "SELECT id_brand, nome_brand FROM brand WHERE LOWER(nome_brand) = LOWER(?)";
+        
+        Connection con = ConnectionPool.getConnection();
+        
+        try {
+            try (PreparedStatement ps = con.prepareStatement(query)) {
+                ps.setString(1, nomeBrand);
+                
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        brand = new Brand();
+                        brand.setIdBrand(rs.getInt("id_brand"));
+                        brand.setNomeBrand(rs.getString("nome_brand"));
+                    }
+                }
+            }
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
+        
+        return brand;
+    }
+
+    // Metodo per inserire un nuovo brand nel database (restituisce l'id del brand appena inserito)
+    public int doSave(Brand brand) throws SQLException {
+        String query = "INSERT INTO brand (nome_brand) VALUES (?)";
+        
+        Connection con = ConnectionPool.getConnection();
+
+        try {
+            try (PreparedStatement ps = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, brand.getNomeBrand());
+                
+                int affectedRows = ps.executeUpdate();
+                
+                if (affectedRows == 0) {
+                    throw new SQLException("Creazione brand fallita, nessuna riga interessata.");
+                }
+                
+                try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1);
+                    } else {
+                        throw new SQLException("Creazione brand fallita, nessun ID ottenuto.");
+                    }
+                }
+            }
+        } finally {
+            if (con != null) {
+                ConnectionPool.releaseConnection(con);
+            }
+        }
+    }
 
 }

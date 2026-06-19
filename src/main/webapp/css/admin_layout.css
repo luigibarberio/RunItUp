@@ -1,0 +1,179 @@
+/* ==========================================================================
+   RUNITUP - STILI BASE AREA ADMIN (admin_layout.css)
+   ========================================================================== */
+
+/* * 1. IL CONTENITORE PADRE (Flexbox Layout)
+ * Avvolgerà la sidebar e il contenuto principale nelle pagine admin.
+ */
+.admin-layout-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--sfondo-alternativo); /* Grigio chiaro per far risaltare le card bianche */
+}
+
+/* * 2. LA SIDEBAR (Fissa a sinistra)
+ */
+.admin-sidebar {
+    width: 260px;
+    background-color: #FFFFFF;
+    border-right: 1px solid #E2E8F0;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0; /* Impedisce alla sidebar di restringersi se il contenuto a destra è troppo largo */
+    z-index: 100;
+    border-radius: 0 24px 24px 0; /* Angoli arrotondati solo in basso a destra e in alto a destra */
+}
+
+.sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--testo-primario);
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.5px;
+}
+
+.sidebar-logo img {
+    height: 32px;
+}
+
+/* Navigazione Interna */
+.sidebar-nav {
+    padding: 20px 0;
+    flex-grow: 1;
+}
+
+.sidebar-nav-title {
+    padding: 0 20px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94A3B8; /* Grigio tenue */
+    font-weight: 700;
+    margin-bottom: 10px;
+    margin-top: 25px;
+}
+
+.sidebar-nav-title:first-child {
+    margin-top: 0;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-list li {
+    margin-bottom: 4px;
+    padding: 0 12px;
+}
+
+/* Stile dei Link / Bottoni */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--testo-secondario);
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    background-color: #F1F5F9; /* Grigio azzurrato leggero */
+    color: var(--colore-primario);
+}
+
+/* STATO ATTIVO: Quando l'admin si trova in quella pagina */
+.nav-link.active {
+    background-color: var(--colore-primario);
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(12, 89, 207, 0.3);
+    position: relative; /* Necessario per l'effetto grafico */
+}
+
+/* Gestione Icone */
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover .nav-icon {
+    opacity: 1;
+}
+
+/* TRUCCO CSS: Se il bottone diventa blu, l'icona nera/grigia deve diventare bianca */
+.nav-link.active .nav-icon {
+    opacity: 1;
+    filter: brightness(0) invert(1);
+}
+
+/* Bottone Esci (Rosso) */
+.logout-link {
+    color: var(--promozioni);
+}
+.logout-link:hover {
+    background-color: #FEF2F2;
+    color: var(--promozioni);
+}
+
+/* * 3. AREA CONTENUTO PRINCIPALE (A destra della sidebar)
+ */
+.admin-main-content {
+    flex-grow: 1;
+    padding: 40px;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   MEDIA QUERIES (Responsive Checklist Esame)
+   ========================================================================== */
+@media (max-width: 991px) {
+    /* Su schermi piccoli, la sidebar smette di stare a sinistra e va in cima */
+    .admin-layout-wrapper {
+        flex-direction: column;
+    }
+    
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid #E2E8F0;
+    }
+    
+    .sidebar-header {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .nav-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .nav-list li {
+        margin-bottom: 8px;
+    }
+    
+    .admin-main-content {
+        padding: 20px;
+    }
+}

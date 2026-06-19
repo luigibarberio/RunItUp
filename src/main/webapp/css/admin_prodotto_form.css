@@ -1,0 +1,151 @@
+/* ==========================================================================
+   STILE FORM PRODOTTO (admin_prodotto_form.css)
+   ========================================================================== */
+
+.admin-form-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.admin-form-panel {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 40px;
+    border: 1px solid var(--sfondo-alternativo);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.form-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--sfondo-alternativo);
+}
+
+.form-title {
+    font-size: 1.8rem;
+    color: var(--testo-principale);
+    font-weight: 800;
+}
+
+/* Griglia per affiancare i campi */
+.form-row-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Stile Input (Coerente con formUtils.js) */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--testo-secondario);
+    margin-bottom: 8px;
+}
+
+.form-control {
+    padding: 12px 15px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--colore-primario);
+    box-shadow: 0 0 0 3px rgba(12, 89, 207, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Box per i file (Stile Dashed Moderno) */
+.file-upload-box {
+    border: 2px dashed #CBD5E1;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    background-color: #F8FAFC;
+    transition: border-color 0.3s;
+}
+
+.file-upload-box:hover {
+    border-color: var(--colore-primario);
+}
+
+.file-upload-box input[type="file"] {
+    margin-top: 10px;
+}
+
+/* Classi Errore JS */
+.error-text {
+    color: var(--promozioni);
+    font-size: 0.8rem;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.form-control.error {
+    border-color: var(--promozioni);
+    background-color: #FEF2F2;
+}
+
+/* Bottoni Footer */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--sfondo-alternativo);
+}
+
+.btn-secondary {
+    padding: 12px 24px;
+    border-radius: 8px;
+    background-color: #E2E8F0;
+    color: #475569;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #CBD5E1;
+}
+
+.btn-primary {
+    border-radius: 8px;
+    border: none;
+    padding: 12px 24px;
+    background-color: var(--colore-primario);
+    color: #FFFFFF;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: var(--colore-secondario);
+}
+
+/* Media Query Mobile */
+@media (max-width: 768px) {
+    .form-row-2col {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    .admin-form-panel {
+        padding: 20px;
+    }
+}

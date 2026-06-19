@@ -20,7 +20,7 @@
     align-items: center;
     justify-content: center;
     background-color: #1E293B; /* Fallback scuro ed elegante */
-    background-image: url('../images/common/hero-bg.jpg');
+    background-image: url('../images/home/hero-bg.jpg');
     background-attachment: fixed;
     background-size: cover;
     background-position: center;

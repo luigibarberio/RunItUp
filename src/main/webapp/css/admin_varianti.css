@@ -1,0 +1,286 @@
+/* ==========================================================================
+   RUNITUP - STILE DASHBOARD VARIANTI (admin_varianti.css)
+   ========================================================================== */
+
+/* --- 1. ZONA MASTER (Header Prodotto) --- */
+.variants-header {
+    background-color: #FFFFFF;
+    border: 1px solid var(--sfondo-alternativo);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.product-context {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.master-img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    background-color: var(--sfondo-principale);
+    border-radius: 8px;
+    padding: 5px;
+    border: 1px solid #E2E8F0;
+}
+
+.back-link {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: #64748B;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 8px;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: var(--colore-primario);
+}
+
+.master-title {
+    font-size: 1.6rem;
+    color: var(--testo-principale);
+    font-weight: 800;
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.master-subtitle {
+    font-size: 0.95rem;
+    color: #64748B;
+    font-weight: 500;
+}
+
+
+/* --- 2. ZONA AGGIUNTA RAPIDA (Form Orizzontale) --- */
+.add-variant-bar {
+    background-color: #F8FAFC;
+    border: 1px solid #CBD5E1;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 30px;
+}
+
+.add-variant-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.form-group-inline {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 120px;
+}
+
+.form-group-inline label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--testo-secondario);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.form-group-inline input {
+    padding: 10px 12px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group-inline input:focus {
+    outline: none;
+    border-color: var(--colore-primario);
+    box-shadow: 0 0 0 3px rgba(12, 89, 207, 0.1);
+}
+
+.btn-add {
+    padding: 11px 24px;
+    border-radius: 6px;
+    font-weight: 700;
+    white-space: nowrap;
+    height: 42px; /* Allinea all'altezza degli input */
+}
+
+
+/* --- 3. ZONA GRIGLIA DETAIL (Le Card) --- */
+.variants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.variant-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.variant-card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+}
+
+/* Modalità Lettura vs Modifica */
+.variant-view-mode, 
+.variant-edit-mode {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Stili Testo Lettura */
+.variant-data {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.v-badge {
+    font-size: 0.85rem;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.v-colore {
+    font-weight: 700;
+    color: var(--testo-principale);
+}
+
+.v-taglia {
+    font-size: 1.1rem;
+    color: var(--colore-primario);
+}
+
+.v-price {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--testo-principale);
+}
+
+.v-stock {
+    font-size: 0.9rem;
+    color: var(--conferme);
+    background-color: #F0FDF4;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    align-self: flex-start;
+}
+
+/* Form Modifica Inline (Stili Input ristretti) */
+.edit-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    flex-grow: 1;
+    margin-right: 15px;
+}
+
+.edit-fields input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #CBD5E1;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* Colonna Bottoni Azione */
+.variant-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    border-left: 1px solid #E2E8F0;
+    padding-left: 15px;
+}
+
+.btn-icon {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-icon:hover {
+    background-color: #F1F5F9;
+}
+
+.btn-icon:active {
+    transform: scale(0.9);
+}
+
+.btn-delete:hover {
+    background-color: #FEF2F2;
+}
+
+/* Stato Vuoto */
+.empty-variants {
+    grid-column: 1 / -1; /* Occupa tutta la riga disponibile */
+    text-align: center;
+    padding: 60px 20px;
+    background-color: #F8FAFC;
+    border: 2px dashed #CBD5E1;
+    border-radius: 12px;
+    color: #64748B;
+    font-weight: 500;
+}
+
+/* Animazioni Aggiunta/Rimozione (JS le attiverà) */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.new-variant-anim {
+    animation: slideDown 0.4s ease forwards;
+}
+
+.fade-out {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* --- 4. RESPONSIVE DESIGN --- */
+@media (max-width: 768px) {
+    .product-context {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .add-variant-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-add {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .edit-fields {
+        grid-template-columns: 1fr; /* Incolonna gli input di modifica su mobile */
+    }
+}

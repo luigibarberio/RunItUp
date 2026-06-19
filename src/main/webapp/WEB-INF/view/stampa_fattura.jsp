@@ -34,7 +34,7 @@
         <!-- HEADER: Dati Aziendali e Dati Documento -->
         <header class="fattura-header">
             <div class="company-info">
-                <img src="${pageContext.request.contextPath}/images/common/logo-runitup.svg" alt="RunItUp Logo" class="company-logo">
+                <img src="${pageContext.request.contextPath}/images/common/icons/logo-runitup.svg" alt="RunItUp Logo" class="company-logo">
                 <h1 class="company-name">RunTime SRL</h1>
                 <p>Via Giovanni Paolo II, 32</p>
                 <p>84084 Fisciano (SA), Italia</p>

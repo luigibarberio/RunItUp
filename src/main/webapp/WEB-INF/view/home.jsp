@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/prodotto_card.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css">
-    <link rel="preload" href="${pageContext.request.contextPath}/images/hero-bg.jpg" as="image"> <!-- Preload dell'immagine hero per migliorare l'esperienza utente -->
+    <link rel="preload" href="${pageContext.request.contextPath}/images/home/hero-bg.jpg" as="image"> <!-- Preload dell'immagine hero per migliorare l'esperienza utente -->
 </head>
 <body>
 
@@ -67,15 +67,15 @@
         <section class="category-section container">
             <div class="category-grid">
                 <a href="${pageContext.request.contextPath}/catalogo?genere=UOMO" class="category-card">
-                    <img src="${pageContext.request.contextPath}/images/common/home-uomo.jpg" alt="Collezione Uomo" loading="lazy">
+                    <img src="${pageContext.request.contextPath}/images/home/home-uomo.jpg" alt="Collezione Uomo" loading="lazy">
                     <span class="category-label">Uomo</span>
                 </a>
                 <a href="${pageContext.request.contextPath}/catalogo?genere=DONNA" class="category-card">
-                    <img src="${pageContext.request.contextPath}/images/common/home-donna.jpg" alt="Collezione Donna" loading="lazy">
+                    <img src="${pageContext.request.contextPath}/images/home/home-donna.jpg" alt="Collezione Donna" loading="lazy">
                     <span class="category-label">Donna</span>
                 </a>
                 <a href="${pageContext.request.contextPath}/catalogo?genere=UNISEX" class="category-card">
-                    <img src="${pageContext.request.contextPath}/images/common/home-unisex.jpg" alt="Collezione Unisex" loading="lazy">
+                    <img src="${pageContext.request.contextPath}/images/home/home-unisex.jpg" alt="Collezione Unisex" loading="lazy">
                     <span class="category-label">Per Tutti</span>
                 </a>
             </div>
@@ -141,7 +141,7 @@
             <div class="bento-wrapper">
                 
                 <div class="bento-cell bento-image-cell">
-                    <img src="${pageContext.request.contextPath}/images/common/shoefinder-banner.jpg" alt="Trova la scarpa perfetta" loading="lazy">
+                    <img src="${pageContext.request.contextPath}/images/home/shoefinder-banner.jpg" alt="Trova la scarpa perfetta" loading="lazy">
                 </div>
 
                 <div class="bento-cell bento-text-cell">

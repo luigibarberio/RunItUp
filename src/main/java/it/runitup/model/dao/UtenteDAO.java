@@ -197,4 +197,27 @@ public class UtenteDAO {
         }
     }    
 
+    // Metodo per recuperare tutti gli utenti (utile per la dashboard admin)
+    public java.util.List<Utente> doRetrieveAll() throws SQLException {
+        java.util.List<Utente> utenti = new java.util.ArrayList<>();
+        String query = "SELECT id_utente, nome, cognome, email FROM utente ORDER BY cognome ASC, nome ASC";
+        
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+             
+            while (rs.next()) {
+                Utente u = new Utente();
+                u.setIdUtente(rs.getInt("id_utente"));
+                u.setNome(rs.getString("nome"));
+                u.setCognome(rs.getString("cognome"));
+                u.setEmail(rs.getString("email"));
+                utenti.add(u);
+            }
+        } finally {
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+        return utenti;
+    }
+
 }

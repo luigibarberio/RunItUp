@@ -325,4 +325,82 @@ public class OrdineDAO {
         return ord;
     }
 
+    // Recupera tutti gli ordini filtrati per data e/o cliente, utile per la dashboard admin
+    public List<Ordine> doRetrieveAllAdmin(java.time.LocalDate dal, java.time.LocalDate al, Integer idCliente) throws SQLException {
+        List<Ordine> ordini = new ArrayList<>();
+        
+        // Costruiamo la query dinamicamente. La JOIN ci serve per avere subito i dati dell'utente.
+        StringBuilder query = new StringBuilder(
+            "SELECT o.*, u.nome, u.cognome, u.email " +
+            "FROM ordine o " +
+            "JOIN utente u ON o.id_utente = u.id_utente " +
+            "WHERE 1=1 " // Trucco per accodare gli AND dinamicamente
+        );
+
+        if (dal != null) query.append("AND o.data_ordine >= ? ");
+        if (al != null) query.append("AND o.data_ordine <= ? ");
+        if (idCliente != null) query.append("AND o.id_utente = ? ");
+
+        query.append("ORDER BY o.data_ordine DESC"); // I più recenti in alto
+
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query.toString())) {
+            
+            int paramIndex = 1;
+            
+            if (dal != null) {
+                // Convertiamo LocalDate in Timestamp (Inizio della giornata: 00:00:00)
+                ps.setTimestamp(paramIndex++, java.sql.Timestamp.valueOf(dal.atStartOfDay()));
+            }
+            if (al != null) {
+                // Convertiamo LocalDate in Timestamp (Fine della giornata: 23:59:59)
+                ps.setTimestamp(paramIndex++, java.sql.Timestamp.valueOf(al.atTime(23, 59, 59)));
+            }
+            if (idCliente != null) {
+                ps.setInt(paramIndex++, idCliente);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Ordine ord = new Ordine();
+                    ord.setIdOrdine(rs.getInt("id_ordine"));
+                    
+                    // Popoliamo i dati dell'utente aggregati dalla JOIN
+                    Utente u = new Utente();
+                    u.setIdUtente(rs.getInt("id_utente"));
+                    u.setNome(rs.getString("nome"));
+                    u.setCognome(rs.getString("cognome"));
+                    u.setEmail(rs.getString("email"));
+                    ord.setUtente(u);
+
+                    // Conversione Timestamp in LocalDateTime per data_ordine
+                    java.sql.Timestamp ts = rs.getTimestamp("data_ordine");
+                    if (ts != null) {
+                        ord.setDataOrdine(ts.toInstant().atZone(java.time.ZoneId.of("Europe/Rome")).toLocalDateTime());
+                    }
+
+                    // Totali
+                    ord.setTotaleImponibile(rs.getBigDecimal("totale_imponibile"));
+                    ord.setTotaleIva(rs.getBigDecimal("totale_iva"));
+                    ord.setTotalePagato(rs.getBigDecimal("totale_pagato"));
+                    ord.setCostoSpedizione(rs.getBigDecimal("costo_spedizione"));
+                    
+                    // Dati Spedizione e Stato
+                    ord.setNome_e_cognome_destinatario(rs.getString("nome_e_cognome_destinatario"));
+                    ord.setIndirizzoSpedizione(rs.getString("indirizzo_spedizione"));
+                    ord.setCitta(rs.getString("citta"));
+                    ord.setCap(rs.getString("cap"));
+                    ord.setMetodoPagamento(rs.getString("metodo_pagamento"));
+                    ord.setStato(it.runitup.model.bean.StatoOrdine.valueOf(rs.getString("stato")));
+
+                    ordini.add(ord);
+                }
+            }
+        } finally {
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+        
+        return ordini;
+    }
+
 }

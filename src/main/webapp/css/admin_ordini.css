@@ -1,0 +1,279 @@
+/* ==========================================================================
+   RUNITUP - STILE GESTIONE ORDINI ADMIN (admin_ordini.css)
+   ========================================================================== */
+
+/* --- 1. INTESTAZIONE PAGINA --- */
+.admin-page-header {
+    margin-bottom: 24px;
+}
+
+.admin-page-title {
+    font-size: 2.2rem;
+    color: var(--testo-principale);
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.admin-page-subtitle {
+    color: #64748B;
+    font-size: 1rem;
+}
+
+/* --- 2. BARRA DEI FILTRI (Filter Card) --- */
+.admin-filter-bar-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.admin-filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end; /* Allinea i bottoni alla base degli input */
+    gap: 20px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 150px;
+}
+
+/* Il campo email richiede più spazio visivo */
+.filter-group-large {
+    flex: 2;
+    min-width: 250px;
+}
+
+.filter-group label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--testo-secondario);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-input {
+    padding: 12px 16px;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    background-color: #F8FAFC;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: var(--colore-primario);
+    background-color: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(12, 89, 207, 0.1);
+}
+
+.filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto; /* Spinge i bottoni a destra se c'è spazio */
+}
+
+.btn-reset {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64748B;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.btn-reset:hover {
+    color: var(--promozioni);
+    text-decoration: underline;
+}
+
+.btn-filter {
+    padding: 12px 24px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+
+/* --- 3. GRIGLIA ORDINI E CARD (AOC = Admin Order Card) --- */
+.admin-orders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+}
+
+.admin-order-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.admin-order-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Card Header */
+.aoc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background-color: #F8FAFC;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.aoc-id-date {
+    display: flex;
+    flex-direction: column;
+}
+
+.aoc-id {
+    font-weight: 800;
+    color: var(--testo-principale);
+    font-size: 1.1rem;
+}
+
+.aoc-date {
+    font-size: 0.85rem;
+    color: #64748B;
+}
+
+/* Stili Badge Stato Ordine (Riciclati e migliorati) */
+.aoc-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.badge-in_lavorazione { background-color: #FEF3C7; color: #B45309; }
+.badge-spedito { background-color: #DBEAFE; color: #1D4ED8; }
+.badge-consegnato { background-color: #D1FAE5; color: #047857; }
+.badge-annullato { background-color: #FEE2E2; color: #B91C1C; }
+
+/* Card Body */
+.aoc-body {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.aoc-client-info {
+    background-color: #F1F5F9;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: var(--testo-secondario);
+}
+
+.aoc-email {
+    font-size: 0.85rem;
+    color: var(--colore-primario);
+    word-break: break-all;
+}
+
+.aoc-financials {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.aoc-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: var(--testo-secondario);
+}
+
+.aoc-total {
+    font-size: 1.2rem;
+    color: var(--testo-principale);
+}
+
+/* Card Footer (Azioni) */
+.aoc-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #E2E8F0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #FFFFFF;
+}
+
+.btn-view-details {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--colore-primario);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.btn-view-details:hover {
+    color: var(--colore-secondario);
+    text-decoration: underline;
+}
+
+.btn-download-pdf {
+    font-size: 1.4rem;
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    line-height: 1;
+    background-color: #F1F5F9;
+}
+
+.btn-download-pdf:hover {
+    background-color: #E2E8F0;
+}
+
+/* --- 4. STATO VUOTO (Empty State) --- */
+.empty-state-box {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: #FFFFFF;
+    border: 2px dashed #CBD5E1;
+    border-radius: 12px;
+    color: #64748B;
+}
+
+.empty-state-box p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+/* --- 5. RESPONSIVE DESIGN --- */
+@media (max-width: 768px) {
+    .admin-filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-actions {
+        margin-left: 0;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .btn-filter {
+        width: 100%;
+        text-align: center;
+    }
+}

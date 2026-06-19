@@ -129,4 +129,100 @@ public class VarianteDAO {
         return vDto;
     }
 
+
+    // =========================================================================
+    // METODI CRUD PER L'AREA ADMIN (AJAX/FETCH)
+    // =========================================================================
+
+    /**
+     * Recupera tutte le varianti di uno specifico prodotto (per la tabella Admin).
+     */
+    public java.util.List<VarianteProdotto> getVariantiByProdotto(int idProdotto) throws SQLException {
+        java.util.List<VarianteProdotto> list = new java.util.ArrayList<>();
+        String query = "SELECT id_variante, id_prodotto, colore, taglia, prezzo, quantita_magazzino " +
+                       "FROM variante_prodotto WHERE id_prodotto = ? ORDER BY colore, taglia";
+                       
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, idProdotto);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    VarianteProdotto v = new VarianteProdotto();
+                    v.setIdVariante(rs.getInt("id_variante"));
+                    
+                    // Creiamo un Prodotto "fittizio" con solo l'ID per mantenere il riferimento
+                    Prodotto p = new Prodotto();
+                    p.setIdProdotto(rs.getInt("id_prodotto"));
+                    v.setProdotto(p);
+                    
+                    v.setColore(rs.getString("colore"));
+                    v.setTaglia(rs.getString("taglia"));
+                    v.setPrezzo(rs.getBigDecimal("prezzo"));
+                    v.setQuantitaMagazzino(rs.getInt("quantita_magazzino"));
+                    
+                    list.add(v);
+                }
+            }
+        } finally {
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+        return list;
+    }
+
+    /**
+     * Inserisce una nuova variante e restituisce l'ID autogenerato.
+     */
+    public int insertVariante(VarianteProdotto v) throws SQLException {
+        String query = "INSERT INTO variante_prodotto (id_prodotto, colore, taglia, prezzo, quantita_magazzino) VALUES (?, ?, ?, ?, ?)";
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, v.getProdotto().getIdProdotto());
+            ps.setString(2, v.getColore());
+            ps.setString(3, v.getTaglia());
+            ps.setBigDecimal(4, v.getPrezzo());
+            ps.setInt(5, v.getQuantitaMagazzino());
+            
+            if (ps.executeUpdate() > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) return rs.getInt(1);
+                }
+            }
+            return -1;
+        } finally {
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+    }
+
+    /**
+     * Aggiorna una variante esistente (Modifica Inline).
+     */
+    public boolean updateVariante(VarianteProdotto v) throws SQLException {
+        String query = "UPDATE variante_prodotto SET colore = ?, taglia = ?, prezzo = ?, quantita_magazzino = ? WHERE id_variante = ?";
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, v.getColore());
+            ps.setString(2, v.getTaglia());
+            ps.setBigDecimal(3, v.getPrezzo());
+            ps.setInt(4, v.getQuantitaMagazzino());
+            ps.setInt(5, v.getIdVariante());
+            
+            return ps.executeUpdate() > 0;
+        } finally {
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+    }
+
+    /**
+     * Elimina fisicamente una variante.
+     */
+    public boolean deleteVariante(int idVariante) throws SQLException {
+        String query = "DELETE FROM variante_prodotto WHERE id_variante = ?";
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, idVariante);
+            return ps.executeUpdate() > 0;
+        } finally {
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+    }
 }

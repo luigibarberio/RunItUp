@@ -451,4 +451,183 @@ public class ProdottoDAO {
         return suggerimenti;
     }
 
+
+    // =========================================================================
+    // METODI CRUD PER L'AREA ADMIN
+    // =========================================================================
+
+    /**
+     * Recupera un singolo Prodotto dal DB per precompilare il form di modifica.
+     */
+    public Prodotto getProdottoById(int idProdotto) throws SQLException {
+        Prodotto p = null;
+        String query = "SELECT p.*, b.nome_brand FROM prodotto p JOIN brand b ON p.id_brand = b.id_brand WHERE p.id_prodotto = ?";
+        
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, idProdotto);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    p = new Prodotto();
+                    p.setIdProdotto(rs.getInt("id_prodotto"));
+                    p.setNome(rs.getString("nome"));
+                    p.setDescrizione(rs.getString("descrizione"));
+                    
+                    Brand b = new Brand();
+                    b.setIdBrand(rs.getInt("id_brand"));
+                    b.setNomeBrand(rs.getString("nome_brand"));
+                    p.setBrand(b);
+                    
+                    p.setGenere(GenereScarpa.valueOf(rs.getString("genere")));
+                    p.setTipoTerreno(TipoTerreno.valueOf(rs.getString("tipo_terreno")));
+                    p.setTipoAppoggio(TipoAppoggio.valueOf(rs.getString("tipo_appoggio")));
+                    p.setTipoPasso(TipoPasso.valueOf(rs.getString("tipo_passo")));
+                    p.setInEvidenza(rs.getBoolean("in_evidenza"));
+                    p.setDataInserimento(rs.getTimestamp("data_inserimento"));
+                    p.setTotaleVendite(rs.getInt("totale_vendite"));
+                }
+            }
+        } finally {
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+        return p;
+    }
+
+    /**
+     * Inserisce un nuovo Prodotto base.
+     * Restituisce l'ID autogenerato (utile per rinominare le immagini e fare redirect).
+     */
+    public int insertProdotto(Prodotto p) throws SQLException {
+        String query = "INSERT INTO prodotto (nome, descrizione, id_brand, genere, tipo_terreno, tipo_appoggio, tipo_passo, in_evidenza) " +
+                       "VALUES (?, ?, ?, CAST(? AS genere_scarpa), CAST(? AS tipo_terreno), CAST(? AS tipo_appoggio), CAST(? AS tipo_passo), ?)";
+        
+        Connection con = ConnectionPool.getConnection();
+        // Richiediamo a JDBC di restituirci la chiave generata (il SERIAL id_prodotto)
+        try (PreparedStatement ps = con.prepareStatement(query, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, p.getNome());
+            ps.setString(2, p.getDescrizione());
+            ps.setInt(3, p.getBrand().getIdBrand());
+            ps.setString(4, p.getGenere().name());
+            ps.setString(5, p.getTipoTerreno().name());
+            ps.setString(6, p.getTipoAppoggio().name());
+            ps.setString(7, p.getTipoPasso().name());
+            ps.setBoolean(8, p.isInEvidenza());
+
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1); // Ritorna il nuovo ID
+                    }
+                }
+            }
+            return -1;
+        } finally {
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+    }
+
+    /**
+     * Aggiorna i dati di un prodotto esistente.
+     */
+    public boolean updateProdotto(Prodotto p) throws SQLException {
+        String query = "UPDATE prodotto SET nome = ?, descrizione = ?, id_brand = ?, " +
+                       "genere = CAST(? AS genere_scarpa), tipo_terreno = CAST(? AS tipo_terreno), " +
+                       "tipo_appoggio = CAST(? AS tipo_appoggio), tipo_passo = CAST(? AS tipo_passo), " +
+                       "in_evidenza = ? WHERE id_prodotto = ?";
+                       
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, p.getNome());
+            ps.setString(2, p.getDescrizione());
+            ps.setInt(3, p.getBrand().getIdBrand());
+            ps.setString(4, p.getGenere().name());
+            ps.setString(5, p.getTipoTerreno().name());
+            ps.setString(6, p.getTipoAppoggio().name());
+            ps.setString(7, p.getTipoPasso().name());
+            ps.setBoolean(8, p.isInEvidenza());
+            ps.setInt(9, p.getIdProdotto());
+
+            return ps.executeUpdate() > 0;
+        } finally {
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+    }
+
+    /**
+     * Elimina fisicamente un prodotto e (grazie al DB) elimina a cascata le sue varianti,
+     * settando a NULL il riferimento nello storico ordini.
+     */
+    public boolean deleteProdotto(int idProdotto) throws SQLException {
+        String query = "DELETE FROM prodotto WHERE id_prodotto = ?";
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, idProdotto);
+            return ps.executeUpdate() > 0;
+        } finally {
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+    }
+
+    /**
+     * Metodo dedicato per il pannello Admin.
+     * Utilizza una LEFT JOIN per recuperare TUTTI i prodotti (anche quelli orfani di varianti).
+     */
+    public List<ProdottoDTO> doRetrieveAllAdmin() throws SQLException {
+        List<ProdottoDTO> lista = new ArrayList<>();
+
+        // La LEFT JOIN è la chiave: prende sempre il prodotto, e se non ci sono varianti, MIN(v.prezzo) sarà NULL
+        String query = 
+            "SELECT p.*, b.nome_brand, " +
+            "       MIN(v.prezzo) AS prezzo_minimo " +
+            "FROM prodotto p " +
+            "JOIN brand b ON p.id_brand = b.id_brand " +
+            "LEFT JOIN variante_prodotto v ON p.id_prodotto = v.id_prodotto " +
+            "GROUP BY p.id_prodotto, p.nome, p.descrizione, p.id_brand, p.genere, " +
+            "         p.tipo_terreno, p.tipo_appoggio, p.tipo_passo, p.in_evidenza, " +
+            "         p.data_inserimento, p.totale_vendite, b.nome_brand " +
+            "ORDER BY p.id_prodotto DESC"; // I più recenti in alto
+
+        Connection con = ConnectionPool.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                ProdottoDTO dto = new ProdottoDTO();
+
+                // 1. Costruiamo il Bean Prodotto base
+                Prodotto p = new Prodotto();
+                p.setIdProdotto(rs.getInt("id_prodotto"));
+                p.setNome(rs.getString("nome"));
+                p.setDescrizione(rs.getString("descrizione"));
+
+                Brand b = new Brand();
+                b.setIdBrand(rs.getInt("id_brand"));
+                b.setNomeBrand(rs.getString("nome_brand"));
+                p.setBrand(b);
+
+                p.setGenere(GenereScarpa.valueOf(rs.getString("genere")));
+                p.setTipoTerreno(TipoTerreno.valueOf(rs.getString("tipo_terreno")));
+                p.setTipoAppoggio(TipoAppoggio.valueOf(rs.getString("tipo_appoggio")));
+                p.setTipoPasso(TipoPasso.valueOf(rs.getString("tipo_passo")));
+                p.setInEvidenza(rs.getBoolean("in_evidenza"));
+                p.setDataInserimento(rs.getTimestamp("data_inserimento"));
+                p.setTotaleVendite(rs.getInt("totale_vendite"));
+
+                dto.setProdotto(p);
+
+                // 2. Impostiamo il Prezzo Minimo (se NULL, il DTO accetta il null senza problemi)
+                dto.setPrezzoMinimo(rs.getBigDecimal("prezzo_minimo"));
+                
+                // NOTA: Non popoliamo taglieDisponibili e coloriDisponibili perché
+                // nella tabella Admin non ci interessano. Questo rende la query super ottimizzata!
+                
+                lista.add(dto);
+            }
+        } finally {
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+
+        return lista;
+    }
 }

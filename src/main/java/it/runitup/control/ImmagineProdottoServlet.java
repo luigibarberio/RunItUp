@@ -19,29 +19,33 @@ public class ImmagineProdottoServlet extends HttpServlet {
             throws ServletException, IOException {
         
         String idParam = request.getParameter("id");
+        // Se non viene passato l'indice, assumiamo che si voglia la prima immagine (indice 0)
+        String indexParam = request.getParameter("index");
+        String index = (indexParam != null && !indexParam.trim().isEmpty()) ? indexParam.trim() : "0";
         
         if (idParam == null || idParam.trim().isEmpty()) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID immagine mancante");
             return;
         }
 
-        // Costruiamo il path System-Agnostic basato sulla Home dell'utente
         String uploadRoot = System.getProperty("user.home") + File.separator + "runitup_media" + File.separator + "prodotti";
         
-        // Creiamo il riferimento al file esatto (es. prodotto_5_0.png)
-        File imageFile = new File(uploadRoot + File.separator + "prodotto_" + idParam + "_0" + ".png");
+        // Creiamo il riferimento al file richiesto (es. prodotto_5_1.png)
+        File imageFile = new File(uploadRoot + File.separator + "prodotto_" + idParam + "_" + index + ".png");
 
-        // Se il file non esiste sul disco, restituiamo un errore 404 (Not Found).
-        // Questo dirà al browser di usare l'attributo 'onerror' della JSP (il placeholder).
+        // Se l'immagine richiesta non esiste e l'indice è 1, proviamo a servire la primaria (indice 0)
+        if (!imageFile.exists() && "1".equals(index)) {
+            imageFile = new File(uploadRoot + File.separator + "prodotto_" + idParam + "_0.png");
+        }
+
+        // Se nemmeno la primaria esiste, allora diamo 404 (così la JSP usa il placeholder SVG)
         if (!imageFile.exists()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        // Indichiamo al browser che gli stiamo inviando un'immagine JPEG
-        response.setContentType("image/jpeg");
+        response.setContentType("image/png");
         
-        // Ottimizzazione Java 11: Files.copy copia l'intero file nello stream di risposta in modo iper-efficiente
         Files.copy(imageFile.toPath(), response.getOutputStream());
     }
 }

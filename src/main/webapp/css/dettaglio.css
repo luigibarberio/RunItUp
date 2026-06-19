@@ -18,22 +18,46 @@
    IMMAGINE
    ========================================= */
 .product-image {
+    position: relative;
     width: 100%;
+    aspect-ratio: 1 / 1; /* Mantiene l'aspetto quadrato */
     background-color: var(--sfondo-principale);
     border: 1px solid var(--sfondo-alternativo);
     border-radius: 8px;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .product-img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    aspect-ratio: 1 / 1;
+    height: 100%;
     object-fit: contain; /* Adatta l'immagine al contenitore senza tagliarla, mantenendo le proporzioni */
-    display: block;
     padding: 20px;
+    transition: opacity 0.4s ease-in-out, transform 0.3s ease;
+}
+
+/* =========================================
+   EFFETTO HOVER REVEAL (Doppia Immagine)
+   ========================================= */
+.primary-img {
+    z-index: 1;
+    opacity: 1;
+}
+
+.secondary-img {
+    z-index: 2;
+    opacity: 0; /* Invisibile di default */
+}
+
+/* Al passaggio del mouse sull'area dell'immagine, sveliamo la seconda */
+.product-image:hover .primary-img {
+    opacity: 0; 
+}
+
+.product-image:hover .secondary-img {
+    opacity: 1;
 }
 
 /* =========================================

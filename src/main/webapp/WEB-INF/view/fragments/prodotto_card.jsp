@@ -15,11 +15,19 @@
     
     <div class="card-image-wrapper">
         <a href="<%= linkDettaglio %>">
-            <img src="${pageContext.request.contextPath}/images/prodotti?id=<%= dto.getProdotto().getIdProdotto() %>" 
+            <%-- Immagine Primaria (Visibile di default) --%>
+            <img src="${pageContext.request.contextPath}/images/prodotti?id=<%= dto.getProdotto().getIdProdotto() %>&index=0" 
                  alt="<%= dto.getProdotto().getNome() %>" 
-                 class="product-img" 
+                 class="product-img primary-img" 
                  loading="lazy"
                  onerror="this.src='${pageContext.request.contextPath}/images/placeholder.svg'">
+
+            <%-- Immagine Secondaria (Appare al passaggio del mouse) --%>
+            <img src="${pageContext.request.contextPath}/images/prodotti?id=<%= dto.getProdotto().getIdProdotto() %>&index=1" 
+                 alt="<%= dto.getProdotto().getNome() %> (Vista 2)" 
+                 class="product-img secondary-img" 
+                 loading="lazy"
+                 onerror="this.style.display='none'">
         </a>
         
         <div class="badges-container">

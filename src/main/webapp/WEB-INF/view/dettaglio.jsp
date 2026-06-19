@@ -30,11 +30,19 @@
         <div class="product-layout">
 
             <div class="product-image">
-                <img src="${pageContext.request.contextPath}/images/prodotti?id=<%= prodotto.getIdProdotto() %>" 
+                <%-- Immagine Primaria (Visibile di default) --%>
+                <img src="${pageContext.request.contextPath}/images/prodotti?id=<%= prodotto.getIdProdotto() %>&index=0" 
                      alt="<%= prodotto.getNome() %>" 
-                     class="product-img" 
+                     class="product-img primary-img" 
                      loading="lazy"
                      onerror="this.src='${pageContext.request.contextPath}/images/placeholder.svg'">
+                     
+                <%-- Immagine Secondaria (Appare al passaggio del mouse) --%>
+                <img src="${pageContext.request.contextPath}/images/prodotti?id=<%= prodotto.getIdProdotto() %>&index=1" 
+                     alt="<%= prodotto.getNome() %> (Vista 2)" 
+                     class="product-img secondary-img" 
+                     loading="lazy"
+                     onerror="this.style.display='none'">
             </div>
 
             <div class="product-details">

@@ -1,0 +1,259 @@
+/* ==========================================================================
+   RUNITUP - STILE SHOE FINDER (findmyshoes.css)
+   ========================================================================== */
+
+/* --- 1. CONTENITORE PRINCIPALE --- */
+.finder-main {
+    padding: 60px 20px;
+    background-color: var(--sfondo-principale);
+    min-height: calc(100vh - 200px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.finder-container {
+    width: 100%;
+    max-width: 800px; /* Abbastanza largo per ospitare 4 card affiancate */
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    padding: 40px;
+    border: 1px solid var(--sfondo-alternativo);
+}
+
+/* --- 2. HEADER E PROGRESS BAR --- */
+.finder-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.finder-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--testo-principale);
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+}
+
+.finder-header p {
+    font-size: 1.1rem;
+    color: #64748B;
+    margin-bottom: 25px;
+}
+
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background-color: #E2E8F0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--colore-primario);
+    border-radius: 10px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- 3. GLI STEP DEL QUIZ (Transizioni) --- */
+.quiz-form {
+    position: relative;
+    min-height: 400px; /* Evita che il contenitore collassi tra un'animazione e l'altra */
+}
+
+.quiz-step {
+    display: none; /* Nascosto di default */
+    animation: fadeInSlideUp 0.5s ease forwards;
+}
+
+/* Solo lo step attivo viene mostrato */
+.quiz-step.active-step {
+    display: block;
+}
+
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.quiz-step h2 {
+    font-size: 1.6rem;
+    color: var(--testo-principale);
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* --- 4. GRIGLIE DELLE OPZIONI --- */
+.options-grid {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* --- 5. VISUAL RADIO BUTTONS (Il cuore della UI) --- */
+.quiz-option {
+    display: block;
+    cursor: pointer;
+    /* Disabilita la selezione del testo in caso di doppi click accidentali */
+    user-select: none; 
+}
+
+/* Nascondiamo il vero pallino del radio button */
+.quiz-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Lo stile della "finta" card */
+.option-card {
+    border: 2px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    background-color: #FFFFFF;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.option-emoji {
+    font-size: 3.5rem;
+    line-height: 1;
+    display: block;
+    transition: transform 0.2s;
+}
+
+.option-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--testo-secondario);
+    line-height: 1.3;
+}
+
+.option-label small {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #94A3B8;
+    margin-top: 5px;
+}
+
+/* Effetto Hover */
+.quiz-option:hover .option-card {
+    border-color: #CBD5E1;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.quiz-option:hover .option-emoji {
+    transform: scale(1.1);
+}
+
+/* EFFETTO SELEZIONATO (Quando l'input nascosto è :checked, colora la .option-card successiva) */
+.quiz-option input[type="radio"]:checked + .option-card {
+    border-color: var(--colore-primario);
+    background-color: #EFF6FF; /* Azzurrino leggero */
+    box-shadow: 0 0 0 4px rgba(12, 89, 207, 0.1);
+}
+
+.quiz-option input[type="radio"]:checked + .option-card .option-label {
+    color: var(--colore-primario);
+}
+
+/* --- 6. BOTTONI DI NAVIGAZIONE --- */
+.step-actions {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #E2E8F0;
+    padding-top: 25px;
+}
+
+.right-align {
+    justify-content: flex-end;
+}
+
+.split-align {
+    justify-content: space-between;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #64748B;
+    border: 1px solid #CBD5E1;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #F1F5F9;
+    color: var(--testo-principale);
+}
+
+.btn-primary, .btn-submit {
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1.05rem;
+}
+
+.btn-submit {
+    background-color: var(--conferme);
+}
+
+.btn-submit:hover {
+    background-color: #02665A;
+}
+
+/* --- 7. RESPONSIVE DESIGN --- */
+@media (max-width: 768px) {
+    .finder-container {
+        padding: 30px 20px;
+    }
+
+    /* Su mobile le griglie diventano a 2 colonne (o 1 se lo schermo è minuscolo) */
+    .grid-3, .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .option-card {
+        padding: 20px 10px;
+    }
+
+    .option-emoji {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-3, .grid-4 {
+        grid-template-columns: 1fr; /* Su schermi piccolissimi mettiamo tutto in colonna */
+    }
+    
+    .step-actions {
+        flex-direction: column-reverse;
+        gap: 15px;
+    }
+    
+    .btn-primary, .btn-secondary, .btn-submit {
+        width: 100%;
+        text-align: center;
+    }
+}

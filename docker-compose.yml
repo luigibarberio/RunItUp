@@ -49,7 +49,7 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: runitup_tunnel
     restart: unless-stopped
-    command: tunnel run
+    command: tunnel --no-autoupdate --loglevel warn run
     environment:
       TUNNEL_TOKEN: ${CLOUDFLARE_TOKEN}
 

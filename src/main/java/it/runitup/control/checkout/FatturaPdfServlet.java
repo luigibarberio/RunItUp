@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.checkout;
 
 import java.io.IOException;
 import java.sql.SQLException;

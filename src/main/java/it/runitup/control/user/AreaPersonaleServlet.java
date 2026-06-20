@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.user;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -44,7 +44,7 @@ public class AreaPersonaleServlet extends HttpServlet {
             }
 
             // 4. Forward verso la View (La nostra dashboard a "scatole")
-            request.getRequestDispatcher("/WEB-INF/view/area_personale.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/user/area_personale.jsp").forward(request, response);
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.catalog;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -38,7 +38,7 @@ public class FindMyShoesServlet extends HttpServlet {
 
         // --- CASO A: L'utente apre la pagina senza filtri (Inizio del Quiz) ---
         if (genereParam == null && terrenoParam == null && appoggioParam == null && passoParam == null) {
-            request.getRequestDispatcher("/WEB-INF/view/findmyshoes.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/catalog/findmyshoes.jsp").forward(request, response);
             return;
         }
 
@@ -70,7 +70,7 @@ public class FindMyShoesServlet extends HttpServlet {
 
             // 3. Passiamo i risultati alla JSP dedicata
             request.setAttribute("prodottiConsigliati", prodottiConsigliati);
-            request.getRequestDispatcher("/WEB-INF/view/findmyshoes_results.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/catalog/findmyshoes_results.jsp").forward(request, response);
 
         } catch (IllegalArgumentException e) {
             // Protezione: se qualcuno si diverte a manomettere l'URL (es. ?genere=ALIENO)

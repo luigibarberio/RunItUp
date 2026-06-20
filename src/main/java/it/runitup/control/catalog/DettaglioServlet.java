@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.catalog;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -48,7 +48,7 @@ public class DettaglioServlet extends HttpServlet {
             request.setAttribute("prodotto", prodotto);
             request.setAttribute("varianti", varianti);
 
-            request.getRequestDispatcher("/WEB-INF/view/dettaglio.jsp")
+            request.getRequestDispatcher("/WEB-INF/view/catalog/dettaglio.jsp")
                    .forward(request, response);
 
         } catch (NumberFormatException | SQLException e) {

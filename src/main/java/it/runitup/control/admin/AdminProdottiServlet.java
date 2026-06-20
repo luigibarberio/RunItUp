@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.admin;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -46,7 +46,7 @@ public class AdminProdottiServlet extends HttpServlet {
             }
 
             // Forward verso la vista di riepilogo del pannello di controllo
-            request.getRequestDispatcher("/WEB-INF/view/admin_prodotti.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/admin/admin_prodotti.jsp").forward(request, response);
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.catalog;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -210,7 +210,7 @@ public class CatalogoServlet extends HttpServlet {
             request.setAttribute("paginaCorrente", paginaCorrente);
 
             // Richiesta standard: carichiamo l'intera infrastruttura del catalogo
-            request.getRequestDispatcher("/WEB-INF/view/catalogo.jsp")
+            request.getRequestDispatcher("/WEB-INF/view/catalog/catalogo.jsp")
                     .forward(request, response);
         
 

@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.common;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.admin;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class AdminGestioneProdottoServlet extends HttpServlet {
                 request.setAttribute("modalita", "INSERIMENTO");
             }
             
-            request.getRequestDispatcher("/WEB-INF/view/admin_prodotto_form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/admin/admin_prodotto_form.jsp").forward(request, response);
             
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID prodotto non valido.");
@@ -177,7 +177,7 @@ public class AdminGestioneProdottoServlet extends HttpServlet {
             e.printStackTrace();
         }
         
-        request.getRequestDispatcher("/WEB-INF/view/admin_prodotto_form.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/view/admin/admin_prodotto_form.jsp").forward(request, response);
     }
 
     private void salvaImmagineFisica(Part part, String uploadPath, int idProdotto, int index) throws IOException {

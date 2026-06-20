@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.checkout;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,12 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import it.runitup.control.service.CarrelloManager;
 import it.runitup.model.bean.VoceCarrello;
 import it.runitup.model.dao.CarrelloDAO;
 import it.runitup.model.dao.VarianteDAO;
 import it.runitup.model.dto.VarianteDTO;
 import it.runitup.model.dto.VoceCarrelloDTO;
+import it.runitup.service.CarrelloManager;
 
 @WebServlet("/carrello")
 public class CarrelloServlet extends HttpServlet {
@@ -66,7 +66,7 @@ public class CarrelloServlet extends HttpServlet {
             request.setAttribute("totaleCarrello", totaleCarrello);
             
             // 6. Forward alla JSP sicura sotto WEB-INF
-            request.getRequestDispatcher("/WEB-INF/view/carrello.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/checkout/carrello.jsp").forward(request, response);
             
         } catch (Exception e) {
             e.printStackTrace();

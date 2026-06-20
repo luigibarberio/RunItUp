@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.admin;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -74,7 +74,7 @@ public class AdminOrdiniServlet extends HttpServlet {
             request.setAttribute("filtroEmail", emailCliente != null ? emailCliente : "");
 
             // 6. Forward alla View
-            request.getRequestDispatcher("/WEB-INF/view/admin_ordini.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/admin/admin_ordini.jsp").forward(request, response);
 
         } catch (DateTimeParseException e) {
             // Caso limite: l'utente manomette a mano la query string nell'URL con formati strani (es. ?dal=ciao)
@@ -104,7 +104,7 @@ public class AdminOrdiniServlet extends HttpServlet {
         try {
             request.setAttribute("listaClienti", utenteDAO.doRetrieveAll());
             request.setAttribute("ordiniAdmin", ordineDAO.doRetrieveAllAdmin(null, null, null));
-            request.getRequestDispatcher("/WEB-INF/view/admin_ordini.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/admin/admin_ordini.jsp").forward(request, response);
         } catch (SQLException ex) {
             ex.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore di connessione al database.");

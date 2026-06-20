@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.auth;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class RegistrazioneServlet extends HttpServlet {
     private UtenteDAO utenteDAO = new UtenteDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/view/registrazione.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/view/auth/registrazione.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -50,7 +50,6 @@ public class RegistrazioneServlet extends HttpServlet {
             String phoneRegex = "^(3\\d{9}|0\\d{6,10})$";
             String prefissoRegex = "^\\+[1-9]\\d{1,3}$";
 
-            // TODO Centralizzare le regex di validazione in una classe di utilità condivisa, così da evitare duplicazione tra Servlet
             if (nome.length() < 2 || nome.length() > 50 || 
                 cognome.length() < 2 || cognome.length() > 50) {
                 sendError(response, jsonResponse, gson, "Nome e cognome devono avere tra 2 e 50 caratteri.");

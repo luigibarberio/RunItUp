@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.checkout;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -17,7 +17,6 @@ import javax.servlet.http.HttpSession;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import it.runitup.control.service.CarrelloManager;
 import it.runitup.model.bean.Coupon;
 import it.runitup.model.bean.Ordine;
 import it.runitup.model.bean.StatoOrdine;
@@ -29,6 +28,7 @@ import it.runitup.model.dao.CouponDAO;
 import it.runitup.model.dao.VarianteDAO;
 import it.runitup.model.dto.VarianteDTO;
 import it.runitup.model.dto.VoceCarrelloDTO;
+import it.runitup.service.CarrelloManager;
 import it.runitup.util.SpedizioneUtil;
 import it.runitup.model.dao.OrdineDAO;
 import it.runitup.model.dao.UtenteDAO;
@@ -76,7 +76,7 @@ public class CheckoutServlet extends HttpServlet {
             request.setAttribute("costoSpedizione", costoSpedizione);
             request.setAttribute("totaleFinale", totaleFinale);
             
-            request.getRequestDispatcher("/WEB-INF/view/checkout.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/checkout/checkout.jsp").forward(request, response);
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,7 +114,6 @@ public class CheckoutServlet extends HttpServlet {
             String metodoPagamentoStr = jsonBody.has("metodoPagamento") ? jsonBody.get("metodoPagamento").getAsString().trim() : "";
             String codiceCoupon = jsonBody.has("codiceCoupon") ? jsonBody.get("codiceCoupon").getAsString().trim().toUpperCase() : "";
 
-            // TODO Validare tutti i campi lato backend come fatto qui di seguito
             // Validazione severa delle stringhe, con limite di lunghezza e formato
             if (nome.isEmpty() || nome.length() > 50 ||
                 cognome.isEmpty() || cognome.length() > 50 ||

@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.admin;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class AdminVariantiServlet extends HttpServlet {
             request.setAttribute("prodotto", prodotto);
             request.setAttribute("varianti", listaVarianti);
 
-            request.getRequestDispatcher("/WEB-INF/view/admin_varianti.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/admin/admin_varianti.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID prodotto non valido.");

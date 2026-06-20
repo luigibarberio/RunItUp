@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.user;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -46,7 +46,7 @@ public class ModificaProfiloServlet extends HttpServlet {
             return;
         }
 
-        request.getRequestDispatcher("/WEB-INF/view/modifica_profilo.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/view/user/modifica_profilo.jsp").forward(request, response);
     }
 
     // Il metodo doPost gestisce sia la modifica dell'anagrafica che il cambio password, con validazioni e controlli di sicurezza
@@ -76,7 +76,6 @@ public class ModificaProfiloServlet extends HttpServlet {
             String nuovaPassword = jsonRequest.has("nuovaPassword") ? jsonRequest.get("nuovaPassword").getAsString() : "";
             String confermaPassword = jsonRequest.has("confermaPassword") ? jsonRequest.get("confermaPassword").getAsString() : "";
 
-            // TODO Centralizzare le regex di validazione in una classe di utilità condivisa, così da evitare duplicazione tra Servlet
             // --- 2. VALIDAZIONE ANAGRAFICA LATO SERVER ---
             if (nome.isEmpty() || nome.length() < 2 || !nome.matches("^[a-zA-ZÀ-ÿ\\s']{2,50}$")) {
                 sendError(response, jsonResponse, "Nome non valido. Usa solo lettere (min 2 caratteri).");

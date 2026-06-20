@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.checkout;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -44,14 +44,14 @@ public class OrdiniServlet extends HttpServlet {
                 request.setAttribute("ordine", ordine); // Non serve rimetterlo se la JSP usa "ordineGiaValidato", ma lo rimettiamo col nome standard per comodità
                 request.setAttribute("dettagliOrdini", dettagli);
 
-                request.getRequestDispatcher("/WEB-INF/view/dettaglio_ordine.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/view/order/dettaglio_ordine.jsp").forward(request, response);
                 return;
             }
             // --- CASISTICA B: Cronologia Completa ---
             else {
                 List<Ordine> cronologiaOrdini = ordineDAO.getOrdiniByUtente(utenteLoggato.getIdUtente());
                 request.setAttribute("cronologiaOrdini", cronologiaOrdini);
-                request.getRequestDispatcher("/WEB-INF/view/cronologia_ordini.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/view/order/cronologia_ordini.jsp").forward(request, response);
             }
 
         } catch (SQLException e) {

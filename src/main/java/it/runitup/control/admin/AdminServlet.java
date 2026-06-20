@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.admin;
 
 import javax.servlet.annotation.WebServlet;
 

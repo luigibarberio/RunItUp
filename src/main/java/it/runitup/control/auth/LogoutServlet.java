@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.auth;
 
 import java.io.IOException;
 import java.util.HashMap;

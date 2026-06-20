@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.catalog;
 
 import java.io.IOException;
 import java.util.Collections;

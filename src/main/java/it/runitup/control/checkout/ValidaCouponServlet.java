@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.checkout;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -10,13 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.JsonObject;
-import it.runitup.control.service.CarrelloManager;
+
 import it.runitup.model.bean.Coupon;
 import it.runitup.model.bean.VoceCarrello;
 import it.runitup.model.dao.CarrelloDAO;
 import it.runitup.model.dao.CouponDAO;
 import it.runitup.model.dao.VarianteDAO;
 import it.runitup.model.dto.VarianteDTO;
+import it.runitup.service.CarrelloManager;
 import it.runitup.util.SpedizioneUtil;
 
 @WebServlet("/valida-coupon")

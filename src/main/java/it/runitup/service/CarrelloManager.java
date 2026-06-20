@@ -1,4 +1,4 @@
-package it.runitup.control.service;
+package it.runitup.service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

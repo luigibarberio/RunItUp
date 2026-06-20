@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.checkout;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -43,7 +43,7 @@ public class StampaFatturaServlet extends HttpServlet {
             request.setAttribute("dettagliOrdini", dettagli);
 
             // Forward alla View dedicata alla Stampa (la JSP finta-A4 che abbiamo creato prima)
-            request.getRequestDispatcher("/WEB-INF/view/stampa_fattura.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/view/order/stampa_fattura.jsp").forward(request, response);
 
         } catch (SQLException e) {
             e.printStackTrace();

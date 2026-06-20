@@ -1,4 +1,4 @@
-package it.runitup.control;
+package it.runitup.control.auth;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -16,11 +16,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.mindrot.jbcrypt.BCrypt;
 
-import it.runitup.control.service.CarrelloManager;
 import it.runitup.model.bean.Utente;
 import it.runitup.model.dao.CarrelloDAO;
 import it.runitup.model.dao.UtenteDAO;
 import it.runitup.model.dao.VarianteDAO;
+import it.runitup.service.CarrelloManager;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -56,7 +56,7 @@ public class LoginServlet extends HttpServlet {
         }
 
         // Mostriamo la pagina di login
-        request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/view/auth/login.jsp").forward(request, response);
     }
 
     @Override

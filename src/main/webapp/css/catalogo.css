@@ -344,6 +344,13 @@
     border: 1px dashed #CBD5E1;
 }
 
+.no-brands-msg, .no-taglie-msg, .no-colori-msg {
+    color: #64748B;
+    font-size: 0.9rem;
+    font-style: italic;
+    padding: 6px 0;
+}
+
 @media (max-width: 991px) {
     .catalogo-main {
         grid-template-columns: 1fr;

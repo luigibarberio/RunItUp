@@ -7,6 +7,7 @@
 
 <%
     List<ProdottoDTO> prodotti = (List<ProdottoDTO>) request.getAttribute("prodottiCatalogo");
+    List<ProdottoDTO> prodottiSidebar = (List<ProdottoDTO>) request.getAttribute("prodottiSidebar");
     List<TipoTerreno> tipiTerrenoDisponibili = Arrays.asList(TipoTerreno.values());
     List<TipoAppoggio> tipiAppoggioDisponibili = Arrays.asList(TipoAppoggio.values());
     List<TipoPasso> tipiPassoDisponibili = Arrays.asList(TipoPasso.values());
@@ -94,29 +95,62 @@
                 </div>
             </div>
 
+            <%-- GENERE --%>
+            <div class="filter-group">
+                <h3 class="filter-title">Genere</h3>
+                <div class="filter-pills-wrap">
+                <%
+                    // Recuperiamo la lista dei generi selezionati una sola volta
+                    List<GenereScarpa> generiList = (filtri != null) ? filtri.getGeneri() : null;
+                %>
+                    <label class="custom-pill">
+                        <input type="checkbox" name="genere" value="UOMO" <%= (generiList != null && generiList.contains(GenereScarpa.UOMO)) ? "checked" : "" %>>
+                        <span class="pill-box">Uomo</span>
+                    </label>
+                    <label class="custom-pill">
+                        <input type="checkbox" name="genere" value="DONNA" <%= (generiList != null && generiList.contains(GenereScarpa.DONNA)) ? "checked" : "" %>>
+                        <span class="pill-box">Donna</span>
+                    </label>
+                    <label class="custom-pill">
+                        <input type="checkbox" name="genere" value="UNISEX" <%= (generiList != null && generiList.contains(GenereScarpa.UNISEX)) ? "checked" : "" %>>
+                        <span class="pill-box">Unisex</span>
+                    </label>
+                </div>
+            </div>
+
             <%-- BRAND --%>
             <div class="filter-group">
                 <h3 class="filter-title">Brand</h3>
                 <div class="filter-pills-wrap">
                 <%
-                    if (prodotti != null) {
+                    if (prodottiSidebar != null) {
                         Map<Integer, String> brandsEstratti = new TreeMap<>();
-                        for (ProdottoDTO pDto : prodotti) {
+                        for (ProdottoDTO pDto : prodottiSidebar) {
                             if (pDto.getProdotto().getBrand() != null) {
                                 brandsEstratti.put(pDto.getProdotto().getBrand().getIdBrand(), pDto.getProdotto().getBrand().getNomeBrand());
                             }
                         }
-                        for (Map.Entry<Integer, String> entry : brandsEstratti.entrySet()) {
-                            Integer idBrand = entry.getKey();
-                            String nomeBrand = entry.getValue();
-                            boolean isChecked = filtri != null && filtri.getBrandIds() != null && filtri.getBrandIds().contains(idBrand);
+                        // Controllo se la mappa dei brand è vuota e mostro un messaggio appropriato
+                        if (brandsEstratti.isEmpty()) {
                 %>
-                            <label class="custom-pill">
-                                <input type="checkbox" name="brand" value="<%= idBrand %>" <%= isChecked ? "checked" : "" %>>
-                                <span class="pill-box"><%= nomeBrand %></span>
-                            </label>
-                <%      }
-                    } %>
+                            <p class="no-brands-msg">Nessun brand disponibile.</p>
+                <%
+                        } else {
+                            // Ciclo solo se la mappa non è vuota
+                            for (Map.Entry<Integer, String> entry : brandsEstratti.entrySet()) {
+                                Integer idBrand = entry.getKey();
+                                String nomeBrand = entry.getValue();
+                                boolean isChecked = filtri != null && filtri.getBrandIds() != null && filtri.getBrandIds().contains(idBrand);
+                %>
+                                <label class="custom-pill">
+                                    <input type="checkbox" name="brand" value="<%= idBrand %>" <%= isChecked ? "checked" : "" %>>
+                                    <span class="pill-box"><%= nomeBrand %></span>
+                                </label>
+                <%
+                            }
+                        }
+                    }
+                %>
                 </div>
             </div>
 
@@ -132,18 +166,33 @@
                 <h3 class="filter-title">Taglia</h3>
                 <div class="filter-pills-wrap">
                 <%
-                    if (prodotti != null) {
+                    if (prodottiSidebar != null) {
                         Set<String> taglieSet = new TreeSet<>();
-                        for (ProdottoDTO prodotto : prodotti) taglieSet.addAll(prodotto.getTaglieDisponibili());
-                        for (String taglia : taglieSet) {
-                            boolean isChecked = filtri != null && filtri.getTaglie() != null && filtri.getTaglie().contains(taglia);
+                        for (ProdottoDTO prodotto : prodottiSidebar) {
+                            if (prodotto.getTaglieDisponibili() != null) {
+                                taglieSet.addAll(prodotto.getTaglieDisponibili());
+                            }
+                        }
+
+                        // CONTROLLO SPOSTATO FUORI: gestito prima del ciclo
+                        if (taglieSet.isEmpty()) {
                 %>
-                            <label class="custom-pill">
-                                <input type="checkbox" name="taglie" value="<%= taglia %>" <%= isChecked ? "checked" : "" %>>
-                                <span class="pill-box"><%= taglia %></span>
-                            </label>
-                <%      }
-                    } %>
+                            <p class="no-taglie-msg">Nessuna taglia disponibile.</p>
+                <%
+                        } else {
+                            // Il ciclo avviene solo se ci sono taglie
+                            for (String taglia : taglieSet) {
+                                boolean isChecked = filtri != null && filtri.getTaglie() != null && filtri.getTaglie().contains(taglia);
+                %>
+                                <label class="custom-pill">
+                                    <input type="checkbox" name="taglie" value="<%= taglia %>" <%= isChecked ? "checked" : "" %>>
+                                    <span class="pill-box"><%= taglia %></span>
+                                </label>
+                <%
+                            }
+                        }
+                    }
+                %>
                 </div>
             </div>
 
@@ -152,18 +201,33 @@
                 <h3 class="filter-title">Colore</h3>
                 <div class="filter-pills-wrap">
                 <%
-                    if (prodotti != null) {
+                    if (prodottiSidebar != null) {
                         Set<String> coloriSet = new TreeSet<>();
-                        for (ProdottoDTO prodotto : prodotti) coloriSet.addAll(prodotto.getColoriDisponibili());
-                        for (String colore : coloriSet) {
-                            boolean isChecked = filtri != null && filtri.getColori() != null && filtri.getColori().contains(colore);
+                        for (ProdottoDTO prodotto : prodottiSidebar) {
+                            if (prodotto.getColoriDisponibili() != null) {
+                                coloriSet.addAll(prodotto.getColoriDisponibili());
+                            }
+                        }
+
+                        // CONTROLLO SPOSTATO FUORI dal ciclo for
+                        if (coloriSet.isEmpty()) {
                 %>
-                            <label class="custom-pill">
-                                <input type="checkbox" name="colori" value="<%= colore %>" <%= isChecked ? "checked" : "" %>>
-                                <span class="pill-box"><%= colore %></span>
-                            </label>
-                <%      }
-                    } %>
+                            <p class="no-colori-msg">Nessun colore disponibile.</p>
+                <%
+                        } else {
+                            // Ciclo solo se ci sono colori da mostrare
+                            for (String colore : coloriSet) {
+                                boolean isChecked = filtri != null && filtri.getColori() != null && filtri.getColori().contains(colore);
+                %>
+                                <label class="custom-pill">
+                                    <input type="checkbox" name="colori" value="<%= colore %>" <%= isChecked ? "checked" : "" %>>
+                                    <span class="pill-box"><%= colore %></span>
+                                </label>
+                <%
+                            }
+                        }
+                    }
+                %>
                 </div>
             </div>
 

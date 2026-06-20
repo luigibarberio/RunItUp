@@ -182,10 +182,24 @@ public class CatalogoServlet extends HttpServlet {
         filtri.setLimit(limit + 1);
         filtri.setOffset(offset);
 
+        // Filtri per popolare la sidebar con i brand, taglie e colori disponibili in base ai prodotti filtrati (quindi non filtrati da brand/taglie/colori)
+        FiltroCatalogo filtriSidebar = new FiltroCatalogo();
+        filtriSidebar.setRicercaTestuale(filtri.getRicercaTestuale());
+        filtriSidebar.setGeneri(filtri.getGeneri());
+        filtriSidebar.setPrezzoMinimo(filtri.getPrezzoMinimo());
+        filtriSidebar.setPrezzoMassimo(filtri.getPrezzoMassimo());
+        filtriSidebar.setInEvidenza(filtri.getInEvidenza());
+        filtriSidebar.setInOfferta(filtri.getInOfferta());
+        filtriSidebar.setNuoviArrivi(filtri.getNuoviArrivi());
+        filtriSidebar.setTipiTerreno(filtri.getTipiTerreno());
+        filtriSidebar.setTipiAppoggio(filtri.getTipiAppoggio());
+        filtriSidebar.setTipiPasso(filtri.getTipiPasso());
+
         // 7. INVOCAZIONE DEL DAO ED INVIO ALLA VIEW CORRETTA
         try {
-            // Eseguiamo la query dinamica passando l'oggetto filtro configurato
+            // Eseguiamo le query dinamica passando l'oggetto filtro configurato
             List<ProdottoDTO> prodotti = prodottoDAO.doRetrieveAllFiltered(filtri);
+            List<ProdottoDTO> prodottiSidebar = prodottoDAO.doRetrieveAllFiltered(filtriSidebar);
             
             // Determiniamo se esiste una pagina successiva: se la lista restituita ha più elementi del limite, significa che c'è un'altra pagina
             boolean isPaginaSuccessiva = prodotti.size() > limit;
@@ -201,6 +215,9 @@ public class CatalogoServlet extends HttpServlet {
 
             // Registriamo la lista nella request affinché le JSP possano leggerla
             request.setAttribute("prodottiCatalogo", prodotti);
+
+            // Registriamo anche la lista per la sidebar
+            request.setAttribute("prodottiSidebar", prodottiSidebar);
 
             // Chiamata standard: carichiamo l'intera infrastruttura della pagina del catalogo
             // Passiamo i filtri correnti alla JSP per mantenere lo stato dei filtri selezionati

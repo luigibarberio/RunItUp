@@ -23,7 +23,7 @@
 
             <%-- Intestazione del Quiz e Barra di Progresso --%>
             <div class="finder-header">
-                <h1>Shoe Finder</h1>
+                <h1>FindMyShoes</h1>
                 <p>Rispondi a 4 semplici domande e scopri i modelli perfetti per il tuo stile di corsa.</p>
                 
                 <div class="progress-container">

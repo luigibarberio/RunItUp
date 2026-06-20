@@ -70,6 +70,7 @@
     flex-direction: column;
     gap: 6px;
     align-items: flex-end;
+    z-index: 3; /* Sopra le immagini */
 }
 
 .badge {

@@ -26,6 +26,12 @@
     background-position: center;
     text-align: center;
     color: #FFFFFF;
+    margin-top: 20px;
+    /* Arrotondamento e margini per un effetto più morbido */
+    margin-left: 20px;
+    margin-right: 20px;
+    border-radius: 128px;
+    overflow: hidden;
 }
 
 .hero-overlay {
@@ -41,10 +47,21 @@
     max-width: 800px;
     padding: 0 20px;
     animation: fadeInUP 0.8s ease-out;
+    
+    height: 100%;
+    display: grid;
+    /* 2fr al testo (più spazio) e 1fr al bottone (meno spazio) */
+    grid-template-rows: 2fr 1fr; 
+    align-items: center;
+    justify-items: center;
 }
 
-.hero-content a {
-    margin-top: 30px;
+.hero-title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 80px; /* Spazio in alto per bilanciare il bottone in basso */
 }
 
 .hero-title {
@@ -272,7 +289,7 @@
     background-color: var(--sfondo-alternativo);
     
     /* Arrotondamento e bordo esterno */
-    border: 2px solid #94a3b880;
+    border: 2px solid #94a3b834;
     border-radius: 40px;
     overflow: hidden; /* Taglia gli angoli delle celle interne per seguire il bordo arrotondato */
     box-shadow: 0 10px 25px rgba(0,0,0,0.05);
@@ -490,11 +507,18 @@
     box-shadow: 0 3px 10px rgba(12, 89, 207, 0.2);
 }
 
+.hero-btn-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 50px;
+}
+
 /* Modificatore specifico per il bottone gigante della Hero Section */
 .hero-btn {
     font-size: 1.15rem;
     padding: 14px 45px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    background-color: #0c5acfbc; /* Colore semi-trasparente per un effetto più leggero nell'hero section */
+    background-color: #0c5acfeb; /* Colore semi-trasparente per un effetto più leggero nell'hero section */
 }

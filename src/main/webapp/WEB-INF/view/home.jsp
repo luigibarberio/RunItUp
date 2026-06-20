@@ -52,14 +52,18 @@
         <section class="hero-section">
             <div class="hero-overlay"></div>
             <div class="hero-content">
-                <%-- Se l'utente è loggato e ha un nome, mostra un messaggio di benvenuto --%>
-                <% if (isLoggato && utenteLoggato.getNome() != null && !utenteLoggato.getNome().isEmpty()) { %>
-                    <h1 class="hero-title">Supera i tuoi limiti, ${utenteLoggato.getNome()}!</h1>
-                <% } else { %>
-                    <h1 class="hero-title">Supera i tuoi limiti.</h1>
-                <% } %>
-                <p class="hero-subtitle">Scopri la nuova collezione running e trova il ritmo perfetto per la tua corsa.</p>
-                <a href="${pageContext.request.contextPath}/catalogo" class="btn-primary hero-btn bounce-element">Esplora la Collezione</a>
+                <div class="hero-title-container">
+                    <%-- Se l'utente è loggato e ha un nome, mostra un messaggio di benvenuto --%>
+                    <% if (isLoggato && utenteLoggato.getNome() != null && !utenteLoggato.getNome().isEmpty()) { %>
+                        <h1 class="hero-title">Supera i tuoi limiti, ${utenteLoggato.getNome()}!</h1>
+                    <% } else { %>
+                        <h1 class="hero-title">Supera i tuoi limiti.</h1>
+                    <% } %>
+                    <p class="hero-subtitle">Scopri la nuova collezione running e trova il ritmo perfetto per la tua corsa.</p>
+                </div>
+                <div class="hero-btn-container">
+                    <a href="${pageContext.request.contextPath}/catalogo" class="btn-primary hero-btn bounce-element">Esplora la Collezione</a>
+                </div>
             </div>
         </section>
 

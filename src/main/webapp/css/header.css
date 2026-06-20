@@ -236,22 +236,21 @@
     display: flex;
     align-items: center;
     gap: 28px;
+    height: 36px;
+    font-weight: 500;
+    font-size: 0.95rem;
 }
 
 .nav-group > a {
     display: block;
-    padding: 14px 0;
-    font-weight: 600;
-    font-size: 0.95rem;
+    padding: 0px 4px;
     color: var(--testo-principale);
     text-decoration: none;
     transition: color 0.2s;
 }
 .nav-group > a:hover { color: var(--colore-primario); }
 
-.nav-highlights .highlight-promo { color: var(--promozioni); }
-.btn-shoefinder { color: var(--conferme) !important; }
-.utility-trigger { font-weight: 600; font-size: 0.95rem; padding: 14px 0; cursor: pointer; display: block; }
+.utility-trigger { cursor: pointer; }
 .utility-dropdown .desktop-dropdown-menu { right: auto; left: 0; }
 
 /* ==========================================================================

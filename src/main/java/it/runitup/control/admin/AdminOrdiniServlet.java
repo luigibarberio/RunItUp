@@ -1,5 +1,6 @@
 package it.runitup.control.admin;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -11,6 +12,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import it.runitup.model.bean.Ordine;
 import it.runitup.model.bean.Utente;
@@ -88,11 +92,49 @@ public class AdminOrdiniServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        // La visualizzazione e i filtri sono eseguiti in GET. 
-        // In futuro potremmo usare il POST qui per permettere all'admin di aggiornare 
-        // lo STATO dell'ordine (es. da IN_LAVORAZIONE a SPEDITO) in modo tradizionale,
-        // o in alternativa potremmo usare una chiamata Fetch asincrona JSON.
-        doGet(request, response);
+        
+        // Rispondiamo in formato JSON
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        JsonObject jsonResponse = new JsonObject();
+        
+        try {
+            // Leggiamo il body della richiesta JSON
+            BufferedReader reader = request.getReader();
+            Gson gson = new Gson();
+            JsonObject jsonRequest = gson.fromJson(reader, JsonObject.class);
+            
+            if (jsonRequest != null && jsonRequest.has("idOrdine") && jsonRequest.has("nuovoStato")) {
+                int idOrdine = jsonRequest.get("idOrdine").getAsInt();
+                String statoStr = jsonRequest.get("nuovoStato").getAsString();
+                
+                it.runitup.model.bean.StatoOrdine nuovoStato = it.runitup.model.bean.StatoOrdine.valueOf(statoStr);
+                
+                // Aggiorniamo il DB
+                boolean success = ordineDAO.updateStatoOrdine(idOrdine, nuovoStato);
+                
+                if (success) {
+                    jsonResponse.addProperty("success", true);
+                    jsonResponse.addProperty("message", "Stato ordine aggiornato con successo.");
+                } else {
+                    jsonResponse.addProperty("success", false);
+                    jsonResponse.addProperty("message", "Errore: ordine non trovato.");
+                }
+            } else {
+                jsonResponse.addProperty("success", false);
+                jsonResponse.addProperty("message", "Dati mancanti nella richiesta.");
+            }
+            
+        } catch (IllegalArgumentException e) {
+            jsonResponse.addProperty("success", false);
+            jsonResponse.addProperty("message", "Stato non valido.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            jsonResponse.addProperty("success", false);
+            jsonResponse.addProperty("message", "Errore del database.");
+        }
+        
+        response.getWriter().write(jsonResponse.toString());
     }
     
     // Metodo di utilità per ricaricare la pagina senza filtri in caso di errore

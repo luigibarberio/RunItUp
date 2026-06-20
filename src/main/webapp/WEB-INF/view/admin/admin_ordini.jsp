@@ -5,6 +5,7 @@
 <%@ page import="java.util.Locale" %>
 <%@ page import="it.runitup.model.bean.Ordine" %>
 <%@ page import="it.runitup.model.bean.Utente" %>
+<%@ page import="it.runitup.model.bean.StatoOrdine" %>
 
 <%
     // Recupero delle liste dalla Servlet
@@ -108,9 +109,15 @@
                                     <span class="aoc-id">Ordine #<%= o.getIdOrdine() %></span>
                                     <span class="aoc-date"><%= o.getDataOrdine().format(dtf) %></span>
                                 </div>
-                                <span class="aoc-badge <%= badgeClass %>">
-                                    <%= o.getStato().name().replace("_", " ") %>
-                                </span>
+                                <div class="order-status-wrapper">
+                                    <select class="status-select" data-id="<%= o.getIdOrdine() %>" data-original="<%= o.getStato().name() %>">
+                                        <% for(it.runitup.model.bean.StatoOrdine stato : it.runitup.model.bean.StatoOrdine.values()) { %>
+                                            <option value="<%= stato.name() %>" <%= o.getStato() == stato ? "selected" : "" %>>
+                                                <%= stato.name().replace("_", " ") %>
+                                            </option>
+                                        <% } %>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="aoc-body">

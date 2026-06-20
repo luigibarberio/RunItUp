@@ -408,4 +408,26 @@ public class OrdineDAO {
         return ordini;
     }
 
+    // Metodo per aggiornare solo lo stato dell'ordine
+    public boolean updateStatoOrdine(int idOrdine, StatoOrdine nuovoStato) throws SQLException {
+        
+        // AGGIUNTO ::stato_ordine AL PRIMO PARAMETRO
+        String query = "UPDATE ordine SET stato = ?::stato_ordine WHERE id_ordine = ?";
+        
+        Connection con = null;
+        PreparedStatement ps = null;
+        
+        try {
+            con = ConnectionPool.getConnection();
+            ps = con.prepareStatement(query);
+            ps.setString(1, nuovoStato.name());
+            ps.setInt(2, idOrdine);
+            
+            return ps.executeUpdate() > 0;
+        } finally {
+            if (ps != null) ps.close();
+            if (con != null) ConnectionPool.releaseConnection(con);
+        }
+    }
+
 }

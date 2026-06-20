@@ -33,4 +33,50 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // =====================================================================
+    // 3. CAMBIO STATO ORDINE ASINCRONO (AJAX Fetch)
+    // =====================================================================
+    const statusSelects = document.querySelectorAll('.status-select');
+    
+    statusSelects.forEach(select => {
+        select.addEventListener('change', async function() {
+            const idOrdine = this.getAttribute('data-id');
+            const nuovoStato = this.value;
+            const statoOriginale = this.getAttribute('data-original');
+            
+            // Disabilitiamo temporaneamente la select durante il caricamento
+            this.disabled = true;
+
+            try {
+                const response = await fetch('ordini', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        idOrdine: idOrdine,
+                        nuovoStato: nuovoStato
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (window.showToast) window.showToast(data.message, "success");
+                    // Aggiorniamo lo stato originale in caso di futuri cambiamenti
+                    this.setAttribute('data-original', nuovoStato);
+                } else {
+                    if (window.showToast) window.showToast(data.message, "error");
+                    // In caso di errore, rimettiamo la select al valore originale
+                    this.value = statoOriginale;
+                }
+            } catch (error) {
+                console.error("Errore Fetch:", error);
+                if (window.showToast) window.showToast("Errore di rete durante l'aggiornamento.", "error");
+                this.value = statoOriginale;
+            } finally {
+                // Riabilitiamo la select
+                this.disabled = false;
+            }
+        });
+    });
+
 });

@@ -418,10 +418,11 @@ public class ProdottoDAO {
         
         // Estraiamo solo i dati strettamente necessari per il menu a tendina
         String query = "SELECT p.id_prodotto, p.nome, b.nome_brand " +
-                       "FROM prodotto p " +
-                       "JOIN brand b ON p.id_brand = b.id_brand " +
-                       "WHERE p.nome ILIKE ? OR b.nome_brand ILIKE ? " +
-                       "LIMIT 5";
+                   "FROM prodotto p " +
+                   "JOIN brand b ON p.id_brand = b.id_brand " +
+                   "WHERE CONCAT(b.nome_brand, ' ', p.nome) ILIKE ? " +
+                   "OR CONCAT(p.nome, ' ', b.nome_brand) ILIKE ? " +
+                   "LIMIT 5";
 
         Connection con = ConnectionPool.getConnection();
         try (PreparedStatement ps = con.prepareStatement(query)) {

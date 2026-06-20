@@ -37,6 +37,21 @@ services:
     depends_on:
       db: # Vincolo di avvio: Tomcat si accende SOLO dopo che il database è pronto
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # Opzionale: Cloudflare Tunnel per esporre l'applicazione al mondo esterno senza aprire porte sul router
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: runitup_tunnel
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TOKEN}
 
 volumes:
   postgres_data:

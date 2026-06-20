@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const tagSel = document.getElementById('tagliaSelect');
     const btnAggiungi = document.getElementById('btnAggiungi');
     const priceContainer = document.getElementById('price-container');
+    
+    // Recuperiamo il div per l'avviso delle scorte dalla JSP
+    const stockWarning = document.getElementById('stock-warning'); 
 
     // 1. POPOLAMENTO STATICO (Fatto una sola volta all'avvio)
     const coloriUnici = [...new Set(varianti.map(v => v.variante.colore))];
@@ -25,6 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function aggiornaUI() {
         const coloreScelto = colSel.value;
         const tagliaScelta = tagSel.value;
+
+        // Reset visivo di default ad ogni cambio (nascondiamo l'avviso e ripristiniamo il testo)
+        if (stockWarning) stockWarning.style.display = 'none';
+        btnAggiungi.textContent = 'AGGIUNGI AL CARRELLO';
 
         // A. Gestione visiva "grigio" per le taglie non disponibili
         if (coloreScelto) {
@@ -45,11 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // B. Controllo Prezzo / Disponibilità
         const match = varianti.find(v => v.variante.colore === coloreScelto && v.variante.taglia === tagliaScelta);
 
-        // Se esiste la combinazione E c'è disponibilità in magazzino
-        if (match && match.variante.quantitaMagazzino > 0) {
+        // Se esiste la combinazione selezionata
+        if (match) {
             const prezzoListino = match.variante.prezzo;
             const prezzoScontato = match.prezzoScontato;
             
+            // 1. Stampa del prezzo corretto
             if (match.inPromozione && prezzoScontato != null) {
                 priceContainer.innerHTML = `
                     <span class="current-price" style="color: var(--promozioni);">€ ${prezzoScontato.toFixed(2)}</span>
@@ -58,10 +66,36 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 priceContainer.innerHTML = `<span class="current-price">€ ${prezzoListino.toFixed(2)}</span>`;
             }
-            btnAggiungi.disabled = false;
+            
+            // ==========================================
+            // NUOVA LOGICA: CONTROLLO SCORTE (SCARCITY)
+            // ==========================================
+            const quantita = match.variante.quantitaMagazzino;
+            
+            if (quantita === 0) {
+                // Caso in cui la variante esiste, ma la giacenza è 0 (Esaurito)
+                btnAggiungi.disabled = true;
+                btnAggiungi.textContent = 'ESAURITO';
+                if (stockWarning) {
+                    stockWarning.innerHTML = `🚫 Purtroppo questa combinazione è attualmente esaurita.`;
+                    stockWarning.style.display = 'block';
+                    stockWarning.className = 'stock-warning out-of-stock';
+                }
+            } else if (quantita > 0 && quantita < 5) {
+                // Caso Scarcity: Meno di 5 pezzi disponibili (Fuoco!)
+                btnAggiungi.disabled = false;
+                if (stockWarning) {
+                    stockWarning.innerHTML = `🔥 Affrettati! Ne restano solo <strong>${quantita}</strong> disponibili.`;
+                    stockWarning.style.display = 'block';
+                    stockWarning.className = 'stock-warning low-stock';
+                }
+            } else {
+                // Caso Normale: Più di 5 pezzi (nessun avviso)
+                btnAggiungi.disabled = false;
+            }
         } 
         else {
-            // Se ha selezionato entrambi ma non c'è match/giacenza -> Non disponibile
+            // Se ha selezionato entrambi ma non c'è proprio il match
             if (coloreScelto && tagliaScelta) {
                 priceContainer.innerHTML = `<span class="current-price" style="color: #999;">Non disponibile</span>`;
             } else {
@@ -72,11 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 3. LISTENERS (Senza nessun reset "aggressivo")
+    // 3. LISTENERS
     colSel.addEventListener('change', aggiornaUI);
     tagSel.addEventListener('change', aggiornaUI);
 
-    // 4. CHIAMATA FETCH JSON
+    // 4. CHIAMATA FETCH JSON (Immutata!)
     btnAggiungi.addEventListener('click', async () => {
         const match = varianti.find(v => v.variante.colore === colSel.value && v.variante.taglia === tagSel.value);
         if (!match) return;

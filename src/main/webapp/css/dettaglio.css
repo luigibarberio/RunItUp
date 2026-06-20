@@ -193,6 +193,126 @@
     cursor: not-allowed;
 }
 
+/* ==========================================================================
+   RUNITUP - INFORMAZIONI EXTRA E SPECIFICHE TECNICHE (dettaglio.css)
+   ========================================================================== */
+
+.product-extra-info {
+    margin-top: 80px;
+    border-top: 1px solid var(--sfondo-alternativo);
+    padding-top: 40px;
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+.extra-info-tabs {
+    margin-bottom: 40px;
+    border-bottom: 2px solid var(--sfondo-alternativo);
+}
+
+.tab-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--testo-principale);
+    padding-bottom: 12px;
+    display: inline-block;
+    border-bottom: 3px solid var(--colore-primario);
+    margin-bottom: -2px; /* Sovrappone perfettamente il bordo colorato a quello grigio */
+    letter-spacing: -0.5px;
+}
+
+.extra-info-content {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 60px;
+    align-items: start;
+}
+
+/* --- Blocco Descrizione --- */
+.description-block h3, 
+.specs-block h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--testo-principale);
+    margin-bottom: 20px;
+}
+
+.description-text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--testo-secondario);
+    white-space: pre-line; /* Preserva gli andandi a capo inseriti nel pannello Admin */
+}
+
+/* --- Tabella Specifiche Tecniche --- */
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    border: 1px solid var(--sfondo-alternativo);
+}
+
+.specs-table tr {
+    border-bottom: 1px solid var(--sfondo-alternativo);
+}
+
+.specs-table tr:last-child {
+    border-bottom: none;
+}
+
+.specs-table th {
+    text-align: left;
+    padding: 16px 20px;
+    background-color: var(--sfondo-alternativo);
+    color: var(--testo-principale);
+    font-weight: 700;
+    width: 45%;
+    font-size: 0.95rem;
+}
+
+.specs-table td {
+    padding: 16px 20px;
+    color: var(--testo-secondario);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: capitalize; /* Converte l'enum da "NEUTRO" a "Neutro" visivamente */
+}
+
+/* ==========================================================================
+   AVVISO SCORTE (Scarcity Marketing)
+   ========================================================================== */
+.stock-warning {
+    display: none; /* Nascondi di default, verrà mostrato dinamicamente via JS */
+    margin-bottom: 20px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Stile per Scorte in esaurimento (< 5) */
+.low-stock {
+    background-color: #FFF7ED; /* Arancio chiarissimo */
+    color: #C2410C; /* Arancio scuro/Ruggine */
+    border: 1px solid #FFEDD5;
+}
+
+.low-stock strong {
+    font-weight: 800;
+    font-size: 1.1rem;
+}
+
+/* Stile per Esaurito (= 0) */
+.out-of-stock {
+    background-color: #FEF2F2; /* Rosso chiarissimo */
+    color: #B91C1C; /* Rosso scuro */
+    border: 1px solid #FEE2E2;
+}
+
 /* =========================================
    RESPONSIVE
    ========================================= */
@@ -201,4 +321,19 @@
         grid-template-columns: 1fr;
         gap: 30px;
     }
+
+    .product-extra-info {
+        margin-top: 50px;
+        padding-top: 30px;
+    }
+
+    .extra-info-content {
+        grid-template-columns: 1fr; /* Colonna singola su tablet e smartphone */
+        gap: 40px;
+    }
+
+    .tab-title {
+        font-size: 1.4rem;
+    }
+
 }

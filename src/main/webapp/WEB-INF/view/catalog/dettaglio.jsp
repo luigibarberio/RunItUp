@@ -72,11 +72,56 @@
                         </select>
                     </div>
 
+                    <div id="stock-warning" class="stock-warning"></div>
+
                     <button type="button" id="btnAggiungi" class="btn-cart" disabled>AGGIUNGI AL CARRELLO</button>
                 </div>
             </div>
-
         </div>
+        <section class="product-extra-info">
+            <div class="extra-info-tabs">
+                <h2 class="tab-title">Dettagli del Modello</h2>
+            </div>
+            
+            <div class="extra-info-content">
+                <%-- Blocco della Descrizione Testuale --%>
+                <div class="description-block">
+                    <h3>Presentazione della Scarpa</h3>
+                    <p class="description-text"><%
+                        if (prodotto.getDescrizione() != null && !prodotto.getDescrizione().trim().isEmpty()) {
+                            %><%= prodotto.getDescrizione() %><%
+                        } else {
+                            %>Nessuna descrizione testuale disponibile per questo modello.<%
+                        }
+                    %></p>
+                </div>
+
+                <%-- Blocco delle Caratteristiche Tecniche (Dati estratti dal Bean) --%>
+                <div class="specs-block">
+                    <h3>Specifiche Tecniche</h3>
+                    <table class="specs-table">
+                        <tbody>
+                            <tr>
+                                <th>Genere</th>
+                                <td><%= prodotto.getGenere() != null ? prodotto.getGenere().name().toLowerCase() : "-" %></td>
+                            </tr>
+                            <tr>
+                                <th>Terreno Ideale</th>
+                                <td><%= prodotto.getTipoTerreno() != null ? prodotto.getTipoTerreno().name().toLowerCase().replace("_", " ") : "-" %></td>
+                            </tr>
+                            <tr>
+                                <th>Tipo di Appoggio</th>
+                                <td><%= prodotto.getTipoAppoggio() != null ? prodotto.getTipoAppoggio().name().toLowerCase() : "-" %></td>
+                            </tr>
+                            <tr>
+                                <th>Passo / Ritmo</th>
+                                <td><%= prodotto.getTipoPasso() != null ? prodotto.getTipoPasso().name().toLowerCase() : "-" %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </main>
 
     <jsp:include page="/WEB-INF/view/fragments/footer.jsp" />

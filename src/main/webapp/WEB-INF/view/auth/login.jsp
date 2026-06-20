@@ -38,7 +38,12 @@
 
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Inserisci la tua password" required maxlength="50">
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Inserisci la tua password" required maxlength="50">
+                        <button type="button" class="toggle-password" aria-label="Mostra/Nascondi password">
+                            <img src="${pageContext.request.contextPath}/images/common/icons/password-hidden.svg" alt="Mostra password" class="eye-icon">
+                        </button>
+                    </div>
                     <span class="error-msg" id="passwordError"></span>
                 </div>
 

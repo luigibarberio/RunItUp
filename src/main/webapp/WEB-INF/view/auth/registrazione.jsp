@@ -61,12 +61,22 @@
                 <div class="input-row">
                     <div class="input-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Min. 8 caratteri" required maxlength="50">
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" placeholder="Min. 8 caratteri" required maxlength="50">
+                            <button type="button" class="toggle-password" aria-label="Mostra/Nascondi password">
+                                <img src="${pageContext.request.contextPath}/images/common/icons/password-hidden.svg" alt="Mostra password" class="eye-icon">
+                            </button>
+                        </div>
                         <span class="error-msg" id="passwordError"></span>
                     </div>
                     <div class="input-group">
                         <label for="confermaPassword">Conferma Password</label>
-                        <input type="password" id="confermaPassword" name="confermaPassword" placeholder="Ripeti password" required maxlength="50">
+                        <div class="password-wrapper">
+                            <input type="password" id="confermaPassword" name="confermaPassword" placeholder="Ripeti password" required maxlength="50">
+                            <button type="button" class="toggle-password" aria-label="Mostra/Nascondi password">
+                                <img src="${pageContext.request.contextPath}/images/common/icons/password-hidden.svg" alt="Mostra password" class="eye-icon">
+                            </button>
+                        </div>
                         <span class="error-msg" id="confermaPasswordError"></span>
                     </div>
                 </div>

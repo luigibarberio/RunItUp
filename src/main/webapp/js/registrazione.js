@@ -192,4 +192,25 @@ document.addEventListener('DOMContentLoaded', () => {
             registerBtn.querySelector('.btn-text').textContent = 'Registrati';
         }
     });
+
+    // --- GESTIONE MOSTRA/NASCONDI PASSWORD (MULTIPLO) ---
+    const toggleButtons = document.querySelectorAll('.toggle-password');
+    
+    toggleButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Trova l'input e l'icona relativi a QUESTO specifico bottone
+            const wrapper = this.closest('.password-wrapper');
+            const input = wrapper.querySelector('input');
+            const icon = this.querySelector('.eye-icon');
+            
+            // Inverte il tipo dell'input
+            const isPassword = input.getAttribute('type') === 'password';
+            input.setAttribute('type', isPassword ? 'text' : 'password');
+            
+            // Aggiorna l'icona
+            const iconName = isPassword ? 'password-shown.svg' : 'password-hidden.svg';
+            icon.src = icon.src.replace(/password-(hidden|shown)\.svg/, iconName);
+        });
+    });
+
 });

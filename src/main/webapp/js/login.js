@@ -115,4 +115,19 @@ document.addEventListener('DOMContentLoaded', () => {
             loginBtn.querySelector('.btn-text').textContent = 'Accedi';
         }
     });
+
+    // --- GESTIONE MOSTRA/NASCONDI PASSWORD ---
+    const togglePasswordBtn = document.querySelector('.toggle-password');
+    const eyeIcon = togglePasswordBtn.querySelector('.eye-icon');
+
+    togglePasswordBtn.addEventListener('click', () => {
+        // Controlla il tipo attuale e lo inverte
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        
+        // Cambia l'icona SVG (sostituendo 'hidden' con 'shown' nel nome del file e viceversa)
+        const iconName = isPassword ? 'password-shown.svg' : 'password-hidden.svg';
+        eyeIcon.src = eyeIcon.src.replace(/password-(hidden|shown)\.svg/, iconName);
+    });
+
 });

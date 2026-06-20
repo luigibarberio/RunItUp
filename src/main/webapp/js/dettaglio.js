@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Recuperiamo il div per l'avviso delle scorte dalla JSP
     const stockWarning = document.getElementById('stock-warning'); 
 
-    // 1. POPOLAMENTO STATICO (Fatto una sola volta all'avvio)
+    // POPOLAMENTO STATICO (Fatto una sola volta all'avvio)
     const coloriUnici = [...new Set(varianti.map(v => v.variante.colore))];
     coloriUnici.forEach(colore => {
         colSel.appendChild(new Option(colore, colore));
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tagSel.appendChild(new Option(taglia, taglia));
     });
 
-    // 2. LOGICA DI CONTROLLO SEMPLIFICATA
+    // LOGICA DI CONTROLLO SEMPLIFICATA
     function aggiornaUI() {
         const coloreScelto = colSel.value;
         const tagliaScelta = tagSel.value;
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (stockWarning) stockWarning.style.display = 'none';
         btnAggiungi.textContent = 'AGGIUNGI AL CARRELLO';
 
-        // A. Gestione visiva "grigio" per le taglie non disponibili
+        // Gestione visiva "grigio" per le taglie non disponibili
         if (coloreScelto) {
             const taglieDisponibili = varianti
                 .filter(v => v.variante.colore === coloreScelto && v.variante.quantitaMagazzino > 0)
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             Array.from(tagSel.options).forEach(opt => opt.disabled = false);
         }
 
-        // B. Controllo Prezzo / Disponibilità
+        // Controllo Prezzo / Disponibilità
         const match = varianti.find(v => v.variante.colore === coloreScelto && v.variante.taglia === tagliaScelta);
 
         // Se esiste la combinazione selezionata
@@ -67,9 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 priceContainer.innerHTML = `<span class="current-price">€ ${prezzoListino.toFixed(2)}</span>`;
             }
             
-            // ==========================================
-            // NUOVA LOGICA: CONTROLLO SCORTE (SCARCITY)
-            // ==========================================
+            // Logica di controllo disponibilità e messaggi dinamici sulla base della quantità in magazzino
             const quantita = match.variante.quantitaMagazzino;
             
             if (quantita === 0) {
@@ -82,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     stockWarning.className = 'stock-warning out-of-stock';
                 }
             } else if (quantita > 0 && quantita < 5) {
-                // Caso Scarcity: Meno di 5 pezzi disponibili (Fuoco!)
+                // Caso Scarcity: Meno di 5 pezzi disponibili
                 btnAggiungi.disabled = false;
                 if (stockWarning) {
                     stockWarning.innerHTML = `🔥 Affrettati! Ne restano solo <strong>${quantita}</strong> disponibili.`;
@@ -106,11 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 3. LISTENERS
+    // LISTENERS
     colSel.addEventListener('change', aggiornaUI);
     tagSel.addEventListener('change', aggiornaUI);
 
-    // 4. CHIAMATA FETCH JSON (Immutata!)
+    // CHIAMATA FETCH JSON
     btnAggiungi.addEventListener('click', async () => {
         const match = varianti.find(v => v.variante.colore === colSel.value && v.variante.taglia === tagSel.value);
         if (!match) return;

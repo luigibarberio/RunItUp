@@ -1,8 +1,5 @@
-/**
- * RUNITUP - Logica Client-Side del Carrello
- * Gestisce l'aggiunta, la diminuzione e la rimozione degli articoli tramite Fetch asincrona,
- * supportando le promozioni e i calcoli in tempo reale.
- */
+// Logica client-side per la gestione del carrello: modifica quantità, rimozione articoli, aggiornamento dinamico dei totali e badge
+// Tutte le operazioni sono asincrone e comunicano con il server tramite Fetch API e JSON
 
 // Funzione richiamata dai pulsanti "+" e "-"
 async function modificaQuantita(idVariante, delta) {

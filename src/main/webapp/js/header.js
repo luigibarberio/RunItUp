@@ -18,9 +18,7 @@ window.updateCartBadge = function(newCount) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ----------------======================================================
-    // 1. SCROLL DETECT (Nascondi header allo scroll down)
-    // ----------------======================================================
+    // Scroll detection per nascondere/mostrare l'header
     let lastScrollTop = 0;
     const header = document.querySelector('.main-header');
     
@@ -37,9 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ----------------======================================================
-    // 2. TOGGLE OFF-CANVAS MENU MOBILE (Drawer Destro)
-    // ----------------======================================================
+    // Toggle del menu mobile (Drawer)
     const menuOpenBtn = document.getElementById('mobileMenuOpenBtn');
     const menuCloseBtn = document.getElementById('mobileMenuCloseBtn');
     const drawer = document.getElementById('mobileNavigationDrawer');
@@ -65,9 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (menuCloseBtn) menuCloseBtn.addEventListener('click', closeDrawer);
     if (overlay) overlay.addEventListener('click', closeDrawer);
 
-    // ----------------======================================================
-    // 3. MOBILE SEARCH BAR OVERLAY (Dropdown dall'alto)
-    // ----------------======================================================
+    // Toggle del menu di ricerca su mobile
     const searchOpenBtn = document.getElementById('mobileSearchOpenBtn');
     const searchCloseBtn = document.getElementById('mobileSearchCloseBtn');
     const searchOverlay = document.getElementById('mobileSearchOverlay');
@@ -87,10 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ----------------======================================================
-    // 4. LOGICA AJAX SUGGERIMENTI RICERCA (Preservata e Blindata)
-    // --------------------------------======================================
-
+    // Funzione per gestire la ricerca AJAX con suggerimenti in tempo reale
     function setupAjaxSearch(inputId, suggestionsId) {
         const searchInput = document.getElementById(inputId);
         const searchSuggestions = document.getElementById(suggestionsId);

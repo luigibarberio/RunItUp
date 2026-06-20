@@ -1,8 +1,8 @@
 /* ==========================================================================
-   RUNITUP - FOGLIO DI STILE REGISTRAZIONE (registrazione.css)
+   RUNITUP - FOGLIO DI STILE REGISTRAZIONE
    ========================================================================== */
 
-/* Contenitore principale della pagina (Condivide la struttura con il login) */
+/* Contenitore principale della pagina */
 .login-main {
     display: flex;
     justify-content: center;

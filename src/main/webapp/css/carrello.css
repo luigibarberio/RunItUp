@@ -1,5 +1,5 @@
 /* ==========================================================================
-   RUNITUP - CARRELLO CSS (carrello.css)
+   RUNITUP - CARRELLO CSS
    ========================================================================== */
 
 /* Contenitore principale della pagina (Main wrapper) */
@@ -291,7 +291,7 @@
     cursor: pointer;
     margin-top: 24px;
     transition: all 0.2s ease;
-    background-color: var(--conferme); /* Verde ottanio come da piano d'azione per indurre sicurezza */
+    background-color: var(--conferme); /* Verde ottanio per indurre sicurezza */
     color: #FFFFFF;
 }
 
@@ -347,7 +347,7 @@
         justify-content: space-between;
     }
     
-    /* ACCORPAMENTO DEL BOX PREZZO */
+    /* Riorganizziamo il box dei prezzi per metterli in riga e allineati a sinistra */
     .item-price-box {
         grid-column: 1 / -1;
         flex-direction: row; /* Sovrascrive il column del desktop, mettendo i prezzi in riga */

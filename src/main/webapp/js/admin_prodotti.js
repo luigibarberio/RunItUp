@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. Controllo dei messaggi di ritorno (Redirect dal server)
+    // Controllo dei messaggi di ritorno (Redirect dal server)
     if (window.serverFeedback) {
         if (window.serverFeedback === "updated") {
             window.showToast("Prodotto aggiornato con successo!", "success");
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. Gestione Asincrona Eliminazione Prodotto
+    // Gestione Asincrona Eliminazione Prodotto
     const deleteButtons = document.querySelectorAll('.btn-delete');
 
     deleteButtons.forEach(btn => {
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const idProdotto = this.getAttribute('data-id');
             const card = document.getElementById(`card-prodotto-${idProdotto}`);
 
-            // REQUISITO CHECKLIST: Conferme di Cancellazione OBBLIGATORIO
+            // Conferme di Cancellazione
             const isConfirmed = confirm(`Sei sicuro di voler eliminare definitivamente il prodotto #${idProdotto} dal catalogo?\nQuesta operazione non può essere annullata.`);
             
             if (!isConfirmed) {
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.innerHTML = "⏳ Eliminazione...";
                 this.disabled = true;
 
-                // REQUISITO CHECKLIST: Fetch API con JSON OBBLIGATORIO
+                // Fetch API con JSON
                 const response = await fetch('prodotto/elimina', {
                     method: 'POST',
                     headers: {

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   RUNITUP - FOGLIO DI STILE CHECKOUT (checkout.css)
+   RUNITUP - FOGLIO DI STILE CHECKOUT
    ========================================================================== */
 
 /* Contenitore principale della pagina (Main wrapper) */
@@ -19,7 +19,7 @@
     align-items: start;
 }
 
-/* Pannelli bianchi rialzati (Card design approvato) */
+/* Pannelli bianchi rialzati */
 .checkout-form-panel, 
 .checkout-summary-panel {
     background-color: #FFFFFF;
@@ -375,9 +375,7 @@
     100% { transform: scale(1); opacity: 1; }
 }
 
-/* ==========================================================================
-   MEDIA QUERIES - RESPONSIVE DESIGN (Obbligatorio da Checklist d'esame)
-   ========================================================================== */
+/* Media query per adattare il layout su tablet e mobile */
 @media (max-width: 900px) {
     /* Il layout collassa su una singola colonna ordinata */
     .checkout-container {

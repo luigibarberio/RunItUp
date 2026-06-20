@@ -1,5 +1,5 @@
 /* ==========================================================================
-   RUNITUP - FAT FOOTER ARCHITECTURE (footer.css)
+   RUNITUP - FAT FOOTER ARCHITECTURE
    ========================================================================== */
 
 .main-footer {
@@ -161,9 +161,7 @@
     filter: grayscale(0%);
 }
 
-/* ==========================================================================
-   MEDIA QUERIES - RESPONSIVE DESIGN NATIVO (Checklist d'esame)
-   ========================================================================== */
+/* Mobile Responsive */
 @media (max-width: 991px) {
     .footer-container {
         grid-template-columns: 1fr 1fr; /* Collassa a 2 colonne sui tablet */

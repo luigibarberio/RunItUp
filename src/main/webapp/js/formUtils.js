@@ -22,7 +22,6 @@ window.FormUtils = {
         if (errorElement) errorElement.textContent = '';
     },
 
-    // TODO Pensare di fare un validatore globale, e modificare le funzioni di validazione in modo taleche restituiscano true/false invece di modificare direttamente lo stato. In questo modo si può fare un check globale del form e decidere se abilitare il pulsante di submit o meno.
     // Validazione centralizzata per stringhe vuote
     checkText: function(inputId, errorId, message) {
         const input = document.getElementById(inputId);

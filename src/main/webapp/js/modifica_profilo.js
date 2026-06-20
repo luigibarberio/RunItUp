@@ -1,3 +1,5 @@
+// Gestione del modulo di modifica profilo - Validazione, abilitazione pulsante e invio asincrono
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('editProfileForm');
     const saveBtn = document.getElementById('saveBtn');
@@ -14,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pwdConferma: document.getElementById('confermaPassword')
     };
 
-    // --- 1. LOGICA DI ABILITAZIONE LIVE DEL PULSANTE "APPLICA MODIFICHE" ---
+    // --- LOGICA DI ABILITAZIONE LIVE DEL PULSANTE "APPLICA MODIFICHE" ---
     const checkFormChanges = () => {
         const currentNome = inputs.nome.value.trim();
         const currentCognome = inputs.cognome.value.trim();
@@ -44,8 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const haToccatoPassword = (pwdA !== '' || pwdN !== '' || pwdC !== '');
 
         if (haToccatoPassword) {
-            // Per abilitare validamente il form sul cambio password, tutti e tre i campi devono
-            // soddisfare i criteri formali minimi, altrimenti il pulsante viene forzatamente bloccato
+            // Per abilitare validamente il form sul cambio password, tutti e tre i campi devono soddisfare i criteri formali minimi, altrimenti il pulsante viene forzatamente bloccato
             if (pwdA !== '' && pwdN.length >= 8 && pwdN === pwdC) {
                 passwordModificata = true;
             } else {
@@ -58,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveBtn.disabled = !(anagraficaModificata || passwordModificata);
     };
 
-    // --- 2. FUNZIONI DI VALIDAZIONE FORMALE (Eseguite al focus out / blur) ---
+    // --- FUNZIONI DI VALIDAZIONE FORMALE (Eseguite al focus out / blur) ---
     const validateNome = () => {
         // Regex allineata al backend: accetta lettere, spazi, accenti e apostrofi
         return FormUtils.checkRegex('nome', 'nomeError', /^[a-zA-ZÀ-ÿ\s']{2,50}$/, "Nome non valido (solo lettere, min 2).");
@@ -89,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     };
 
+    // Metodi per la validazione della nuova password e della conferma password
     const validateNuovaPassword = () => {
         const val = inputs.pwdNuova.value;
         if (val === '' && inputs.pwdConferma.value === '' && inputs.pwdAttuale.value === '') {
@@ -118,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     };
 
+    // Funzione di validazione globale che esegue tutte le singole validazioni e restituisce un booleano complessivo sulla validità del form (utilizzata prima dell'invio)
     const validateAll = () => {
         let valid = true;
         if (!validateNome()) valid = false;
@@ -129,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return valid;
     };
 
-    // --- 3. ATTACCO DEGLI EVENT LISTENERS (Gestione Input/Blur Separata) ---
+    // --- Inserimento degli event listeners (Gestione Input/Blur Separata) ---
     
     // Per Nome
     inputs.nome.addEventListener('input', () => {
@@ -173,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputs.pwdConferma.addEventListener('blur', validateConfermaPassword);
 
 
-    // --- 4. INVIO ASINCRONO DEL PAYLOAD (FETCH API) ---
+    // --- Invio asincrono del payload (Fetch API) ---
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 

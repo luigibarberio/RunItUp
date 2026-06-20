@@ -1,8 +1,3 @@
-/**
- * RUNITUP - Logica Client-Side Gestione Ordini (Admin)
- * Gestisce l'intercettazione degli errori di filtro dal backend e la UX dei bottoni.
- */
-
 document.addEventListener('DOMContentLoaded', () => {
     
     // =====================================================================

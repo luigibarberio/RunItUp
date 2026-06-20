@@ -1,3 +1,4 @@
+// Gestione del form di login - Validazione, invio e feedback all'utente
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');

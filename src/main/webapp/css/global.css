@@ -28,7 +28,7 @@ body {
     /* Font di sistema: puliti, veloci da caricare e moderni */
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     
-    /* Applichiamo le tue variabili per lo sfondo e il testo */
+    /* Colore di sfondo neutro e testo scuro per massima leggibilità */
     background-color: var(--sfondo-principale);
     color: var(--testo-principale);
     line-height: 1.6;

@@ -1,11 +1,4 @@
-/* ==========================================================================
-   SCRIPT PAGINA CATALOGO (catalogo.js)
-   ========================================================================== */
-
-/**
- * Pulisce i campi vuoti (es. i range di prezzo) prima di inviare il form.
- * Disabilitando l'input, il browser evita di inserire parametri inutili (es. &prezzoMin=) nell'URL.
- */
+// Logica client-side per la pagina del catalogo: gestione dei filtri, ordinamento, e interazione con la sidebar dei filtri su mobile
 function pulisciCampiVuoti() {
     const form = document.getElementById('filtriForm');
     if (!form) return;
@@ -19,19 +12,13 @@ function pulisciCampiVuoti() {
     });
 }
 
-/**
- * Invia il form dei filtri attivando prima la pulizia dei campi vuoti.
- * Viene chiamata, ad esempio, al cambio della select dell'ordinamento.
- */
+// Funzione richiamata al submit del form dei filtri
 function submitFiltri() {
     pulisciCampiVuoti();
     document.getElementById('filtriForm').submit();
 }
 
-/**
- * Apre e chiude la sidebar dei filtri sulla visualizzazione Mobile.
- * Blocca anche lo scroll del corpo della pagina quando il menù è aperto.
- */
+// Funzione per il toggle della sidebar dei filtri su mobile
 function toggleFiltri() {
     const sidebar = document.getElementById('sidebarFiltri');
     if (!sidebar) return;

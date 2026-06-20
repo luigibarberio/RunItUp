@@ -1,12 +1,8 @@
-/**
- * RUNITUP - Logica Client-Side Dashboard Varianti (Admin)
- * Gestisce l'aggiunta, la modifica inline e l'eliminazione delle varianti 
- * sfruttando esclusivamente la Fetch API e comunicazioni JSON.
- */
+// Gestione dell'aggiunta, modifica e cancellazione delle varianti di prodotto (Admin)
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. AGGIUNTA NUOVA VARIANTE (CREA) ---
+    // --- AGGIUNTA NUOVA VARIANTE (CREA) ---
     const addForm = document.getElementById('addVariantForm');
     
     addForm.addEventListener('submit', async (e) => {
@@ -64,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     .replace(/{PREZZO}/g, parseFloat(prezzo).toFixed(2))
                     .replace(/{QUANTITA}/g, quantita);
 
-                // Appiccichiamo la nuova card in cima alla griglia
+                // Inseriamo la nuova card in cima alla griglia
                 document.getElementById('variantsGrid').insertAdjacentHTML('afterbegin', newCardHTML);
                 
                 // Attiviamo l'animazione di discesa CSS
@@ -93,9 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // FUNZIONI GLOBALI (Richiamate dagli attributi onclick="" nell'HTML)
 // ============================================================================
 
-/**
- * 2. EFFETTO FLIP: Passaggio istantaneo tra visualizzazione Lettura e Modifica
- */
+// Toggle tra modalità di visualizzazione e modifica per una variante specifica
 window.toggleEditMode = function(idVariante, isEdit) {
     const card = document.getElementById(`variante-${idVariante}`);
     if (!card) return;

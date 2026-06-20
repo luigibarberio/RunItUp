@@ -411,7 +411,6 @@ public class OrdineDAO {
     // Metodo per aggiornare solo lo stato dell'ordine
     public boolean updateStatoOrdine(int idOrdine, StatoOrdine nuovoStato) throws SQLException {
         
-        // AGGIUNTO ::stato_ordine AL PRIMO PARAMETRO
         String query = "UPDATE ordine SET stato = ?::stato_ordine WHERE id_ordine = ?";
         
         Connection con = null;

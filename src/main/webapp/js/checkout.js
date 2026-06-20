@@ -1,8 +1,4 @@
-/**
- * RUNITUP - Logica Client-Side del Checkout
- * Pattern a Stati per disabilitazione automatica bottone, 
- * gestione Coupon e inoltro asincrono.
- */
+// Logica client-side per la pagina di checkout: validazione form, gestione dinamica del metodo di pagamento, applicazione coupon e invio ordine
 document.addEventListener('DOMContentLoaded', () => {
     
     const form = document.getElementById('checkoutForm');
@@ -26,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Variabile per tenere traccia del coupon applicato. Ci servirà per evitare che si possa effettuare un ordine senza aver applicato un coupon valido, magari modificando il campo del coupon dopo averlo validato
     let couponConfermato = "";
 
-    // --- 1. GESTIONE DELLO STATO (Pattern usato in registrazione.js) ---
+    // --- GESTIONE DELLO STATO (Pattern usato in registrazione.js) ---
     // Nome e Cognome sono precompilati dalla JSP, quindi partono a true se non sono vuoti
     const state = {
         nome: inputs.nome.value.trim() !== '',
@@ -54,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Chiamata iniziale per impostare il bottone al caricamento pagina
     checkFormValidity();
 
-    // --- 2. FUNZIONI DI VALIDAZIONE E AGGIORNAMENTO STATO ---
+    // --- FUNZIONI DI VALIDAZIONE E AGGIORNAMENTO STATO ---
     const validateTesto = (campo, errorId, msg) => {
         if (inputs[campo].value.trim() === '') {
             FormUtils.showError(inputs[campo], errorId, msg);
@@ -80,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkFormValidity();
     };
 
-    // --- 3. ASSEGNAZIONE EVENTI BLUR / INPUT ---
+    // --- ASSEGNAZIONE EVENTI BLUR / INPUT ---
     const setupLiveValidation = (campo, fn) => {
         inputs[campo].addEventListener('blur', fn);
         inputs[campo].addEventListener('input', () => {
@@ -102,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupLiveValidation('cvvCarta', () => validateRegex('cvvCarta', 'cvvCartaError', FormUtils.cvvRegex, 'Codice di 3 o 4 cifre.'));
 
 
-    // --- 4. GESTIONE DINAMICA METODO PAGAMENTO ---
+    // --- GESTIONE DINAMICA METODO PAGAMENTO ---
     paymentRadios.forEach(radio => {
         radio.addEventListener('change', (e) => {
             if (e.target.value === 'CARTA') {
@@ -118,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- 5. LOGICA COUPON (Fetch Asincrona) ---
+    // --- LOGICA COUPON (Fetch Asincrona) ---
     const btnApplicaCoupon = document.getElementById('btnApplicaCoupon');
     const couponMessage = document.getElementById('couponMessage');
 
@@ -224,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 6. INVIO FORM (Nessuna validazione extra richiesta) ---
+    // --- INVIO FORM (Nessuna validazione extra richiesta) ---
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 

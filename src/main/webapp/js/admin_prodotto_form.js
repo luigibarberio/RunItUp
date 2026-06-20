@@ -1,8 +1,4 @@
-/**
- * RUNITUP - Validazione Client-Side Form Prodotto (Admin)
- * Il form è unificato: se l'input hidden "idProdotto" esiste, 
- * siamo in modalità Modifica (file opzionali), altrimenti Inserimento (file obbligatori).
- */
+// Validazione lato client per il form di creazione/modifica prodotto (Admin)
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('productForm');
     
@@ -23,12 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let isValid = true;
 
-        // 1. Validazione Testi (Obbligatori sempre)
+        // Validazione Testi (Obbligatori sempre)
         if (!window.FormUtils.checkText('nome', 'nomeError', 'Il nome del modello è obbligatorio.')) {
             isValid = false;
         }
 
-        // 2. Validazione Brand (Obbligatorio sempre)
+        // Validazione Brand (Obbligatorio sempre)
         if (!window.FormUtils.checkText('nomeBrand', 'brandError', 'Digita o seleziona un brand.')) {
             isValid = false;
         }

@@ -54,9 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!FormUtils.checkText('email', 'emailError', 'L\'email è obbligatoria.')) return;
         if (!FormUtils.checkRegex('email', 'emailError', FormUtils.emailRegex, 'Formato email non valido.')) return;
 
-        // ==========================================
-        // PUNTO D'ESAME: Controllo AJAX Email Live
-        // ==========================================
+        // Controllo di unicità asincrono (Fetch API)
         try {
             const response = await fetch(`check-email?email=${encodeURIComponent(inputs.email.value.trim())}`);
             const data = await response.json();

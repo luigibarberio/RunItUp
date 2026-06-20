@@ -1,7 +1,4 @@
-/**
- * RUNITUP - Logica Client-Side Shoe Finder
- * Gestisce l'avanzamento degli step del quiz, la validazione e la barra di progresso.
- */
+// Gestione del quiz "Find My Shoes" - Logica di navigazione e interazione
 
 document.addEventListener('DOMContentLoaded', () => {
     

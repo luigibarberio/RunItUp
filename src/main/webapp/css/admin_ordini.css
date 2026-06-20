@@ -1,8 +1,8 @@
 /* ==========================================================================
-   RUNITUP - STILE GESTIONE ORDINI ADMIN (admin_ordini.css)
+   RUNITUP - STILE GESTIONE ORDINI ADMIN
    ========================================================================== */
 
-/* --- 1. INTESTAZIONE PAGINA --- */
+/* --- INTESTAZIONE PAGINA --- */
 .admin-page-header {
     margin-bottom: 24px;
 }
@@ -19,7 +19,7 @@
     font-size: 1rem;
 }
 
-/* --- 2. BARRA DEI FILTRI (Filter Card) --- */
+/* --- BARRA DEI FILTRI (Filter Card) --- */
 .admin-filter-bar-card {
     background-color: #FFFFFF;
     border: 1px solid #E2E8F0;

@@ -58,11 +58,10 @@
     border-radius: 12px;
     border: 1px solid #e0e0e0;
     
-    /* La sidebar rimane fissa in alto... */
+    /* La sidebar rimane fissa in alto ma non supera mai l'altezza dello schermo */
     position: sticky;
     top: 20px; 
-    
-    /* ...ma non supera MAI l'altezza dello schermo dell'utente */
+
     max-height: calc(100vh - 40px); 
     
     /* Se i filtri sono troppi, si scrolla SOLO dentro la sidebar! */

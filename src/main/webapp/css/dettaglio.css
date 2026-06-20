@@ -1,6 +1,8 @@
-/* =========================================
-   LAYOUT DETTAGLIO PRODOTTO
-   ========================================= */
+/* ==========================================================================
+   RUNITUP - DETTAGLIO PRODOTTO CSS
+   ========================================================================== */
+
+/* Layout principale del dettaglio prodotto */
 .dettaglio-main {
     max-width: 1040px;
     margin: 60px auto;
@@ -14,9 +16,7 @@
     align-items: flex-start;
 }
 
-/* =========================================
-   IMMAGINE
-   ========================================= */
+/* Immagine del prodotto */
 .product-image {
     position: relative;
     width: 100%;
@@ -38,9 +38,7 @@
     transition: opacity 0.4s ease-in-out, transform 0.3s ease;
 }
 
-/* =========================================
-   EFFETTO HOVER REVEAL (Doppia Immagine)
-   ========================================= */
+/* Effetto hover per mostrare la seconda immagine (se presente) */
 .primary-img {
     z-index: 1;
     opacity: 1;
@@ -60,9 +58,7 @@
     opacity: 1;
 }
 
-/* =========================================
-   INFO E PREZZO
-   ========================================= */
+/* Info e Prezzo */
 .product-info {
     margin-bottom: 25px;
 }
@@ -193,9 +189,7 @@
     cursor: not-allowed;
 }
 
-/* ==========================================================================
-   RUNITUP - INFORMAZIONI EXTRA E SPECIFICHE TECNICHE (dettaglio.css)
-   ========================================================================== */
+/* --- SEZIONE EXTRA (Descrizione, Specifiche Tecniche, ecc.) --- */
 
 .product-extra-info {
     margin-top: 80px;
@@ -280,9 +274,7 @@
     text-transform: capitalize; /* Converte l'enum da "NEUTRO" a "Neutro" visivamente */
 }
 
-/* ==========================================================================
-   AVVISO SCORTE (Scarcity Marketing)
-   ========================================================================== */
+/* --- Sezione Stock e Avvisi --- */
 .stock-warning {
     display: none; /* Nascondi di default, verrà mostrato dinamicamente via JS */
     margin-bottom: 20px;
@@ -313,9 +305,7 @@
     border: 1px solid #FEE2E2;
 }
 
-/* =========================================
-   RESPONSIVE
-   ========================================= */
+/* Mobile Responsive */
 @media (max-width: 768px) {
     .product-layout {
         grid-template-columns: 1fr;

@@ -29,7 +29,7 @@
     /* Arrotondamento e margini per un effetto più morbido */
     margin-left: 20px;
     margin-right: 20px;
-    border-radius: 128px;
+    border-radius: clamp(12px, 10vw, 128px); /* Arrotondamento dinamico in base alla larghezza della viewport */
     overflow: hidden;
 }
 
@@ -439,7 +439,6 @@
 
 @media (max-width: 576px) {
 
-    .hero-section { border-radius: 30px; } /* Arrotondamento più morbido su mobile */
     .container { padding: 40px 15px; }
     
     .category-grid { grid-template-columns: 1fr; }

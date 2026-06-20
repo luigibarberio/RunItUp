@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Accesso Negato - RunItUp</title>
+
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/common/favicon-grayscale.png">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">

@@ -158,6 +158,24 @@
 .btn-secondary { background-color: var(--sfondo-alternativo); color: var(--testo-principale); }
 .btn-secondary:hover { background-color: #d1d5d8; }
 
+.close-btn {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    background-color: var(--sfondo-alternativo);
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--testo-secondario);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: var(--colore-primario);
+}
+
 /* ==========================================================================
    GRIGLIA PRODOTTI
    ========================================================================== */

@@ -56,17 +56,6 @@
     transform: translateX(3px); /* Leggero scivolamento in hover per feedback dinamico */
 }
 
-/* Evidenze semantiche coerenti con l'header */
-.footer-promo-link {
-    color: var(--promozioni) !important;
-    font-weight: 600 !important;
-}
-
-.footer-highlight-link {
-    color: var(--conferme) !important;
-    font-weight: 600 !important;
-}
-
 /* ==========================================================================
    COLONNA BRAND E PROFILI SOCIAL
    ========================================================================== */

@@ -10,7 +10,7 @@
 <%@ page import="it.runitup.util.SpedizioneUtil" %>
 
 <%
-    // Ora recuperiamo una lista di DTO, non più di Bean puri
+    // Recuperiamo le voci del carrello e il totale calcolati dalla Servlet
     @SuppressWarnings("unchecked")
     List<VoceCarrelloDTO> vociCarrello = (List<VoceCarrelloDTO>) request.getAttribute("vociCarrello");
     BigDecimal totaleCarrello = (BigDecimal) request.getAttribute("totaleCarrello");

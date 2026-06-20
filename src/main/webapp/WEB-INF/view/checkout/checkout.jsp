@@ -8,7 +8,7 @@
 <%@ page import="it.runitup.model.dto.VoceCarrelloDTO" %>
 
 <%
-    // Recuperiamo l'utente dalla sessione (sicuri al 100% che ci sia grazie all'AuthFilter)
+    // Recuperiamo l'utente dalla sessione (sicuri al 100% che ci sia grazie all'AuthFilter), l'inizializzazione della request e della session è implicita in JSP, non serve farlo manualmente
     Utente utente = (Utente) session.getAttribute("utenteLoggato");
 
     // Recuperiamo i dati economici e gli articoli passati dalla CheckoutServlet
@@ -44,7 +44,7 @@
             <div class="checkout-form-panel">
                 <h2 class="section-title">Informazioni di Consegna</h2>
                 
-                <%-- Form muto per AJAX (novalidate blocca i popup nativi del browser per usare i nostri errori inline) --%>
+                <%-- Form muto per AJAX (novalidate blocca i popup nativi del browser per usare gli errori inline) --%>
                 <form id="checkoutForm" novalidate>
                     
                     <div class="form-group-row">

@@ -118,7 +118,7 @@
         </main>
     </div>
 
-    <%-- IL TEMPLATE HTML5 PER LA CREAZIONE DINAMICA IN JAVASCRIPT --%>
+    <%-- TEMPLATE HTML5 PER LA CREAZIONE DINAMICA IN JAVASCRIPT --%>
     <template id="variant-card-template">
         <div class="variant-card" id="variante-{ID}" data-id="{ID}">
             <div class="variant-view-mode">

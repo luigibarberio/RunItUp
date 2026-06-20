@@ -11,7 +11,7 @@
     @SuppressWarnings("unchecked")
     List<DettaglioOrdine> dettagliOrdini = (List<DettaglioOrdine>) request.getAttribute("dettagliOrdini");
 
-    // Formattatore date (Es: 16 Giu 2026, 14:30)
+    // Formattatore date per visualizzare la data in modo leggibile
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
     
     // Funzione helper locale per il colore del badge di stato
@@ -35,7 +35,6 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/toast.css">
-    <%-- Il CSS specifico che andremo a creare --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/dettaglio_ordine.css">
 </head>
 <body>
@@ -115,7 +114,7 @@
                         
                         <div class="cost-row">
                             <span>Subtotale Prodotti</span>
-                            <%-- Ricalcolo al volo per mostrare il subtotale pre-sconto --%>
+                            <%-- Ricalcolo per mostrare il subtotale pre-sconto --%>
                             <% 
                                 java.math.BigDecimal totProdotti = ordine.getTotalePagato().subtract(ordine.getCostoSpedizione());
                                 if (ordine.getCoupon() != null) {

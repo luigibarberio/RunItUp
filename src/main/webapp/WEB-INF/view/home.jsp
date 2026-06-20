@@ -33,13 +33,14 @@
     <title>RunItUp - Supera i tuoi limiti</title>
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/common/favicon.png">
     
-    <%-- I CSS verranno collegati qui. Per ora mettiamo i riferimenti standard --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/prodotto_card.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css">
-    <link rel="preload" href="${pageContext.request.contextPath}/images/home/hero-bg.jpg" as="image"> <!-- Preload dell'immagine hero per migliorare l'esperienza utente -->
+    
+    <!-- Preload dell'immagine hero per migliorare l'esperienza utente -->
+    <link rel="preload" href="${pageContext.request.contextPath}/images/home/hero-bg.jpg" as="image">
 </head>
 <body>
 

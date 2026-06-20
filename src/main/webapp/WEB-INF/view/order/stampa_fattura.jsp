@@ -10,7 +10,7 @@
     @SuppressWarnings("unchecked")
     List<DettaglioOrdine> dettagliOrdini = (List<DettaglioOrdine>) request.getAttribute("dettagliOrdini");
 
-    // Formattatore data più "fiscale" (es. 16/06/2026 14:30)
+    // Formattatore data per visualizzare la data in modo leggibile
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 %>
 

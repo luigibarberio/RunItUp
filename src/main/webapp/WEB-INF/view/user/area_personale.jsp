@@ -30,7 +30,7 @@
     <main class="profile-main">
         <div class="profile-container">
             
-            <%-- Benvenuto --%>
+            <%-- Messaggio di Benvenuto --%>
             <header class="profile-welcome-section">
                 <h1>Ciao, <%= utente.getNome() %>!</h1>
                 <p>Benvenuto nella tua area riservata. Qui puoi gestire le tue informazioni e monitorare i tuoi acquisti.</p>

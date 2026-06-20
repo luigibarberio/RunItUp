@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    // Legge l'attributo impostato dalla Servlet, se nullo usa "dashboard"
+    // Legge l'attributo impostato dalla Servlet, se nullo usa "prodotti" come default
     String activePage = (String) request.getAttribute("activePage");
     if (activePage == null) activePage = "prodotti"; // Default
 %>

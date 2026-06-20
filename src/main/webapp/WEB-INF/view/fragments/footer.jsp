@@ -34,9 +34,9 @@
                 <li><a href="${pageContext.request.contextPath}/catalogo?genere=UOMO">Collezione Uomo</a></li>
                 <li><a href="${pageContext.request.contextPath}/catalogo?genere=DONNA">Collezione Donna</a></li>
                 <li><a href="${pageContext.request.contextPath}/catalogo?genere=UNISEX">Scarpe Unisex</a></li>
-                <li><a href="${pageContext.request.contextPath}/findmyshoes" class="footer-highlight-link">FindMyShoes</a></li>
+                <li><a href="${pageContext.request.contextPath}/findmyshoes">FindMyShoes</a></li>
                 <li><a href="${pageContext.request.contextPath}/catalogo?nuoviArrivi=true">Nuovi Arrivi</a></li>
-                <li><a href="${pageContext.request.contextPath}/catalogo?inOfferta=true" class="footer-promo-link">Promozioni</a></li>
+                <li><a href="${pageContext.request.contextPath}/catalogo?inOfferta=true">Promozioni</a></li>
             </ul>
         </div>
 

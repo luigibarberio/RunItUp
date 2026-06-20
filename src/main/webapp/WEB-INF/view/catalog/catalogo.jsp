@@ -74,8 +74,7 @@
             <% } %>
 
             <%-- Bottone Chiudi visibile solo su mobile --%>
-            <button type="button" class="mobile-only" onclick="toggleFiltri()" 
-                    style="width: 100%; padding: 12px; margin-bottom: 20px; background: var(--sfondo-alternativo); border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+            <button type="button" class="close-btn mobile-only" onclick="toggleFiltri()">
                 ✕ Chiudi
             </button>
             <div class="filter-group">
@@ -242,7 +241,7 @@
         </form>
     </aside>
 
-    <%-- Wrapper aggiunto per isolare la griglia prodotti dai banner soprastanti --%>
+    <%-- Wrapper per isolare la griglia prodotti dai banner soprastanti --%>
     <div class="catalogo-content-area">
 
         <section class="catalogo-prodotti">

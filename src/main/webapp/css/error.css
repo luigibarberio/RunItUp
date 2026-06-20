@@ -1,0 +1,84 @@
+/* ==========================================================================
+   RUNITUP - STILE PAGINE DI ERRORE (error.css)
+   ========================================================================== */
+
+.error-main {
+    padding: 80px 20px;
+    background-color: var(--sfondo-principale);
+    min-height: calc(100vh - 200px); /* Assicura che il footer stia in basso */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.error-container {
+    background-color: #FFFFFF;
+    border: 1px solid var(--sfondo-alternativo);
+    border-radius: 16px;
+    padding: 60px 40px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.error-emoji {
+    font-size: 5rem;
+    line-height: 1;
+    margin-bottom: 20px;
+}
+
+.error-code {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--promozioni); /* Un tocco di rosso/arancio per evidenziare l'errore */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.error-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--testo-principale);
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: var(--testo-secondario);
+    margin-bottom: 35px;
+    line-height: 1.6;
+}
+
+.error-container .btn-primary {
+    display: inline-block;
+    padding: 14px 32px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    background-color: var(--colore-primario);
+    color: #FFFFFF;
+    font-weight: 700;
+    transition: background-color 0.2s;
+}
+
+.error-container .btn-primary:hover {
+    background-color: var(--colore-secondario);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 600px) {
+    .error-container {
+        padding: 40px 20px;
+    }
+    .error-title {
+        font-size: 1.8rem;
+    }
+}

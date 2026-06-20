@@ -219,6 +219,10 @@ public class CheckoutServlet extends HttpServlet {
             if (idOrdineGenerato > 0) {
                 jsonResponse.addProperty("success", true);
                 jsonResponse.addProperty("redirectUrl", request.getContextPath() + "/ordini?id=" + idOrdineGenerato);
+
+                // Si aggiorna il cartBadgeCount in sessione a 0, poiché il carrello è stato svuotato
+                session.setAttribute("cartBadgeCount", 0);
+
                 response.getWriter().write(gson.toJson(jsonResponse));
             } else {
                 inviaRisposta(response, jsonResponse, false, "Scorte esaurite per uno o più articoli selezionati. Ordine annullato.");

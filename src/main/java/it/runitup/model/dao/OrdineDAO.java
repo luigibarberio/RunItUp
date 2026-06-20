@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 public class OrdineDAO {
 
     // Questo metodo salva un ordine completo, i dettagli e aggiorna il magazzino in un'unica transazione
-// Questo metodo salva un ordine completo, i dettagli e aggiorna il magazzino in un'unica transazione
     public int salvaOrdineCompleto(Ordine ordine, List<VoceCarrelloDTO> voci, int idUtente) throws SQLException {
         int idOrdineGenerato = -1;
 

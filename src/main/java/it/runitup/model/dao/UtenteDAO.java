@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import it.runitup.model.bean.Utente;
-import it.runitup.util.ConnectionPool; // Assicurati che il package del pool sia corretto
+import it.runitup.util.ConnectionPool;
 
 public class UtenteDAO {
 

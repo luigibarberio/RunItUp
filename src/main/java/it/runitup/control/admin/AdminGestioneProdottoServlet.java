@@ -24,6 +24,7 @@ import it.runitup.model.bean.TipoTerreno;
 import it.runitup.model.dao.BrandDAO;
 import it.runitup.model.dao.ProdottoDAO;
 
+// Servlet per la gestione (inserimento/modifica) di un prodotto nel catalogo. Riceve richieste GET per visualizzare il form e POST per salvare i dati del prodotto.
 @WebServlet("/admin/prodotto/gestione")
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 2,
@@ -36,6 +37,7 @@ public class AdminGestioneProdottoServlet extends HttpServlet {
     private final ProdottoDAO prodottoDAO = new ProdottoDAO();
     private final BrandDAO brandDAO = new BrandDAO();
 
+    // Gestione della richiesta GET per visualizzare il form di inserimento/modifica prodotto
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -43,7 +45,7 @@ public class AdminGestioneProdottoServlet extends HttpServlet {
         String idParam = request.getParameter("id");
         
         try {
-            // REQUISITO: Carichiamo la lista dei brand per la datalist HTML5
+            // Recuperiamo la lista dei brand per popolare il dropdown nel form
             request.setAttribute("listaBrand", brandDAO.doRetrieveAll());
 
             if (idParam != null && !idParam.trim().isEmpty()) {
@@ -70,6 +72,7 @@ public class AdminGestioneProdottoServlet extends HttpServlet {
         }
     }
 
+    // Gestione della richiesta POST per salvare i dati del prodotto (inserimento o modifica)
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -88,34 +91,35 @@ public class AdminGestioneProdottoServlet extends HttpServlet {
 
         boolean isModifica = (idParam != null && !idParam.trim().isEmpty());
 
-        // 1. RICOSTRUIAMO SUBITO IL BEAN CON I DATI INVIATI DALL'UTENTE
-        // Così se la validazione fallisce, glieli rimandiamo indietro senza svuotare il form!
+        // Creazione dell'oggetto Prodotto con i dati ricevuti dal form
         Prodotto prodotto = new Prodotto();
         prodotto.setNome(nome != null ? nome.trim() : "");
         prodotto.setDescrizione(descrizione != null ? descrizione.trim() : "");
         prodotto.setInEvidenza(inEvidenza);
         
+        // Creazione di un brand di fallback nel caso in cui il brand non sia trovato nel database
         Brand fallbackBrand = new Brand();
         fallbackBrand.setNomeBrand(nomeBrandParam != null ? nomeBrandParam.trim() : "");
         prodotto.setBrand(fallbackBrand);
 
+        // Impostazione dei valori degli enum solo se i parametri non sono nulli
         if (genereParam != null) prodotto.setGenere(GenereScarpa.valueOf(genereParam.toUpperCase()));
         if (terrenoParam != null) prodotto.setTipoTerreno(TipoTerreno.valueOf(terrenoParam.toUpperCase()));
         if (appoggioParam != null) prodotto.setTipoAppoggio(TipoAppoggio.valueOf(appoggioParam.toUpperCase()));
         if (passoParam != null) prodotto.setTipoPasso(TipoPasso.valueOf(passoParam.toUpperCase()));
         
+        // Se siamo in modalità modifica, impostiamo l'ID del prodotto
         if (isModifica) {
             prodotto.setIdProdotto(Integer.parseInt(idParam.trim()));
         }
 
-        // 2. VALIDAZIONE LATO SERVER (Il Paracadute)
         if (nome == null || nome.trim().isEmpty() || nomeBrandParam == null || nomeBrandParam.trim().isEmpty()) {
             gestisciErroreERitornaAlForm(request, response, prodotto, isModifica, "I campi Nome e Brand sono obbligatori.");
             return;
         }
 
+        // Gestione della logica di salvataggio del prodotto (inserimento o aggiornamento)
         try {
-            // 3. GESTIONE UPSERT DEL BRAND (Cerca o Crea)
             Brand brand = brandDAO.doRetrieveByNome(nomeBrandParam.trim());
             
             if (brand == null) {
@@ -130,7 +134,7 @@ public class AdminGestioneProdottoServlet extends HttpServlet {
             }
             prodotto.setBrand(brand);
 
-            // 4. SALVATAGGIO PRODOTTO
+            // Salvataggio del prodotto nel database (inserimento o aggiornamento)
             int idProdottoFinal = -1;
 
             if (isModifica) {
@@ -142,7 +146,7 @@ public class AdminGestioneProdottoServlet extends HttpServlet {
                 if (idProdottoFinal == -1) throw new SQLException("L'inserimento del prodotto è fallito.");
             }
 
-            // 5. GESTIONE UPLOAD IMMAGINI
+            // Salvataggio delle immagini fisiche sul server
             String uploadPath = System.getProperty("user.home") + File.separator + "runitup_media" + File.separator + "prodotti";
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) uploadDir.mkdirs(); 
@@ -150,7 +154,7 @@ public class AdminGestioneProdottoServlet extends HttpServlet {
             salvaImmagineFisica(request.getPart("immagine_0"), uploadPath, idProdottoFinal, 0);
             salvaImmagineFisica(request.getPart("immagine_1"), uploadPath, idProdottoFinal, 1);
 
-            // 6. REDIRECT AL SUCCESSO
+            // Redirezione alla pagina appropriata dopo il salvataggio
             if (isModifica) {
                 response.sendRedirect(request.getContextPath() + "/admin/prodotti?msg=updated");
             } else {
@@ -163,23 +167,24 @@ public class AdminGestioneProdottoServlet extends HttpServlet {
         }
     }
 
-    /**
-     * HELPER METHOD: Ricarica la pagina JSP preservando i dati digitati dall'utente (UX Avanzata)
-     */
+    // Metodo di utilità per gestire gli errori e ritornare al form con i dati inseriti
     private void gestisciErroreERitornaAlForm(HttpServletRequest request, HttpServletResponse response, Prodotto prodotto, boolean isModifica, String errorMessage) throws ServletException, IOException {
         request.setAttribute("erroreMessage", errorMessage);
         request.setAttribute("prodottoForm", prodotto);
         request.setAttribute("modalita", isModifica ? "MODIFICA" : "INSERIMENTO");
         
+        // Recuperiamo la lista dei brand per popolare il dropdown nel form
         try {
             request.setAttribute("listaBrand", brandDAO.doRetrieveAll());
         } catch (SQLException e) {
             e.printStackTrace();
         }
         
+        // Reindirizziamo al form di gestione prodotto con i dati inseriti e il messaggio di errore
         request.getRequestDispatcher("/WEB-INF/view/admin/admin_prodotto_form.jsp").forward(request, response);
     }
 
+    // Metodo di utilità per salvare fisicamente le immagini sul server
     private void salvaImmagineFisica(Part part, String uploadPath, int idProdotto, int index) throws IOException {
         if (part != null && part.getSize() > 0) {
             String fileName = "prodotto_" + idProdotto + "_" + index + ".png";

@@ -30,9 +30,8 @@ public class ModificaProfiloServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        // L'AuthFilter garantisce che l'utente sia loggato.
-        // Se ne approfitta per aggiornare i dati dell'utente in sessione con quelli più freschi dal DB, così da evitare discrepanze tra sessione e DB        
+
+        // Recupero della sessione e dell'utente loggato dalla sessione, garantita dalla servlet di autenticazione.
         try {
             HttpSession session = request.getSession(false);
             Utente utenteLoggato = (Utente) session.getAttribute("utenteLoggato");
@@ -62,21 +61,22 @@ public class ModificaProfiloServlet extends HttpServlet {
         Utente utenteLoggato = (Utente) session.getAttribute("utenteLoggato");
 
         try {
-            // 1. Parsing del corpo della richiesta JSON inviata dalla Fetch
+            // Recupero dei dati JSON dalla richiesta e parsing in JsonObject
             JsonObject jsonRequest = gson.fromJson(request.getReader(), JsonObject.class);
             
             String nome = jsonRequest.has("nome") ? jsonRequest.get("nome").getAsString().trim() : "";
             String cognome = jsonRequest.has("cognome") ? jsonRequest.get("cognome").getAsString().trim() : "";
             
-            // Scomponiamo l'estrazione in accordo con la struttura simmetrica di RegistrazioneServlet
+            // Recupero del prefisso e del numero di telefono, con trimming e normalizzazione
             String prefisso = jsonRequest.has("prefisso") ? jsonRequest.get("prefisso").getAsString().trim() : "";
             String numeroTelefono = jsonRequest.has("telefono") ? jsonRequest.get("telefono").getAsString().trim() : "";
             
+            // Recupero delle password per il cambio password, se l'utente desidera modificarla
             String passwordAttuale = jsonRequest.has("passwordAttuale") ? jsonRequest.get("passwordAttuale").getAsString() : "";
             String nuovaPassword = jsonRequest.has("nuovaPassword") ? jsonRequest.get("nuovaPassword").getAsString() : "";
             String confermaPassword = jsonRequest.has("confermaPassword") ? jsonRequest.get("confermaPassword").getAsString() : "";
 
-            // --- 2. VALIDAZIONE ANAGRAFICA LATO SERVER ---
+            // Validazione dei campi anagrafici: nome e cognome devono essere non vuoti, avere almeno 2 caratteri e contenere solo lettere (anche accentate) e spazi
             if (nome.isEmpty() || nome.length() < 2 || !nome.matches("^[a-zA-ZÀ-ÿ\\s']{2,50}$")) {
                 sendError(response, jsonResponse, "Nome non valido. Usa solo lettere (min 2 caratteri).");
                 return;
@@ -87,24 +87,23 @@ public class ModificaProfiloServlet extends HttpServlet {
                 return;
             }
 
-            // --- VALIDAZIONE DEL TELEFONO COMPOSITO ---
+            // Validazione del numero di telefono solo se l'utente ha inserito un numero
             String telefonoDaSalvare = null;
             
-            // Se l'utente ha inserito dei caratteri nel campo del numero di telefono
             if (!numeroTelefono.isEmpty()) {
-                // 1. Validazione del prefisso (anche se è una select, verifichiamo la Regex per sicurezza)
+                // Validazione del prefisso (anche se è una select, verifichiamo la Regex per sicurezza)
                 if (prefisso.isEmpty() || !prefisso.matches("^\\+[1-9]\\d{1,3}$")) {
                     sendError(response, jsonResponse, "Prefisso internazionale non valido.");
                     return;
                 }
                 
-                // 2. Validazione del numero
+                // Validazione del numero di telefono (deve essere un numero reale, es. 3XXXXXXXXX o 0XXXXXXX)
                 if (!numeroTelefono.matches("^(3\\d{9}|0\\d{6,10})$")) {
                     sendError(response, jsonResponse, "Numero di telefono non valido. Inserisci un numero reale.");
                     return;
                 }
                 
-                // 3. Validazione dell'unicità del numero di telefono (combinazione prefisso + numero)
+                // Validazione dell'unicità del numero di telefono (combinazione prefisso + numero)
                 String telefonoCompleto = prefisso + " " + numeroTelefono;
                 Utente utenteConTelefono = utenteDAO.doRetrieveByTelefono(telefonoCompleto);
                 if (utenteConTelefono != null && (utenteConTelefono.getIdUtente() != utenteLoggato.getIdUtente())) {
@@ -112,53 +111,53 @@ public class ModificaProfiloServlet extends HttpServlet {
                     return;
                 }
 
-                // Se tutti i controlli sono validi, creiamo la stringa con lo spazio per il DB
+                // Se tutte le validazioni passano, si salva il numero di telefono formattato
                 telefonoDaSalvare = telefonoCompleto;
+            } else {
+                // Se il numero di telefono è vuoto, si salva come null nel database
+                telefonoDaSalvare = null;
             }
-            // Se numeroTelefono è vuoto, telefonoDaSalvare rimane null (coerente con il DB nullable)
 
-            // 3. Recuperiamo l'utente dal DB per i controlli di sicurezza
+            // Recupero dell'utente dal database per garantire che le informazioni siano aggiornate
             Utente utenteDb = utenteDAO.doRetrieveById(utenteLoggato.getIdUtente());
             if (utenteDb == null) {
                 sendError(response, jsonResponse, "Impossibile completare l'operazione: utente non trovato.");
                 return;
             }
 
-            // Verifichiamo se l'utente desidera cambiare la password
+            // Verifica se l'utente ha richiesto un cambio password: se il campo nuovaPassword non è vuoto, allora l'utente vuole cambiare la password
             boolean passwordModificata = !nuovaPassword.isEmpty();
 
-            // --- 4. GESTIONE CAMBIO PASSWORD ---
+            // Gestione del cambio password con controlli di sicurezza: verifica della password attuale, uguaglianza delle nuove password e robustezza minima
             if (passwordModificata) {
                 if (passwordAttuale.isEmpty()) {
                     sendError(response, jsonResponse, "Inserisci la tua password attuale per confermare le modifiche.");
                     return;
                 }
 
-                // Controllo di corrispondenza dell'hash tramite BCrypt
+                // Verifica della password attuale confrontando l'hash salvato nel database con la password fornita dall'utente
                 if (!BCrypt.checkpw(passwordAttuale, utenteDb.getPasswordHash())) {
                     sendError(response, jsonResponse, "La password attuale inserita non è corretta.");
                     return;
                 }
 
-                // Verifica uguaglianza formale dei due nuovi campi
+                // Verifica che la nuova password e la conferma coincidano e che rispettino i requisiti di robustezza (almeno 8 caratteri)
                 if (!nuovaPassword.equals(confermaPassword)) {
                     sendError(response, jsonResponse, "La nuova password e la password di conferma non coincidono.");
                     return;
                 }
-
-                // Verifica robustezza minima (es. almeno 8 caratteri)
                 if (nuovaPassword.length() < 8) {
                     sendError(response, jsonResponse, "La nuova password deve contenere almeno 8 caratteri.");
                     return;
                 }
 
-                // Generiamo il nuovo hash sicuro
+                // Se tutte le verifiche passano, si genera l'hash della nuova password e si aggiorna l'oggetto utente
                 String nuovoHash = BCrypt.hashpw(nuovaPassword, BCrypt.gensalt());
                 utenteDb.setPasswordHash(nuovoHash);
                 
             }
 
-            // --- 5. AGGIORNAMENTO DATI ANAGRAFICI ---
+            // Aggiornamento dei dati anagrafici dell'utente nel database: nome, cognome e telefono
             utenteDb.setNome(nome);
             utenteDb.setCognome(cognome);
             utenteDb.setTelefono(telefonoDaSalvare); // Iniettiamo la stringa formattata o null
@@ -169,7 +168,7 @@ public class ModificaProfiloServlet extends HttpServlet {
                 utenteDAO.doUpdateAnagrafica(utenteDb);
             }
 
-            // --- 6. ALLINEAMENTO SESSIONE ---
+            // Aggiornamento dell'utente loggato nella sessione con le informazioni più recenti dal database
             session.setAttribute("utenteLoggato", utenteDb);
 
             jsonResponse.put("success", true);
@@ -188,7 +187,7 @@ public class ModificaProfiloServlet extends HttpServlet {
             jsonResponse.put("message", "Si è verificato un errore imprevisto sul server.");
         }
 
-        // Output del JSON finale verso il client
+        // Output della risposta JSON al client, che conterrà lo stato dell'operazione e eventuali messaggi di errore o successo
         response.getWriter().write(gson.toJson(jsonResponse));
     }
 

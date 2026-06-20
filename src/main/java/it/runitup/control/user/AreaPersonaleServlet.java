@@ -22,28 +22,27 @@ public class AreaPersonaleServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        // 1. L'AuthFilter garantisce che l'utenteLoggato sia presente.
+
+        // Recuperiamo la sessione e l'utente loggato dalla sessione, garantita dalla servlet di autenticazione.
         HttpSession session = request.getSession(false);
         Utente utenteInSessione = (Utente) session.getAttribute("utenteLoggato");
 
         try {
-            // 2. Recuperiamo i dati "freschi" dal DB 
-            // in caso siano stati modificati da un altro dispositivo o dall'Admin.
+            // Recupero dell'utente aggiornato dal database per garantire che le informazioni siano sempre aggiornate.
             Utente utenteAggiornato = utenteDAO.doRetrieveById(utenteInSessione.getIdUtente());
 
             if (utenteAggiornato != null) {
-                // 3. Sincronizziamo la sessione sovrascrivendo il vecchio oggetto
+                // Aggiorniamo l'utente loggato nella sessione con le informazioni più recenti dal database.
                 session.setAttribute("utenteLoggato", utenteAggiornato);
                 
             } else {
-                // Caso limite (ma da gestire per il 30 e lode): l'account è stato cancellato dal DB mentre l'utente era loggato.
+                // Se l'utente non esiste più nel database (ad esempio, se è stato eliminato), invalidiamo la sessione e reindirizziamo alla pagina di login con un messaggio di errore.
                 session.invalidate();
                 response.sendRedirect(request.getContextPath() + "/login?error=account_deleted");
                 return;
             }
 
-            // 4. Forward verso la View (La nostra dashboard a "scatole")
+            // Inoltriamo la richiesta alla JSP dell'area personale, che mostrerà le informazioni aggiornate dell'utente.
             request.getRequestDispatcher("/WEB-INF/view/user/area_personale.jsp").forward(request, response);
 
         } catch (SQLException e) {
@@ -52,10 +51,10 @@ public class AreaPersonaleServlet extends HttpServlet {
         }
     }
 
+    // doPost: Reindirizza le richieste POST alla gestione GET per la visualizzazione dell'area personale
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        // La dashboard si apre in GET.
         doGet(request, response);
     }
 }

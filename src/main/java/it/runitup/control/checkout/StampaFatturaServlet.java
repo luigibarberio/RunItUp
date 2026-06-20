@@ -25,24 +25,23 @@ public class StampaFatturaServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        // Se arriviamo qui, il Filtro ha già verificato tutto. Se mancava l'ID, il filtro ci ha fermato.
-        // Recuperiamo direttamente il "pacco dono" dal Filtro.
+        // Recupero dell'ordine validato dal filtro OrderOwnerFilter, che ha già verificato la proprietà dell'ordine e lo ha messo in request
         Ordine ordine = (Ordine) request.getAttribute("ordineValidato");
 
         if (ordine == null) {
-            // Fallback estremo se qualcosa va storto nel passaggio
+            // Se l'ordine non è stato validato, inviamo un errore 400 (Bad Request)
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Ordine non validato.");
             return;
         }
 
         try {
-            // Dobbiamo solo caricare i prodotti acquistati
+            // Recupero dei dettagli dell'ordine per la generazione della fattura
             List<DettaglioOrdine> dettagli = ordineDAO.getDettagliByOrdine(ordine.getIdOrdine());
 
             request.setAttribute("ordine", ordine);
             request.setAttribute("dettagliOrdini", dettagli);
 
-            // Forward alla View dedicata alla Stampa (la JSP finta-A4 che abbiamo creato prima)
+            // Inoltro alla JSP dedicata alla stampa della fattura
             request.getRequestDispatcher("/WEB-INF/view/order/stampa_fattura.jsp").forward(request, response);
 
         } catch (SQLException e) {
@@ -51,10 +50,10 @@ public class StampaFatturaServlet extends HttpServlet {
         }
     }
 
+    // doPost: Reindirizza le richieste POST alla gestione GET per la visualizzazione della fattura
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        // Nessuna modifica di stato viene fatta qui, inoltriamo alla GET
         doGet(request, response);
     }
 }

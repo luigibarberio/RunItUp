@@ -18,7 +18,7 @@ import it.runitup.model.bean.Ordine;
 import it.runitup.model.bean.Utente;
 import it.runitup.model.dao.OrdineDAO;
 
-// Questo filtro si applica alle rotte in cui si cerca di accedere a uno specifico ordine
+// Filtro per proteggere le pagine relative agli ordini, assicurandosi che solo il proprietario dell'ordine o un admin possa accedervi.
 @WebFilter({"/ordini" ,"/ordini/*", "/stampa_fattura/*", "/fattura_pdf/*"})
 public class OrderOwnerFilter implements Filter {
 
@@ -34,16 +34,16 @@ public class OrderOwnerFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // Recuperiamo l'ID dalla query string (?id=...)
+        // Recupero dell'ID dell'ordine dalla query string o dai parametri della richiesta
         String idParam = httpRequest.getParameter("id");
 
-        // Se non c'è un ID (es. l'utente sta solo visitando la lista /ordini), lasciamo passare.
+        // Se non c'è un ID (es. l'utente sta solo visitando la lista /ordini), per cui si lascia proseguire la richiesta senza ulteriori controlli
         if (idParam == null || idParam.trim().isEmpty()) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Recuperiamo l'utente dalla sessione (L'AuthFilter dovrebbe averlo già garantito)
+        // Recupero dell'utente loggato dalla sessione (si assume che l'utente sia già autenticato grazie al filtro AuthFilter)
         HttpSession session = httpRequest.getSession(false);
         Utente utenteLoggato = (session != null) ? (Utente) session.getAttribute("utenteLoggato") : null;
 
@@ -56,22 +56,22 @@ public class OrderOwnerFilter implements Filter {
             int idOrdine = Integer.parseInt(idParam.trim());
             Ordine ordine = ordineDAO.getOrdineById(idOrdine);
 
-            // 1. L'ordine esiste?
+            // Controllo sull'esistenza dell'ordine, in caso contrario viene restituito un errore 404 (Not Found)
             if (ordine == null) {
                 httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Ordine non trovato.");
                 return;
             }
 
-            // 2. Controllo IDOR: L'utente loggato è il proprietario o è un admin?
+            // Controllo se l'utente loggato è un admin o il proprietario dell'ordine
             if (!utenteLoggato.isAdmin() && ordine.getUtente().getIdUtente() != utenteLoggato.getIdUtente()) {
                 httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Accesso negato: non sei il proprietario di questo documento.");
                 return;
             }
 
-            // Passiamo l'ordine validato alla Servlet tramite attributo della request, così evitiamo di doverlo recuperare di nuovo in Servlet.
+            // Se l'utente è autorizzato, si può procedere con la richiesta, eventualmente aggiungendo l'ordine come attributo della richiesta per un uso successivo nella Servlet o JSP
             httpRequest.setAttribute("ordineValidato", ordine);
 
-            // Lasciamo proseguire la richiesta verso la Servlet
+            // Si prosegue con la catena di filtri o con la servlet richiesta
             chain.doFilter(request, response);
 
         } catch (NumberFormatException e) {

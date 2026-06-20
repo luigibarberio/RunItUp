@@ -9,7 +9,7 @@ public class VarianteDTO implements Serializable {
 
     private VarianteProdotto variante;
     private BigDecimal prezzoScontato; // Prezzo finale calcolato dal DAO
-    private boolean inPromozione;      // True se c'è una promo attiva
+    private boolean inPromozione; // True se c'è una promo attiva
 
     public VarianteDTO() {
         super();
@@ -25,7 +25,7 @@ public class VarianteDTO implements Serializable {
     public boolean isInPromozione() { return inPromozione; }
     public void setInPromozione(boolean inPromozione) { this.inPromozione = inPromozione; }
     
-    // Utilità per la vista: restituisce il prezzo da mostrare (scontato se presente)
+    // Metodo di utilità per ottenere il prezzo effettivo da visualizzare, considerando eventuali promozioni (per evitare logica di business nelle JSP)
     public BigDecimal getPrezzoEffettivo() {
         return (inPromozione && prezzoScontato != null) ? prezzoScontato : variante.getPrezzo();
     }

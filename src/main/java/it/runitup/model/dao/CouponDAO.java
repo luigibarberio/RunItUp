@@ -14,18 +14,11 @@ import it.runitup.util.ConnectionPool;
 
 public class CouponDAO {
 
-    /**
-     * Recupera un coupon dal database in base al codice alfanumerico inserito dall'utente.
-     * La particolarità di questa query è che scarta in automatico a livello di RDBMS 
-     * i coupon non ancora iniziati o già scaduti.
-     * * @param codice Il codice promozionale (es. "RUN10")
-     * @return L'oggetto Coupon precompilato se valido, null se inesistente o scaduto.
-     */
+    // Metodo per ottenere un coupon attivo dal database tramite il suo codice, restituisce null se il coupon non esiste o non è valido.
     public Coupon getCouponByCodice(String codice) throws SQLException {
         Coupon coupon = null;
         
-        // La funzione CURRENT_DATE di PostgreSQL restituisce la data odierna.
-        // Gestiamo in sicurezza il fatto che data_scadenza possa essere NULL (coupon perenne).
+        // Query che recupera il coupon solo se è attivo (data_inizio <= oggi e (data_scadenza >= oggi o data_scadenza è NULL))
         String query = "SELECT id_coupon, codice, valore_sconto, tipo_sconto, data_inizio, data_scadenza " +
                        "FROM coupon " +
                        "WHERE codice = ? " +
@@ -55,6 +48,7 @@ public class CouponDAO {
                         coupon.setDataInizio(sqlDataInizio.toLocalDate());
                     }
 
+                    // Conversione sicura della data di scadenza, che può essere NULL
                     Date sqlDataScadenza = rs.getDate("data_scadenza");
                     if (sqlDataScadenza != null) {
                         coupon.setDataScadenza(sqlDataScadenza.toLocalDate());
@@ -66,20 +60,16 @@ public class CouponDAO {
                 ConnectionPool.releaseConnection(con);
             }
         }
+
+        // Restituisce il coupon trovato o null se non esiste o non è valido
         return coupon;
     }
 
-    /**
-     * Recupera la lista di tutti i coupon attualmente attivi nel sistema.
-     * Un coupon è considerato attivo se la data odierna è compresa tra la data di inizio
-     * e la data di scadenza (se specificata).
-     * * @return Una lista di oggetti Coupon validi.
-     * @throws SQLException Se si verificano anomalie sul database.
-     */
+    // Metodo per ottenere tutti i coupon attivi (non scaduti e già iniziati) dal database.
     public List<Coupon> getCouponAttivi() throws SQLException {
         List<Coupon> lista = new ArrayList<>();
         
-        // Query blindata: controlla che la data corrente sia coerente con i vincoli del coupon
+        // Query che recupera tutti i coupon attivi (data_inizio <= oggi e (data_scadenza >= oggi o data_scadenza è NULL))
         String query = "SELECT id_coupon, codice, valore_sconto, tipo_sconto, data_inizio, data_scadenza " +
                        "FROM coupon " +
                        "WHERE data_inizio <= CURRENT_DATE " +
@@ -105,6 +95,7 @@ public class CouponDAO {
                     coupon.setDataInizio(sqlDataInizio.toLocalDate());
                 }
                 
+                // Conversione sicura della data di scadenza, che può essere NULL
                 java.sql.Date sqlDataScadenza = rs.getDate("data_scadenza");
                 if (sqlDataScadenza != null) {
                     coupon.setDataScadenza(sqlDataScadenza.toLocalDate());

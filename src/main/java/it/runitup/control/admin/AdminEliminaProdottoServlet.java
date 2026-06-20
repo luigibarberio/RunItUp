@@ -14,10 +14,7 @@ import com.google.gson.JsonObject;
 
 import it.runitup.model.dao.ProdottoDAO;
 
-/**
- * Micro-Servlet asincrona per l'eliminazione di un prodotto base.
- * Risponde esclusivamente a chiamate AJAX/Fetch in formato JSON.
- */
+// Servlet per l'eliminazione di un prodotto dal catalogo. Riceve una richiesta POST contenente l'ID del prodotto da eliminare in formato JSON.
 @WebServlet("/admin/prodotto/elimina")
 public class AdminEliminaProdottoServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -47,8 +44,6 @@ public class AdminEliminaProdottoServlet extends HttpServlet {
             int idProdotto = jsonBody.get("idProdotto").getAsInt();
 
             // 2. Eliminazione sul Database
-            // Come concordato, NON cancelliamo fisicamente le immagini (prodotto_X_0.png) dal disco,
-            // lasciandole orfane per questioni di sicurezza.
             boolean esito = prodottoDAO.deleteProdotto(idProdotto);
             
             if (esito) {
@@ -69,9 +64,7 @@ public class AdminEliminaProdottoServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Metodo helper per standardizzare l'invio degli errori in formato JSON.
-     */
+    // Metodo di utilità per inviare un messaggio di errore in formato JSON
     private void inviaErrore(HttpServletResponse response, JsonObject jsonResponse, String messaggio) throws IOException {
         jsonResponse.addProperty("success", false);
         jsonResponse.addProperty("message", messaggio);

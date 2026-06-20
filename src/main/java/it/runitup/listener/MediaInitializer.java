@@ -11,6 +11,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+// Inizializzatore dell'applicazione che copia le immagini di seed dal WAR al filesystem del computer host all'avvio dell'applicazione.
 @WebListener
 public class MediaInitializer implements ServletContextListener {
 
@@ -18,7 +19,7 @@ public class MediaInitializer implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         ServletContext context = sce.getServletContext();
         
-        // 1. Definiamo dove le immagini dovrebbero trovarsi sul PC host
+        // Si crea la cartella "runitup_media/prodotti" nella home directory dell'utente se non esiste già
         String userHome = System.getProperty("user.home");
         File mediaDir = new File(userHome + File.separator + "runitup_media" + File.separator + "prodotti");
         
@@ -27,19 +28,19 @@ public class MediaInitializer implements ServletContextListener {
             mediaDir.mkdirs();
         }
 
-        // 2. Chiediamo a Tomcat la lista dei file contenuti nel nostro "seed" interno al WAR
+        // Copia delle immagini di seed dal WAR al filesystem del computer host
         String seedPath = "/WEB-INF/resources/images/seeds/"; // Cartella dentro il WAR dove sono presenti le immagini di seed
         Set<String> seedFiles = context.getResourcePaths(seedPath);
         
         if (seedFiles != null) {
             for (String seedFilePath : seedFiles) {
-                // Estraiamo il nome del file dall'intero path (es. da "/WEB-INF/resources/images/seeds/prodotto_5.png" si ottiene "prodotto_5.png")
+                // Estrazione del nome del file dall'intero percorso (ad esempio, da "/WEB-INF/resources/images/seeds/prodotto_1_0.png" si ottiene "prodotto_1_0.png")
                 String fileName = seedFilePath.substring(seedFilePath.lastIndexOf("/") + 1);
                 
-                // File di destinazione sul computer host
+                // Creazione del percorso di destinazione sul filesystem del computer host
                 File destFile = new File(mediaDir, fileName);
                 
-                // 3. Se l'immagine non è già presente sul computer host, la copiamo dal WAR!
+                // Se il file non esiste già, lo copiamo dal WAR al filesystem del computer host
                 if (!destFile.exists()) {
                     try (InputStream is = context.getResourceAsStream(seedFilePath)) {
                         if (is != null) {
@@ -47,9 +48,10 @@ public class MediaInitializer implements ServletContextListener {
                             context.log("Copiata immagine di seed: " + fileName + " in " + destFile.getAbsolutePath());
                         }
                     } catch (FileAlreadyExistsException faee) {
-                        // Non andiamo a sovrascrivere il contenuto del file system per una questione di sicurezza
+                        // Questo caso non dovrebbe mai verificarsi grazie al controllo precedente, la gestione dell'eccezione è solo per notificare l'errore nel log
                         context.log("File già esistente: " + fileName);
                     } catch (Exception e) {
+                        // Log dell'errore in caso di problemi durante la copia del file
                         context.log("Errore durante la copia dell'immagine di seed: " + fileName, e);
                     }
                 }
@@ -59,6 +61,6 @@ public class MediaInitializer implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        // Alla chiusura del server non dobbiamo fare nulla di speciale
+        // Non è necessario fare nulla alla chiusura del contesto per questo listener
     }
 }

@@ -9,7 +9,7 @@ public class ProdottoDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // L'oggetto originale che rispecchia il DB
+    // Prodotto di base con tutte le sue informazioni (ID, nome, descrizione, brand, categoria, ecc.)
     private Prodotto prodotto;
 
     // Campi aggiuntivi calcolati dal DAO per la visualizzazione

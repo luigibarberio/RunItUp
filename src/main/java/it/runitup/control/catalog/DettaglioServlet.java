@@ -33,7 +33,7 @@ public class DettaglioServlet extends HttpServlet {
         try {
             int id = Integer.parseInt(idParam);
             
-            // 1. Recupero il Prodotto (con il suo Brand già caricato dal DAO)
+            //  Recupero del prodotto dal database
             Prodotto prodotto = prodottoDAO.doRetrieveById(id);
             
             if (prodotto == null) {
@@ -41,10 +41,10 @@ public class DettaglioServlet extends HttpServlet {
                 return;
             }
 
-            // 2. Recupero le varianti (con prezzi calcolati e promozioni)
+            // Recupero delle varianti del prodotto dal database
             List<VarianteDTO> varianti = prodottoDAO.getVariantiDTOByProdottoId(id);
 
-            // 3. Passaggio alla JSP
+            // Inoltro dei dati alla JSP per la visualizzazione del dettaglio del prodotto
             request.setAttribute("prodotto", prodotto);
             request.setAttribute("varianti", varianti);
 

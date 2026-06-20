@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 
 public class OrdineDAO {
 
-    // Questo metodo salva un ordine completo, i dettagli e aggiorna il magazzino in un'unica transazione
+    // Metodo per salvare un ordine completo, comprese le voci del carrello, aggiornando magazzino e vendite. Restituisce l'ID dell'ordine generato o -1 se lo stock è insufficiente.
     public int salvaOrdineCompleto(Ordine ordine, List<VoceCarrelloDTO> voci, int idUtente) throws SQLException {
         int idOrdineGenerato = -1;
 
@@ -47,7 +47,7 @@ public class OrdineDAO {
             con = ConnectionPool.getConnection();
             con.setAutoCommit(false); // Inizio transazione
 
-            // 1. INSERIMENTO ORDINE PRINCIPALE
+            // Inserimento dell'ordine principale e recupero dell'ID generato
             try (PreparedStatement psOrd = con.prepareStatement(insertOrdine, Statement.RETURN_GENERATED_KEYS)) {
                 psOrd.setInt(1, ordine.getUtente().getIdUtente());
                 
@@ -57,6 +57,7 @@ public class OrdineDAO {
                     psOrd.setNull(2, java.sql.Types.INTEGER);
                 }
                 
+                // Calcolo dei totali e inserimento dei valori
                 psOrd.setBigDecimal(3, ordine.getTotaleImponibile());
                 psOrd.setBigDecimal(4, ordine.getTotaleIva());
                 psOrd.setBigDecimal(5, ordine.getTotalePagato());
@@ -72,7 +73,7 @@ public class OrdineDAO {
                 
                 psOrd.executeUpdate();
                                 
-                // Recuperiamo l'ID univoco assegnato dal database all'ordine
+                // Recupero dell'ID generato per l'ordine appena inserito
                 try (ResultSet rsKeys = psOrd.getGeneratedKeys()) {
                     if (rsKeys.next()) {
                         idOrdineGenerato = rsKeys.getInt(1);
@@ -82,7 +83,7 @@ public class OrdineDAO {
                 }
             }
 
-            // 2. ITERAZIONE SULLE VOCI DEL CARRELLO (Dettagli, Magazzino e Vendite)
+            // Iterazione sulle voci del carrello per aggiornare magazzino, inserire dettagli e incrementare vendite
             try (PreparedStatement psDet = con.prepareStatement(insertDettaglio);
                  PreparedStatement psMag = con.prepareStatement(updateMagazzino);
                  PreparedStatement psVendite = con.prepareStatement(incrementaVendite)) {
@@ -91,7 +92,7 @@ public class OrdineDAO {
                     int idVariante = voceDTO.getVarianteDTO().getVariante().getIdVariante();
                     int qta = voceDTO.getVoceCarrello().getQuantita();
                     
-                    // 2a. Sottrazione Magazzino con Hard-Check Concorrenziale
+                    // Aggiornamento magazzino: decremento della quantità disponibile, con controllo che non vada sotto zero
                     psMag.setInt(1, qta);
                     psMag.setInt(2, idVariante);
                     psMag.setInt(3, qta); 
@@ -102,7 +103,7 @@ public class OrdineDAO {
                         throw new SQLException("STOCK_ESAURITO_" + idVariante); 
                     }
                     
-                    // 2b. Inserimento Dettaglio (Snapshot storico)
+                    // Inserimento del dettaglio dell'ordine con i dati storici del prodotto e della variante
                     psDet.setInt(1, idOrdineGenerato);
                     psDet.setInt(2, idVariante);
                     psDet.setString(3, voceDTO.getVarianteDTO().getVariante().getProdotto().getNome());
@@ -121,25 +122,25 @@ public class OrdineDAO {
                     
                     psDet.executeUpdate();
 
-                    // 2c. INCREMENTO CONTATORE VENDITE
+                    // Incremento del totale vendite del prodotto associato alla variante acquistata
                     psVendite.setInt(1, qta);
                     psVendite.setInt(2, idVariante);
                     psVendite.executeUpdate();
                 }
             }
             
-            // 3. SVUOTAMENTO DEL CARRELLO DELL'UTENTE
+            // Svuotamento del carrello dell'utente dopo il completamento dell'ordine
             try (PreparedStatement psCart = con.prepareStatement(svuotaCarrello)) {
                 psCart.setInt(1, idUtente);
                 psCart.executeUpdate();
             }
 
-            // 4. COMMIT DELLA TRANSAZIONE
+            // Commit della transazione se tutte le operazioni sono andate a buon fine
             con.commit();
             return idOrdineGenerato;
 
         } catch (SQLException e) {
-            // IN CASO DI ERRORE, ANNULLIAMO TUTTE LE OPERAZIONI FATTE FINORA!
+            // Rollback della transazione in caso di errore, per garantire l'integrità dei dati
             if (con != null) {
                 try {
                     con.rollback();
@@ -147,14 +148,14 @@ public class OrdineDAO {
                     ex.printStackTrace();
                 }
             }
-            // Se l'errore è dovuto allo stock, restituiamo un codice speciale per dirlo alla Servlet
+            // Controllo specifico per lo stock esaurito: se l'eccezione contiene il messaggio "STOCK_ESAURITO", restituiamo -1 per indicare questo caso particolare
             if (e.getMessage() != null && e.getMessage().startsWith("STOCK_ESAURITO")) {
                 return -1; 
             }
-            throw e; // Rilanciamo l'eccezione per errori di DB "veri"
+            throw e; // Rilancia l'eccezione per gestirla a un livello superiore
             
         } finally {
-            // Ripristiniamo l'autocommit di default e rilasciamo la connessione
+            // Rilascio della connessione e ripristino dell'auto-commit sulla connessione
             if (con != null) {
                 try {
                     con.setAutoCommit(true);
@@ -164,11 +165,11 @@ public class OrdineDAO {
         }
     }
 
-    // Recupera tutti gli ordini di un utente, ordinati per data decrescente. Utile per la pagina "I miei ordini"
+    // Metodo per recuperare tutti gli ordini di un utente, inclusi i dettagli del coupon se presente, ordinati per data decrescente. Utile per la visualizzazione della cronologia ordini di un utente.
     public List<Ordine> getOrdiniByUtente(int idUtente) throws SQLException {
         List<Ordine> lista = new ArrayList<>();
         
-        // LEFT JOIN necessaria: estraiamo il coupon solo se l'utente l'ha utilizzato
+        // Query che recupera tutti gli ordini di un utente, includendo i dettagli del coupon se presente, e ordinati per data decrescente (LEFT JOIN con coupon per ottenere i dati del coupon se associato)
         String query = "SELECT o.*, c.codice, c.valore_sconto, c.tipo_sconto " +
                        "FROM ordine o " +
                        "LEFT JOIN coupon c ON o.id_coupon = c.id_coupon " +
@@ -194,7 +195,7 @@ public class OrdineDAO {
         return lista;
     }
 
-    // Recupera un ordine specifico con i dettagli del coupon se presente. Utile per la pagina di conferma ordine o per la fattura.
+    // Metodo per recuperare un ordine specifico di un utente, includendo i dettagli del coupon se presente. Utile per la visualizzazione dei dettagli di un ordine specifico.
     public Ordine getOrdineById(int idOrdine) throws SQLException {
         String query = "SELECT o.*, c.codice, c.valore_sconto, c.tipo_sconto " +
                        "FROM ordine o " +
@@ -220,7 +221,7 @@ public class OrdineDAO {
         return null;
     }
 
-    // Recupera tutti i dettagli di un ordine specifico, utile per la fattura o la visualizzazione completa dell'ordine
+    // Metodo per recuperare i dettagli di un ordine specifico, inclusi i dati storici del prodotto e della variante al momento dell'acquisto. Utile per la visualizzazione dei dettagli dell'ordine.
     public List<DettaglioOrdine> getDettagliByOrdine(int idOrdine) throws SQLException {
         List<DettaglioOrdine> dettagli = new ArrayList<>();
         String query = "SELECT d.*, v.id_prodotto " +
@@ -329,7 +330,7 @@ public class OrdineDAO {
         return ord;
     }
 
-    // Recupera tutti gli ordini filtrati per data e/o cliente, utile per la dashboard admin
+    // Metodo per recuperare tutti gli ordini, con filtri dinamici per data e cliente, ordinati per data decrescente. Utile per la dashboard admin.
     public List<Ordine> doRetrieveAllAdmin(java.time.LocalDate dal, java.time.LocalDate al, Integer idCliente) throws SQLException {
         List<Ordine> ordini = new ArrayList<>();
         

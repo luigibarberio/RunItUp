@@ -22,7 +22,7 @@ public class CarrelloDAO {
     public List<VoceCarrello> getVociByCarrello(int idCarrello) throws SQLException {
         List<VoceCarrello> voci = new ArrayList<>();
         
-        // Query con JOIN per recuperare in un colpo solo Voce, Variante, Prodotto e Brand
+        // Query SQL per ottenere tutte le voci del carrello con i dettagli delle varianti e dei prodotti
         String query = "SELECT vc.id_voce, vc.quantita, " +
                        "vp.id_variante, vp.colore, vp.taglia, vp.prezzo AS prezzo_variante, vp.quantita_magazzino, " +
                        "p.id_prodotto, p.nome AS nome_prodotto, " +
@@ -86,13 +86,13 @@ public class CarrelloDAO {
     // Metodo per aggiungere una variante al carrello dell'utente (con Hard-Check sulle quantità)
     public boolean aggiungiVariante(int idUtente, int idVariante, int quantitaAggiunta) throws SQLException {
         
-        // 1. Otteniamo l'ID del carrello (se non esiste, il metodo lo crea al volo)
+        // Ottenimento o creazione del carrello dell'utente
         int idCarrello = getOrCreateCarrelloByUtente(idUtente).getIdCarrello();
 
         Connection con = ConnectionPool.getConnection();
         try {
             
-            // 2. Recuperiamo la giacenza attuale in magazzino
+            // Controllo della quantità disponibile in magazzino per la variante specifica
             int quantitaMagazzino = 0;
             String magazzinoQuery = "SELECT quantita_magazzino FROM variante_prodotto WHERE id_variante = ?";
             try (PreparedStatement psMag = con.prepareStatement(magazzinoQuery)) {
@@ -106,7 +106,7 @@ public class CarrelloDAO {
                 }
             }
 
-            // 3. Controlliamo se la variante è già nel carrello e quanta ce n'è
+            // Controllo della quantità già presente nel carrello per la variante specifica
             int quantitaInCarrello = 0;
             String checkQuery = "SELECT quantita FROM voce_carrello WHERE id_carrello = ? AND id_variante = ?";
             try (PreparedStatement psCheck = con.prepareStatement(checkQuery)) {
@@ -119,12 +119,12 @@ public class CarrelloDAO {
                 }
             }
 
-            // 4. HARD-CHECK: Verificata la disponibilità totale
+            // Verifica se l'aggiunta della quantità richiesta supera la quantità disponibile in magazzino
             if (quantitaInCarrello + quantitaAggiunta > quantitaMagazzino) {
                 return false; // Blocco: superata la quantità in magazzino
             }
 
-            // 5. Inserimento o Aggiornamento sicuro
+            // Se la voce esiste già nel carrello, si aggiorna la quantità; altrimenti, si inserisce una nuova voce
             if (quantitaInCarrello > 0) {
                 String updateQuery = "UPDATE voce_carrello SET quantita = quantita + ? WHERE id_carrello = ? AND id_variante = ?";
                 try (PreparedStatement psUpdate = con.prepareStatement(updateQuery)) {
@@ -155,7 +155,7 @@ public class CarrelloDAO {
     public Carrello getOrCreateCarrelloByUtente(int idUtente) throws SQLException {
         Carrello carrello = null;
         
-        // 1. Proviamo a cercare il carrello esistente
+        // Si tenta di recuperare il carrello esistente per l'utente
         String selectQuery = "SELECT id_carrello FROM carrello WHERE id_utente = ?";
         
         Connection con = ConnectionPool.getConnection();
@@ -171,19 +171,20 @@ public class CarrelloDAO {
                         u.setIdUtente(idUtente);
                         carrello.setUtente(u);
                         
-                        return carrello; // Trovato, lo restituiamo e usciamo
+                        return carrello; // Se esiste già, lo restituiamo subito
                     }
                 }
             }
 
-            // 2. Se arriviamo qui, il carrello non esiste. Lo creiamo.
+            // Se non esiste, creiamo un nuovo carrello per l'utente
             String insertQuery = "INSERT INTO carrello (id_utente) VALUES (?)";
             
-            // Usiamo RETURN_GENERATED_KEYS per farci restituire subito l'ID appena creato dal DB
+            // Si utilizza RETURN_GENERATED_KEYS per ottenere l'ID del nuovo carrello appena creato
             try (PreparedStatement psInsert = con.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
                 psInsert.setInt(1, idUtente);
                 int affectedRows = psInsert.executeUpdate();
                 
+                // Se l'inserimento ha avuto successo, recuperiamo l'ID generato e creiamo il bean Carrello
                 if (affectedRows > 0) {
                     try (ResultSet rsKeys = psInsert.getGeneratedKeys()) {
                         if (rsKeys.next()) {
@@ -203,10 +204,11 @@ public class CarrelloDAO {
             }
         }
         
+        // Restituiamo il carrello appena creato o quello esistente
         return carrello;
     }
     
-    // Ottiene la quantità di una specifica variante nel carrello (0 se non c'è)
+    // Metodo per ottenere la quantità di una voce specifica nel carrello
     public int getQuantitaVoce(int idCarrello, int idVariante) throws SQLException {
         String query = "SELECT quantita FROM voce_carrello WHERE id_carrello = ? AND id_variante = ?";
         
@@ -226,7 +228,7 @@ public class CarrelloDAO {
         return 0;
     }
 
-    // Rimuove fisicamente una voce dal carrello (quando la quantità scende a 0)
+    // Metodo per rimuovere una voce specifica dal carrello
     public void rimuoviVoce(int idCarrello, int idVariante) throws SQLException {
         String query = "DELETE FROM voce_carrello WHERE id_carrello = ? AND id_variante = ?";
         Connection con = ConnectionPool.getConnection();
@@ -241,7 +243,7 @@ public class CarrelloDAO {
         }
     }
 
-    // Imposta forzatamente la quantità (inserisce se non c'è, aggiorna se c'è)
+    // Metodo per impostare forzatamente la quantità di una voce nel carrello
     public void impostaQuantitaVoce(int idCarrello, int idVariante, int nuovaQuantita) throws SQLException {
         String checkQuery = "SELECT id_voce FROM voce_carrello WHERE id_carrello = ? AND id_variante = ?";
         Connection con = ConnectionPool.getConnection();

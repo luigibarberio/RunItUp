@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        // Logica proattiva per salvare l'URL di destinazione prima del login, così da poter reindirizzare l'utente dopo il login
+        // Se l'utente non è loggato, salviamo l'URL di destinazione (referer) nella sessione per poterlo reindirizzare dopo il login.
         if (session == null || session.getAttribute("redirectDopoLogin") == null) {
             
             // Recuperiamo l'header "Referer" che indica la pagina da cui l'utente proveniva prima di arrivare alla pagina di login
@@ -71,7 +71,7 @@ public class LoginServlet extends HttpServlet {
         Map<String, Object> jsonResponse = new HashMap<>();
         
         try {
-            // NORMALIZZAZIONE: Email sempre in lowercase
+            // Estrazione dei parametri email (in lowercase) e password dal JSON della richiesta
             String email = jsonRequest.has("email") ? jsonRequest.get("email").getAsString().trim().toLowerCase() : "";
             String password = jsonRequest.has("password") ? jsonRequest.get("password").getAsString() : "";
             
@@ -91,7 +91,7 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession(true);
                 session.setAttribute("utenteLoggato", utente);
 
-                // Al momento del login, uniamo il carrello ospite con quello reale dell'utente loggato
+                // Dopo il login, se l'utente aveva un carrello salvato nella sessione (da prima del login), lo uniamo con quello del database
                 CarrelloDAO carrelloDAO = new CarrelloDAO();
                 VarianteDAO varianteDAO = new VarianteDAO();
                 CarrelloManager cartManager = new CarrelloManager(request, carrelloDAO, varianteDAO);

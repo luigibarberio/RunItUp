@@ -117,6 +117,7 @@ public class RegistrazioneServlet extends HttpServlet {
         response.getWriter().write(gson.toJson(jsonResponse));
     }
 
+    // Metodo helper per inviare un messaggio di errore in formato JSON al client
     private void sendError(HttpServletResponse response, Map<String, Object> jsonResponse, Gson gson, String message) throws IOException {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         jsonResponse.put("success", false);

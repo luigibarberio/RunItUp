@@ -23,20 +23,20 @@ public class AuthFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         
-        // Cast necessario perché Filter lavora a un livello più astratto dell'HTTP
+        // Cast delle richieste e risposte a HttpServletRequest e HttpServletResponse per poter accedere a metodi specifici
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         HttpSession session = httpRequest.getSession(false);
 
-        // Controllo: L'utente è loggato?
+        // Si controlla se l'utente è loggato verificando la presenza dell'attributo "utenteLoggato" nella sessione
         boolean isLoggedIn = (session != null && session.getAttribute("utenteLoggato") != null);
 
         if (isLoggedIn) {
-            // Utente autorizzato: lascia procedere la richiesta verso la Servlet o JSP di destinazione
+            // Se l'utente è loggato, si prosegue con la catena di filtri o con la servlet richiesta
             chain.doFilter(request, response);
         } else {
-            // 1. Catturiamo l'URL esatto che stava cercando di visitare (inclusi eventuali parametri, es: ?id=5)
+            // L'utente non è loggato, quindi salviamo l'URL di destinazione e reindirizziamo alla pagina di login
             String requestURI = httpRequest.getRequestURI();
             String queryString = httpRequest.getQueryString();
             
@@ -45,16 +45,16 @@ public class AuthFilter implements Filter {
                 urlDiDestinazione += "?" + queryString;
             }
 
-            // 2. Salviamo questo URL nella sessione (creandola se non esiste)
+            // Creiamo una nuova sessione se non esiste e salviamo l'URL di destinazione per poter reindirizzare l'utente dopo il login
             HttpSession newSession = httpRequest.getSession(true);
             newSession.setAttribute("redirectDopoLogin", urlDiDestinazione);
 
-            // 3. Reindirizziamo l'utente alla pagina di login
+            // Reindirizziamo l'utente alla pagina di login con un parametro per indicare che l'accesso è stato negato
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/login?redirected=true");
         }
     }
 
     public void destroy() {
-        // Pulizia risorse se necessario (non in questo caso)
+        // Nessuna risorsa da rilasciare
     }
 }

@@ -9,7 +9,7 @@ import it.runitup.model.bean.TipoAppoggio;
 import it.runitup.model.bean.TipoPasso;
 import it.runitup.model.bean.TipoTerreno;
 
-
+// Classe che rappresenta i filtri applicati al catalogo, utilizzata per passare i parametri di filtraggio dal frontend al DAO
 public class FiltroCatalogo implements Serializable {
 
     private static final long serialVersionUID = 1L;

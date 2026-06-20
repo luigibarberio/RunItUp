@@ -34,38 +34,38 @@ public class CarrelloServlet extends HttpServlet {
             throws ServletException, IOException {
         
         try {
-            // 1. Inizializziamo il manager unificato e il DAO dei prodotti per le promozioni
+            // Inizializzazione del CarrelloManager con le DAO necessarie
             CarrelloManager cartManager = new CarrelloManager(request, carrelloDAO, varianteDAO);
             
-            // 2. Recuperiamo la lista grezza delle voci (valida sia per loggati che ospiti)
+            // Recupero delle voci del carrello grezze dalla sessione o dal database
             List<VoceCarrello> vociGrezze = cartManager.getVociCarrello();
             
-            // 3. Creiamo la lista destinata ad ospitare i pacchetti DTO completi
+            // Creazione di una lista di DTO per le voci del carrello, che includeranno i prezzi scontati in tempo reale
             List<VoceCarrelloDTO> vociDTO = new java.util.ArrayList<>();
             
-            // 4. Calcoliamo il totale economico basandoci sul prezzo effettivo di vendita
+            // Calcolo del totale del carrello aggiornato con i prezzi scontati
             BigDecimal totaleCarrello = BigDecimal.ZERO;
             
             for (VoceCarrello voce : vociGrezze) {
-                // Ricaviamo la variante arricchita con lo sconto in tempo reale dal DB
+                // Recupero della variante con eventuale promozione applicata
                 VarianteDTO varianteDTO = varianteDAO.getVarianteConPromozione(voce.getVariante());
                 
-                // Creiamo il DTO della riga iniettando i due componenti
+                // Creazione del DTO della voce del carrello con la variante aggiornata
                 VoceCarrelloDTO voceDTO = new VoceCarrelloDTO(voce, varianteDTO);
                 vociDTO.add(voceDTO);
                 
-                // Calcolo del subtotale della riga: prezzoEffettivo (scontato se in promo) * quantita
+                // Calcolo del totale del carrello considerando il prezzo effettivo della variante e la quantità
                 BigDecimal prezzoVendita = varianteDTO.getPrezzoEffettivo();
                 BigDecimal quantita = new BigDecimal(voce.getQuantita());
                 
                 totaleCarrello = totaleCarrello.add(prezzoVendita.multiply(quantita));
             }
             
-            // 5. Passiamo i DTO e il totale ricalcolato alla View
+            // Impostazione degli attributi della richiesta per la JSP
             request.setAttribute("vociCarrello", vociDTO);
             request.setAttribute("totaleCarrello", totaleCarrello);
-            
-            // 6. Forward alla JSP sicura sotto WEB-INF
+                    
+            // Inoltro alla JSP del carrello con i dati aggiornati
             request.getRequestDispatcher("/WEB-INF/view/checkout/carrello.jsp").forward(request, response);
             
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class CarrelloServlet extends HttpServlet {
         }
     }
 
-    // Il metodo doPost ora gestisce sia l'aggiunta che la rimozione di articoli, restituendo sempre un JSON alla Fetch
+    // Il metodo doPost gestisce le richieste AJAX per modificare le quantità o rimuovere voci dal carrello, restituendo un JSON con l'esito e il numero aggiornato di pezzi
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -82,7 +82,7 @@ public class CarrelloServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        // 1. Prepariamo una variabile per tracciare il numero totale di pezzi
+        // Variabile per tenere traccia del numero totale di pezzi nel carrello dopo le modifiche
         int totalePezzi = 0;
 
         try {
@@ -91,7 +91,7 @@ public class CarrelloServlet extends HttpServlet {
             
             CarrelloManager cartManager = new CarrelloManager(request, carrelloDAO, varianteDAO);
             
-            // 2. Leggiamo il totale pezzi iniziale prima di fare modifiche (come punto di partenza sicuro)
+            // Calcolo iniziale del totale pezzi prima di qualsiasi modifica
             totalePezzi = cartManager.getTotalePezzi();
 
             if (jsonBody == null || !jsonBody.has("idVariante")) {
@@ -101,15 +101,15 @@ public class CarrelloServlet extends HttpServlet {
             
             int idVariante = jsonBody.get("idVariante").getAsInt();
             
-            // Controllo Azione: Rimozione Esplicita o Aggiornamento Quantità?
+            // Controllo se l'azione è di rimozione o di aggiornamento della quantità
             if (jsonBody.has("action") && "remove".equalsIgnoreCase(jsonBody.get("action").getAsString())) {
                 
-                // AZIONE A: Rimozione totale dell'articolo
+                // AZIONE A: Rimozione della voce dal carrello
                 boolean rimosso = cartManager.rimuoviVoce(idVariante);
                 if (rimosso) {
-                    // 3. SE LA MODIFICA RIESCE: Ricalcoliamo il nuovo totale pezzi dal manager
+                    // Se la rimozione riesce, ricalcoliamo il nuovo totale pezzi dal manager
                     totalePezzi = cartManager.getTotalePezzi();
-                    // 4. Lo salviamo subito in sessione per i futuri caricamenti di pagina (Sincrono)
+                    // Aggiorniamo subito il numero di pezzi in sessione per i futuri caricamenti di pagina (Sincrono)
                     request.getSession().setAttribute("cartBadgeCount", totalePezzi);
                     
                     inviaRisposta(response, true, "Prodotto rimosso dal carrello.", totalePezzi);
@@ -119,14 +119,14 @@ public class CarrelloServlet extends HttpServlet {
                 
             } else {
                 
-                // AZIONE B: Variazione di quantità (Pulsanti "+" e "-" o Aggiunta da scheda)
+                // AZIONE B: Aggiornamento della quantità della voce nel carrello (pulsanti "+" e "-")
                 int delta = jsonBody.has("delta") ? jsonBody.get("delta").getAsInt() : 1;
                 
                 boolean esito = cartManager.aggiornaQuantita(idVariante, delta);
                 if (esito) {
-                    // 3. SE LA MODIFICA RIESCE: Ricalcoliamo il nuovo totale pezzi dal manager
+                    // Se l'aggiornamento riesce, ricalcoliamo il nuovo totale pezzi dal manager
                     totalePezzi = cartManager.getTotalePezzi();
-                    // 4. Lo salviamo subito in sessione per i futuri caricamenti di pagina (Sincrono)
+                    // Aggiorniamo subito il numero di pezzi in sessione per i futuri caricamenti di pagina (Sincrono)
                     request.getSession().setAttribute("cartBadgeCount", totalePezzi);
                     
                     inviaRisposta(response, true, "Quantità aggiornata nel carrello.", totalePezzi);
@@ -141,13 +141,13 @@ public class CarrelloServlet extends HttpServlet {
         }
     }
 
-    // Abbiamo aggiunto il parametro "int cartCount" alla firma del metodo helper
+    // Metodo di utilità per inviare una risposta JSON al client con l'esito dell'operazione e il numero aggiornato di pezzi nel carrello
     private void inviaRisposta(HttpServletResponse response, boolean success, String message, int cartCount) throws IOException {
         JsonObject jsonResponse = new JsonObject();
         jsonResponse.addProperty("success", success);
         jsonResponse.addProperty("message", message);
-        
-        // 5. Inseriamo il numero aggiornato nel JSON finale diretto alla Fetch (Asincrono)
+
+        // Numero totale di pezzi nel carrello dopo l'operazione, utile per aggiornare il badge del carrello in tempo reale
         jsonResponse.addProperty("cartCount", cartCount); 
         
         response.getWriter().write(new Gson().toJson(jsonResponse));

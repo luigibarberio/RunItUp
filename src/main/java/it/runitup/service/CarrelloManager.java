@@ -40,12 +40,12 @@ public class CarrelloManager {
         int quantitaAttuale = getQuantitaAttuale(idVariante);
         int nuovaQuantita = quantitaAttuale + delta;
 
-        // 1. Controllo Overselling: impedisci di aggiungere più di quanto disponibile
-        if (nuovaQuantita > variante.getQuantitaMagazzino()) {
+        // Se la nuova quantità è negativa o supera la disponibilità in magazzino, si blocca l'operazione
+        if (nuovaQuantita > variante.getQuantitaMagazzino() || nuovaQuantita < 0) {
             return false;
         }
 
-        // 2. Esecuzione della logica a seconda dello stato di Login
+        // Se l'utente è loggato, si aggiorna direttamente il carrello nel DB, altrimenti lo si aggiornia in sessione
         if (isLoggato()) {
             return aggiornaSuDB(idVariante, nuovaQuantita);
         } else {
@@ -53,7 +53,7 @@ public class CarrelloManager {
         }
     }
 
-    // Ottiene quanti pezzi di quella variante sono già presenti nel carrello
+    // Metodo per ottenere la quantità attuale di una variante nel carrello, indipendentemente dallo stato di login (utile per il controllo delle quantità)
     private int getQuantitaAttuale(int idVariante) throws SQLException {
         if (isLoggato()) {
             int idCarrello = carrelloDAO.getOrCreateCarrelloByUtente(utenteLoggato.getIdUtente()).getIdCarrello();
@@ -69,27 +69,26 @@ public class CarrelloManager {
         return 0;
     }
 
-    // Logica di persistenza su Database (senza sporcarsi con SQL)
+    // Metodo per aggiornare la quantità di una variante nel carrello del database, restituendo true se l'operazione è avvenuta con successo
     private boolean aggiornaSuDB(int idVariante, int nuovaQuantita) throws SQLException {
         int idCarrello = carrelloDAO.getOrCreateCarrelloByUtente(utenteLoggato.getIdUtente()).getIdCarrello();
 
+        // Se la nuova quantità è zero o negativa (anche se questo caso non dovrebbe verificarsi), rimuoviamo la voce dal carrello, altrimenti aggiorniamo la quantità
         if (nuovaQuantita <= 0) {
-            // RIMOZIONE: Delega al DAO
             carrelloDAO.rimuoviVoce(idCarrello, idVariante);
         } else {
-            // INSERIMENTO/AGGIORNAMENTO: Delega al DAO
             carrelloDAO.impostaQuantitaVoce(idCarrello, idVariante, nuovaQuantita);
         }
         
         return true;
     }
 
-    // Logica di persistenza su Sessione RAM
+    // Metodo per aggiornare la quantità di una variante nel carrello della sessione (per utenti non loggati), restituendo true se l'operazione è avvenuta con successo
     private boolean aggiornaSuSessione(VarianteProdotto variante, int nuovaQuantita) {
         List<VoceCarrello> carrelloOspite = getCarrelloOspite();
 
         if (nuovaQuantita <= 0) {
-            // RIMOZIONE DALLA LISTA
+            // Rimuoviamo la voce dal carrello se la quantità è zero o negativa (anche se quest'ultimo caso non dovrebbe verificarsi)
             carrelloOspite.removeIf(voce -> voce.getVariante().getIdVariante() == variante.getIdVariante());
         } else {
             boolean trovato = false;
@@ -123,28 +122,27 @@ public class CarrelloManager {
         // Se per qualche motivo il metodo viene chiamato senza un utente loggato, interrompiamo subito
         if (utenteLoggato == null) return;
 
-        // 1. Recuperiamo le voci salvate in RAM dall'ospite
+        // Si ottiene il carrello ospite dalla sessione (che potrebbe essere vuoto se l'utente non aveva aggiunto nulla prima del login)
         List<VoceCarrello> carrelloOspite = getCarrelloOspite();
         if (carrelloOspite.isEmpty()) return; // Se il carrello ospite è vuoto, non c'è nulla da unire
 
-        // 2. Otteniamo l'ID del carrello reale dell'utente nel DB
+        // Si ottiene o crea il carrello reale dell'utente loggato dal database, per avere un ID carrello valido su cui operare
         int idCarrello = carrelloDAO.getOrCreateCarrelloByUtente(utenteLoggato.getIdUtente()).getIdCarrello();
 
-        // 3. Iteriamo su ogni voce del carrello ospite
+        // Per ogni voce nel carrello ospite, si tenta di aggiungerla al carrello reale, rispettando la logica del "tetto massimo" basato sulla disponibilità in magazzino
         for (VoceCarrello voceOspite : carrelloOspite) {
             int idVariante = voceOspite.getVariante().getIdVariante();
             int quantitaSessione = voceOspite.getQuantita();
 
-            // Recuperiamo la disponibilità effettiva in magazzino in tempo reale (Single Source of Truth)
+            // Si recupera la variante dal database per ottenere la quantità attuale in magazzino e applicare la logica del tetto massimo, evitando di superare la disponibilità reale del prodotto (in caso di aggiornamenti concorrenti del magazzino)
             VarianteProdotto variante = varianteDAO.getVarianteById(idVariante);
             if (variante == null) continue; // Se il prodotto fosse stato eliminato nel frattempo, lo saltiamo
 
             int quantitaMagazzino = variante.getQuantitaMagazzino();
-
-            // Recuperiamo quanti pezzi di questa variante l'utente ha già nel suo carrello su DB
+            
+            // Calcolo della quantità attuale sul DB per questa variante, per poterla sommare con quella della sessione
             int quantitaSuDB = carrelloDAO.getQuantitaVoce(idCarrello, idVariante);
 
-            // Logica del Tetto Massimo: calcoliamo la somma potenziale
             int nuovaQuantita = quantitaSuDB + quantitaSessione;
             
             // Se la somma supera il magazzino, la quantità finale viene limitata al massimo disponibile
@@ -155,10 +153,15 @@ public class CarrelloManager {
             // Se la quantità calcolata è valida e differisce da quella già presente sul DB, salviamola
             if (nuovaQuantita > 0 && nuovaQuantita != quantitaSuDB) {
                 carrelloDAO.impostaQuantitaVoce(idCarrello, idVariante, nuovaQuantita);
+
+                // Aggiornamento del totale pezzi in sessione per il badge del carrello
+                int totalePezzi = getTotalePezzi();
+                session.setAttribute("cartBadgeCount", totalePezzi);
+
             }
         }
 
-        // 4. Pulizia automatica della sessione come concordato
+        // Dopo aver unito i carrelli, si rimuove il carrello ospite dalla sessione
         session.removeAttribute("carrello_ospite");
     }
 
@@ -188,7 +191,7 @@ public class CarrelloManager {
         }
     }
 
-    // Metodo per calcolare il numero totale di PEZZI nel carrello (somma delle quantità)
+    // Metodo per calcolare il totale dei pezzi nel carrello, indipendentemente dallo stato di login (utile per il badge del carrello)
     public int getTotalePezzi() throws SQLException {
         int totale = 0;
         List<VoceCarrello> voci = getVociCarrello();

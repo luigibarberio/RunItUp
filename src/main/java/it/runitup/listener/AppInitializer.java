@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebListener;
 
 import it.runitup.util.ConnectionPool;
 
+// Inizializzatore dell'applicazione che configura il pool di connessioni al database all'avvio dell'applicazione.
 @WebListener
 public class AppInitializer implements ServletContextListener {
 

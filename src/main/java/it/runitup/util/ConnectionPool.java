@@ -29,15 +29,15 @@ public class ConnectionPool {
 
     // Metodo di utilità per leggere variabili d'ambiente o System Properties con fallback a default
     private static String getEnv(String key, String defaultValue) {
-        // 1. PRIORITÀ MASSIMA: Variabili d'ambiente (Iniettate da Docker o dal Sistema)
+        // Priorità massima alle variabili d'ambiente del sistema (es. set tramite Docker, hosting, o variabili di ambiente del sistema operativo)
         String value = System.getenv(key);
 
-        // 2. PRIORITÀ MEDIA: File .env (Caricato da dotenv-java)
+        // Priorità media alle variabili di ambiente caricate da .env tramite la libreria Dotenv (utile per lo sviluppo locale e per evitare di hardcodare valori sensibili nel codice)
         if (value == null || value.trim().isEmpty()) {
             value = dotenv.get(key);
         }
 
-        // 3. FALLBACK: Valore di default hardcoded
+        // Se non è stata trovata alcuna variabile d'ambiente, si utilizza il valore di default fornito
         return (value != null && !value.trim().isEmpty()) ? value : defaultValue;
     }
 

@@ -30,8 +30,7 @@ public class ProdottoDAO {
             filtri = new FiltroCatalogo(); // Fallback sui default se l'oggetto è null
         }
 
-        // 1. QUERY BASE CON CALCOLO DINAMICO DELLO SCONTO (PostgreSQL)
-        // Usiamo un LEFT JOIN con la tabella promozione basandoci sulla data corrente (CURRENT_TIMESTAMP)
+        // Costruzione dinamica della query SQL con JOIN per ottenere tutte le informazioni necessarie in un'unica chiamata al DB, inclusi i calcoli per il prezzo scontato e la variabilità dei prezzi tra le varianti
         StringBuilder query = new StringBuilder(
             "SELECT p.*, b.nome_brand, " +
             // Calcolo del prezzo scontato
@@ -65,7 +64,7 @@ public class ProdottoDAO {
             "WHERE v.quantita_magazzino > 0 " // Escludiamo varianti esaurite
         );
 
-        // 2. COSTRUZIONE DINAMICA DELLE CLAUSOLE WHERE
+        // Applicazione dinamica dei filtri in base ai criteri specificati nell'oggetto FiltroCatalogo, con gestione sicura dei parametri per prevenire SQL Injection e supporto per filtri complessi come multi-selezione e ricerche testuali avanzate
         if (filtri.getRicercaTestuale() != null && !filtri.getRicercaTestuale().isEmpty()) {
             // Usiamo ILIKE (PostgreSQL) per una ricerca case-insensitive
             query.append(" AND (p.nome ILIKE ? OR b.nome_brand ILIKE ?)");
@@ -163,11 +162,10 @@ public class ProdottoDAO {
             query.append(")");
         }
 
-        // 3. CHIUSURA FILTRI E RAGGRUPPAMENTO (PostgreSQL Strict Rules)
+        // Chiusura della query con GROUP BY per aggregare correttamente i risultati dopo i JOIN e i calcoli, e per permettere l'uso di funzioni di aggregazione come MIN, MAX e BOOL_OR sui prezzi e sulle promozioni, mantenendo comunque la possibilità di filtrare sui prezzi calcolati tramite HAVING
         query.append(" GROUP BY p.id_prodotto, b.id_brand, b.nome_brand");
 
-        // 4. APPLICAZIONE FILTRO AD AVANZATO SUL PREZZO CALCOLATO (Tramite CLAUSOLA HAVING)
-        // Essendo prezzi aggregati e calcolati con formule (sconti), non possiamo usare WHERE, serve HAVING.
+        // Filtro sui prezzi calcolati (prezzo scontato minimo) usando HAVING, che permette di filtrare sui risultati aggregati dopo il GROUP BY. Gestiamo sia il prezzo minimo che il prezzo massimo, e anche la possibilità di filtrare solo i prodotti in offerta
         boolean hasHaving = false;
         if (filtri.getPrezzoMinimo() != null) {
             query.append(" HAVING MIN(CASE WHEN pr.id_promozione IS NOT NULL AND CURRENT_TIMESTAMP BETWEEN pr.data_inizio AND pr.data_fine THEN v.prezzo * (1 - (pr.percentuale / 100.0)) ELSE v.prezzo END) >= ?");
@@ -190,12 +188,12 @@ public class ProdottoDAO {
             if (hasHaving) {
                 query.append(" AND");
             } else {
-                query.append(" HAVING");
+                query.append(" HAVING");                
             }
             query.append(" BOOL_OR(CASE WHEN pr.id_promozione IS NOT NULL AND CURRENT_TIMESTAMP BETWEEN pr.data_inizio AND pr.data_fine THEN true ELSE false END) = true");
         }
 
-        // 5. ORDINAMENTO (Controllato per impedire SQL Injection strutturali)
+        // Ordinamento dinamico in base alla scelta dell'utente, con valori predefiniti per garantire un ordinamento coerente anche se l'utente non specifica nulla
         String order = filtri.getOrdinamento();
         if (order != null) {
             switch (order) {
@@ -209,25 +207,24 @@ public class ProdottoDAO {
             query.append(" ORDER BY p.in_evidenza DESC, p.totale_vendite DESC");
         }
 
-        // 6. PAGINAZIONE (LIMIT E OFFSET)
+        // Paginazione sicura con LIMIT e OFFSET, sempre alla fine della query
         query.append(" LIMIT ? OFFSET ?");
         parametri.add(filtri.getLimit());
         parametri.add(filtri.getOffset());
 
-        // 7. APERTURA CONNESSIONE ED ESECUZIONE
+        // Esecuzione della query con PreparedStatement, passando tutti i parametri ottenuti dall'oggetto FiltroCatalogo
         Connection con = ConnectionPool.getConnection();
         try {
 
             try (PreparedStatement ps = con.prepareStatement(query.toString())) {
 
-                // Riversiamo i parametri tipizzati in RAM dentro il PreparedStatement
                 for (int i = 0; i < parametri.size(); i++) {
                     ps.setObject(i + 1, parametri.get(i));
                 }
 
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        // MAPPING DEL BEAN PRODOTTO STANDARD
+                        // Mappatura del prodotto con tutte le informazioni necessarie per la visualizzazione in catalogo
                         Prodotto p = new Prodotto();
                         p.setIdProdotto(rs.getInt("id_prodotto"));
                         p.setNome(rs.getString("nome"));
@@ -253,13 +250,13 @@ public class ProdottoDAO {
                         p.setInEvidenza(rs.getBoolean("in_evidenza"));
                         p.setTotaleVendite(rs.getInt("totale_vendite"));
 
-                        // MAPPING DEL BRAND (Grazie alla INNER JOIN b.*)
+                        // Mapping dell'oggetto Brand
                         Brand b = new Brand();
                         b.setIdBrand(rs.getInt("id_brand"));
                         b.setNomeBrand(rs.getString("nome_brand"));
                         p.setBrand(b);
 
-                        // IMPACHETTAMENTO DEL DTO PER IL TRASPORTO VERSO LA VIEW
+                        // Creazione del DTO per il prodotto, necessario per includere i campi calcolati che non fanno parte della tabella prodotto
                         ProdottoDTO dto = new ProdottoDTO();
                         dto.setProdotto(p);
 
@@ -272,7 +269,7 @@ public class ProdottoDAO {
 
                         // Calcolo della variabilità dei prezzi tra le varianti
                         if (prezzoMinimo != null && prezzoMassimo != null) {
-                            // Se il prezzo massimo è strettamente maggiore del minimo, i prezzi variano!
+                            // Se il prezzo massimo è maggiore del prezzo minimo, allora ci sono varianti con prezzi diversi, quindi ha prezzi variabili
                             dto.setHaPrezziVariabili(prezzoMassimo.compareTo(prezzoMinimo) > 0);
                         } else {
                             dto.setHaPrezziVariabili(false);
@@ -303,6 +300,7 @@ public class ProdottoDAO {
                             dto.setTaglieDisponibili(new ArrayList<>());
                         }
 
+                        // Aggiunta del DTO alla lista dei risultati
                         prodotti.add(dto);
                     }
                 }
@@ -315,7 +313,7 @@ public class ProdottoDAO {
         return prodotti;
     }
 
-    // Recupera un prodotto completo di Brand dal database
+    // Metodo per recuperare un prodotto specifico con tutte le sue informazioni
     public Prodotto doRetrieveById(int idProdotto) throws SQLException {
         Prodotto prodotto = null;
         
@@ -336,7 +334,7 @@ public class ProdottoDAO {
                     prodotto.setNome(rs.getString("nome"));
                     prodotto.setDescrizione(rs.getString("descrizione"));
                     
-                    // Enum mapping
+                    // Mappatura degli enum, con controllo per evitare NullPointerException se il campo è null
                     if (rs.getString("genere") != null)
                         prodotto.setGenere(GenereScarpa.valueOf(rs.getString("genere")));
                     if (rs.getString("tipo_terreno") != null)
@@ -362,10 +360,11 @@ public class ProdottoDAO {
                 ConnectionPool.releaseConnection(con);
             }
         }
+
         return prodotto;
     }
 
-    // Recupera tutte le varianti disponibili per un dato prodotto, calcolando il prezzo scontato se è attiva una promozione
+    // Metodo per recuperare tutte le varianti di un prodotto specifico
     public List<VarianteDTO> getVariantiDTOByProdottoId(int idProdotto) throws SQLException {
         List<VarianteDTO> listaVarianti = new ArrayList<>();
         
@@ -412,7 +411,7 @@ public class ProdottoDAO {
         return listaVarianti;
     }
 
-    // Recupera una lista veloce di prodotti per i suggerimenti della barra di ricerca AJAX
+    // Metodo per recuperare una lista veloce di prodotti per i suggerimenti della barra di ricerca AJAX
     public List<Prodotto> doRetrieveSuggerimenti(String queryTestuale) throws SQLException {
         List<Prodotto> suggerimenti = new ArrayList<>();
         
@@ -452,14 +451,7 @@ public class ProdottoDAO {
         return suggerimenti;
     }
 
-
-    // =========================================================================
-    // METODI CRUD PER L'AREA ADMIN
-    // =========================================================================
-
-    /**
-     * Recupera un singolo Prodotto dal DB per precompilare il form di modifica.
-     */
+    // Metodo per recuperare un prodotto completo con tutte le sue informazioni, utilizzato principalmente per la pagina di dettaglio prodotto dell'area admin
     public Prodotto getProdottoById(int idProdotto) throws SQLException {
         Prodotto p = null;
         String query = "SELECT p.*, b.nome_brand FROM prodotto p JOIN brand b ON p.id_brand = b.id_brand WHERE p.id_prodotto = ?";
@@ -494,16 +486,13 @@ public class ProdottoDAO {
         return p;
     }
 
-    /**
-     * Inserisce un nuovo Prodotto base.
-     * Restituisce l'ID autogenerato (utile per rinominare le immagini e fare redirect).
-     */
+    // Metodo per inserire un nuovo prodotto nel database, restituendo l'ID generato del nuovo prodotto
     public int insertProdotto(Prodotto p) throws SQLException {
         String query = "INSERT INTO prodotto (nome, descrizione, id_brand, genere, tipo_terreno, tipo_appoggio, tipo_passo, in_evidenza) " +
                        "VALUES (?, ?, ?, CAST(? AS genere_scarpa), CAST(? AS tipo_terreno), CAST(? AS tipo_appoggio), CAST(? AS tipo_passo), ?)";
         
         Connection con = ConnectionPool.getConnection();
-        // Richiediamo a JDBC di restituirci la chiave generata (il SERIAL id_prodotto)
+        // Utilizzo di RETURN_GENERATED_KEYS per ottenere l'ID del prodotto appena inserito, che è necessario per poter poi inserire le varianti associate a quel prodotto
         try (PreparedStatement ps = con.prepareStatement(query, java.sql.Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, p.getNome());
             ps.setString(2, p.getDescrizione());
@@ -528,9 +517,7 @@ public class ProdottoDAO {
         }
     }
 
-    /**
-     * Aggiorna i dati di un prodotto esistente.
-     */
+    // Metodo per aggiornare un prodotto esistente nel database, restituendo true se l'aggiornamento è avvenuto con successo
     public boolean updateProdotto(Prodotto p) throws SQLException {
         String query = "UPDATE prodotto SET nome = ?, descrizione = ?, id_brand = ?, " +
                        "genere = CAST(? AS genere_scarpa), tipo_terreno = CAST(? AS tipo_terreno), " +
@@ -555,10 +542,7 @@ public class ProdottoDAO {
         }
     }
 
-    /**
-     * Elimina fisicamente un prodotto e (grazie al DB) elimina a cascata le sue varianti,
-     * settando a NULL il riferimento nello storico ordini.
-     */
+    // Metodo per eliminare un prodotto dal database, restituendo true se l'eliminazione è avvenuta con successo
     public boolean deleteProdotto(int idProdotto) throws SQLException {
         String query = "DELETE FROM prodotto WHERE id_prodotto = ?";
         Connection con = ConnectionPool.getConnection();
@@ -570,14 +554,11 @@ public class ProdottoDAO {
         }
     }
 
-    /**
-     * Metodo dedicato per il pannello Admin.
-     * Utilizza una LEFT JOIN per recuperare TUTTI i prodotti (anche quelli orfani di varianti).
-     */
+    // Metodo per recuperare tutti i prodotti (utile per l'area admin)
     public List<ProdottoDTO> doRetrieveAllAdmin() throws SQLException {
         List<ProdottoDTO> lista = new ArrayList<>();
 
-        // La LEFT JOIN è la chiave: prende sempre il prodotto, e se non ci sono varianti, MIN(v.prezzo) sarà NULL
+        // LEFT JOIN per includere anche i prodotti senza varianti
         String query = 
             "SELECT p.*, b.nome_brand, " +
             "       MIN(v.prezzo) AS prezzo_minimo " +
@@ -596,7 +577,7 @@ public class ProdottoDAO {
             while (rs.next()) {
                 ProdottoDTO dto = new ProdottoDTO();
 
-                // 1. Costruiamo il Bean Prodotto base
+                // Mapping del prodotto con tutte le sue informazioni
                 Prodotto p = new Prodotto();
                 p.setIdProdotto(rs.getInt("id_prodotto"));
                 p.setNome(rs.getString("nome"));
@@ -617,12 +598,9 @@ public class ProdottoDAO {
 
                 dto.setProdotto(p);
 
-                // 2. Impostiamo il Prezzo Minimo (se NULL, il DTO accetta il null senza problemi)
+                // Il prezzo minimo potrebbe essere null se il prodotto non ha varianti, quindi gestiamo questo caso
                 dto.setPrezzoMinimo(rs.getBigDecimal("prezzo_minimo"));
-                
-                // NOTA: Non popoliamo taglieDisponibili e coloriDisponibili perché
-                // nella tabella Admin non ci interessano. Questo rende la query super ottimizzata!
-                
+
                 lista.add(dto);
             }
         } finally {

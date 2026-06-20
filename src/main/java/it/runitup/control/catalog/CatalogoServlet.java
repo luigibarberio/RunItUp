@@ -32,13 +32,13 @@ public class CatalogoServlet extends HttpServlet {
         // Istanziamo il nostro contenitore per i criteri di ricerca
         FiltroCatalogo filtri = new FiltroCatalogo();
 
-        // 0. ESTRAZIONE DELLA QUERY DI RICERCA TESTUALE (SE PRESENTE)
+        // Estrazione dei parametri di ricerca testuale dalla query string
         String queryRicerca = request.getParameter("q");
         if (queryRicerca != null && !queryRicerca.trim().isEmpty()) {
             filtri.setRicercaTestuale(queryRicerca.trim());
         }
 
-        // 1. ESTRAZIONE E PARSING DEI FILTRI MULTI-SELEZIONE (BRAND)
+        // Estrazione e parsing dei filtri multi-selezione (brand, genere, taglie, colori, tipoTerreno, tipoAppoggio, tipoPasso) dalla query string
         String[] brandParams = request.getParameterValues("brand");
         if (brandParams != null && brandParams.length > 0) {
             List<Integer> brandIds = new ArrayList<>();
@@ -48,7 +48,7 @@ public class CatalogoServlet extends HttpServlet {
                         brandIds.add(Integer.parseInt(idStr.trim()));
                     }
                 } catch (NumberFormatException e) {
-                    // Protezione: se qualcuno manomette l'URL scrivendo caratteri al posto di ID numerici, lo ignoriamo
+                    // Se qualcuno manomette l'URL scrivendo caratteri al posto di ID numerici, lo ignoriamo
                 }
             }
             if (!brandIds.isEmpty()) {
@@ -56,7 +56,7 @@ public class CatalogoServlet extends HttpServlet {
             }
         }
 
-        // 2. ESTRAZIONE E PARSING DEI FILTRI MULTI-SELEZIONE ENUM (GENERE)
+        // Estrazione e parsing dei filtri multi-selezione per il genere (Enum GenereScarpa) dalla query string
         String[] genereParams = request.getParameterValues("genere");
         if (genereParams != null && genereParams.length > 0) {
             List<GenereScarpa> generi = new ArrayList<>();
@@ -66,7 +66,7 @@ public class CatalogoServlet extends HttpServlet {
                         generi.add(GenereScarpa.valueOf(genStr.trim().toUpperCase()));
                     }
                 } catch (IllegalArgumentException e) {
-                    // Protezione: se il valore testuale non corrisponde all'Enum, viene ignorato in sicurezza
+                    // Se il valore testuale non corrisponde all'Enum, viene ignorato in sicurezza
                 }
             }
             if (!generi.isEmpty()) {
@@ -74,7 +74,7 @@ public class CatalogoServlet extends HttpServlet {
             }
         }
 
-        // 3. ESTRAZIONE FILTRI DEI RANGE DI PREZZO (BigDecimal)
+        // Estrazione dei filtri di prezzo (minimo e massimo) dalla query string
         String prezzoMinParam = request.getParameter("prezzoMin");
         if (prezzoMinParam != null && !prezzoMinParam.trim().isEmpty()) {
             try {
@@ -93,12 +93,12 @@ public class CatalogoServlet extends HttpServlet {
             }
         }
 
-        // 4. ESTRAZIONE FILTRI BOOLEANI (CHECKBOX)
+        // Estrazione dei filtri booleani (inEvidenza, inOfferta, nuoviArrivi) dalla query string
         filtri.setInEvidenza("true".equals(request.getParameter("inEvidenza")));
         filtri.setInOfferta("true".equals(request.getParameter("inOfferta")));
         filtri.setNuoviArrivi("true".equals(request.getParameter("nuoviArrivi")));
 
-        // 5. ESTRAZIONE FILTRI TESTUALI AVANZATI ED ORDINAMENTO
+        // Estrazione dei filtri multi-selezione per taglie, colori, tipoTerreno, tipoAppoggio e tipoPasso dalla query string
         String[] taglieParams = request.getParameterValues("taglie");
         if (taglieParams != null && taglieParams.length > 0) {
             filtri.setTaglie(java.util.Arrays.asList(taglieParams));
@@ -160,7 +160,7 @@ public class CatalogoServlet extends HttpServlet {
             filtri.setOrdinamento(ordina.trim());
         }
 
-        // 6. GESTIONE DELLA PAGINAZIONE (CALCOLO DI LIMIT ED OFFSET)
+        // Gestione della paginazione: recuperiamo il parametro "page" dalla query string, se presente, altrimenti impostiamo la pagina corrente a 1
         int paginaCorrente = 1;
         String pageParam = request.getParameter("page");
         if (pageParam != null && !pageParam.trim().isEmpty()) {
@@ -195,7 +195,7 @@ public class CatalogoServlet extends HttpServlet {
         filtriSidebar.setTipiAppoggio(filtri.getTipiAppoggio());
         filtriSidebar.setTipiPasso(filtri.getTipiPasso());
 
-        // 7. INVOCAZIONE DEL DAO ED INVIO ALLA VIEW CORRETTA
+        // Recuperiamo i prodotti filtrati dal database e li inoltriamo alla JSP per la visualizzazione
         try {
             // Eseguiamo le query dinamica passando l'oggetto filtro configurato
             List<ProdottoDTO> prodotti = prodottoDAO.doRetrieveAllFiltered(filtri);
@@ -219,8 +219,7 @@ public class CatalogoServlet extends HttpServlet {
             // Registriamo anche la lista per la sidebar
             request.setAttribute("prodottiSidebar", prodottiSidebar);
 
-            // Chiamata standard: carichiamo l'intera infrastruttura della pagina del catalogo
-            // Passiamo i filtri correnti alla JSP per mantenere lo stato dei filtri selezionati
+            // Passiamo l'oggetto filtri alla JSP per mantenere i valori dei filtri selezionati dall'utente
             request.setAttribute("filtriCorrenti", filtri);
 
             // Passiamo la pagina corrente alla JSP per la gestione della paginazione
@@ -233,7 +232,7 @@ public class CatalogoServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            // In caso di anomalie gravi sul DB o sul server, rispondiamo con un codice di errore HTTP 500
+            // In caso di errore, inviamo un messaggio di errore generico al client e logghiamo l'eccezione
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                     "Si è verificato un errore durante il caricamento del catalogo prodotti.");
         }

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import it.runitup.model.bean.Utente;
 
-// Protegge l'intera area amministrativa (Servlet e JSP mappate sotto /admin/)
+// Filtro per proteggere le pagine dell'area amministrativa, assicurandosi che solo gli utenti con ruolo admin possano accedervi.
 @WebFilter({"/admin", "/admin/*"})
 public class AdminFilter implements Filter {
 
@@ -31,26 +31,26 @@ public class AdminFilter implements Filter {
             utente = (Utente) session.getAttribute("utenteLoggato");
         }
 
-        // Hard Check: L'utente deve esistere e il metodo isAdmin() deve restituire TRUE
+        // Si controlla se l'utente è loggato e ha il ruolo di admin
         if (utente != null && utente.isAdmin()) {
 
             String path = httpRequest.getServletPath();
 
-            // Logica centralizzata: assegna l'attributo basandosi sul path
+            // Determina quale pagina dell'area admin è attiva per evidenziare il menu laterale (funzionalità di UI/UX)
             String activePage = "prodotti"; // default
             if (path.contains("/admin/ordini")) {
                 activePage = "ordini";
             }
 
-            // Passa l'attributo a TUTTE le pagine admin automaticamente
+            // Imposta l'attributo "activePage" nella richiesta per essere utilizzato nella JSP dell'area admin
             httpRequest.setAttribute("activePage", activePage);
 
-            // Autorizzazione confermata, procedi verso la risorsa admin richiesta
+            // L'utente è un admin, quindi si prosegue con la catena di filtri o con la servlet richiesta
             chain.doFilter(request, response);
         } else {
             // Tentativo di accesso abusivo, se l'utente non è loggato, reindirizza alla pagina di login, altrimenti si restituirà un errore 403 (Forbidden)
             if (utente == null) {
-                // Salviamo l'URL richiesto per un eventuale redirect dopo il login
+                // L'utente non è loggato, quindi salviamo l'URL di destinazione e reindirizziamo alla pagina di login
                 String requestURI = httpRequest.getRequestURI();
                 String queryString = httpRequest.getQueryString();
                 
@@ -62,10 +62,10 @@ public class AdminFilter implements Filter {
                 HttpSession newSession = httpRequest.getSession(true);
                 newSession.setAttribute("redirectDopoLogin", urlDiDestinazione);
 
-                // Reindirizziamo l'utente alla pagina di login
+                // Reindirizza alla pagina di login con un parametro per indicare che l'accesso è stato negato
                 httpResponse.sendRedirect(httpRequest.getContextPath() + "/login?redirected=true");
             }else {
-                // L'utente è loggato ma non ha i permessi admin, quindi restituiamo un errore 403
+                // L'utente è loggato ma non ha il ruolo di admin, quindi restituiamo un errore 403 (Forbidden)
                 httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Accesso negato: area riservata agli amministratori.");
                 return;
             }

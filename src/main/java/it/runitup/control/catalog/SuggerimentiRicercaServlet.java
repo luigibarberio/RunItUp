@@ -26,14 +26,14 @@ public class SuggerimentiRicercaServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        // Rispondiamo rigorosamente in JSON
+
+        // Impostazione del tipo di contenuto della risposta come JSON e della codifica dei caratteri
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         
         String q = request.getParameter("q");
         
-        // Se la stringa è nulla o più corta di 2 caratteri, ritorniamo un array vuoto
+        // Restituzione di un array JSON vuoto se la query è nulla o troppo corta (meno di 2 caratteri)
         if (q == null || q.trim().length() < 2) {
             response.getWriter().write("[]");
             return;
@@ -42,7 +42,7 @@ public class SuggerimentiRicercaServlet extends HttpServlet {
         try {
             List<Prodotto> risultati = prodottoDAO.doRetrieveSuggerimenti(q.trim());
             
-            // Costruiamo un JSON personalizzato e leggerissimo
+            // Creazione di un array JSON per contenere i suggerimenti dei prodotti
             JsonArray jsonArray = new JsonArray();
             for (Prodotto p : risultati) {
                 JsonObject obj = new JsonObject();
@@ -52,10 +52,11 @@ public class SuggerimentiRicercaServlet extends HttpServlet {
                 jsonArray.add(obj);
             }
 
-            // Inviamo il JSON al frontend
+            // Invio della risposta JSON al client con i suggerimenti dei prodotti
             response.getWriter().write(gson.toJson(jsonArray));
 
         } catch (Exception e) {
+            // Gestione degli errori generici, come problemi di connessione al database o eccezioni non previste
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("[]");

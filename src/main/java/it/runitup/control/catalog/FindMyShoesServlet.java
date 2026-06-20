@@ -23,32 +23,31 @@ import it.runitup.model.filter.FiltroCatalogo;
 public class FindMyShoesServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
-    // Riutilizziamo il DAO del catalogo senza scrivere nuovo codice SQL!
+    // DAO per l'accesso ai prodotti nel catalogo
     private final ProdottoDAO prodottoDAO = new ProdottoDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        // 1. Leggiamo i parametri dalla Query String (?genere=...&terreno=...)
+
+        // Recupero dei parametri di filtro dalla richiesta
         String genereParam = request.getParameter("genere");
         String terrenoParam = request.getParameter("terreno");
         String appoggioParam = request.getParameter("appoggio");
         String passoParam = request.getParameter("passo");
 
-        // --- CASO A: L'utente apre la pagina senza filtri (Inizio del Quiz) ---
+        // Caso A: L'utente non ha ancora completato il quiz (nessun parametro di filtro presente)
         if (genereParam == null && terrenoParam == null && appoggioParam == null && passoParam == null) {
             request.getRequestDispatcher("/WEB-INF/view/catalog/findmyshoes.jsp").forward(request, response);
             return;
         }
 
-        // --- CASO B: L'utente ha completato il quiz (Calcolo Risultati) ---
+        // Caso B: L'utente ha completato il quiz e ha inviato i filtri
         FiltroCatalogo filtri = new FiltroCatalogo();
 
         try {
-            // "ANY" è un valore speciale che useremo nell'HTML per "Nessuno in particolare"
-            // Se non è "ANY", parsiamo la stringa nella rispettiva Enum e l'aggiungiamo alla lista dei filtri
-            
+  
+            // Costruzione dei filtri basati sui parametri ricevuti dalla richiesta, ignorando eventuali valori "ANY" che indicano nessun filtro per quel campo           
             if (genereParam != null && !genereParam.trim().isEmpty() && !genereParam.equals("ANY")) {
                 filtri.setGeneri(Arrays.asList(GenereScarpa.valueOf(genereParam.toUpperCase())));
             }
@@ -65,16 +64,15 @@ public class FindMyShoesServlet extends HttpServlet {
                 filtri.setTipiPasso(Arrays.asList(TipoPasso.valueOf(passoParam.toUpperCase())));
             }
 
-            // 2. Facciamo lavorare il DAO con i filtri appena costruiti
+            // Recupero dei prodotti consigliati dal database in base ai filtri applicati
             List<ProdottoDTO> prodottiConsigliati = prodottoDAO.doRetrieveAllFiltered(filtri);
 
-            // 3. Passiamo i risultati alla JSP dedicata
+            // Impostazione degli attributi della richiesta per la JSP dei risultati
             request.setAttribute("prodottiConsigliati", prodottiConsigliati);
             request.getRequestDispatcher("/WEB-INF/view/catalog/findmyshoes_results.jsp").forward(request, response);
 
         } catch (IllegalArgumentException e) {
-            // Protezione: se qualcuno si diverte a manomettere l'URL (es. ?genere=ALIENO)
-            // il valueOf() dell'Enum lancerà questa eccezione. Noi rispondiamo con un 400 Bad Request.
+            // Gestione del caso in cui i parametri di filtro non corrispondano a valori validi degli enum
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "I parametri inseriti non sono validi.");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,8 +83,7 @@ public class FindMyShoesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        // Le ricerche devono essere condivisibili (es. inviare il link a un amico). 
-        // Quindi forziamo tutto in GET. Se dovesse arrivare un POST, lo dirottiamo.
+        // Reindirizzamento della richiesta POST alla gestione della richiesta GET per mantenere la logica di filtraggio
         doGet(request, response);
     }
 }

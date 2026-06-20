@@ -16,7 +16,7 @@ public class DettaglioOrdine implements Serializable {
     private String coloreStorico;
     private String tagliaStorica;
     
-    // Finanziari singola riga
+    // Dati dell'acquisto
     private int quantitaAcquistata;
     private BigDecimal prezzoUnitarioImponibile;
     private BigDecimal aliquotaIva;

@@ -39,18 +39,18 @@ public class VarianteDAO {
             
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    // 1. Mappatura Brand
+                    // Mappatura del Brand
                     Brand brand = new Brand();
                     brand.setIdBrand(rs.getInt("id_brand"));
                     brand.setNomeBrand(rs.getString("nome_brand"));
 
-                    // 2. Mappatura Prodotto
+                    // Mappatura del Prodotto
                     Prodotto prodotto = new Prodotto();
                     prodotto.setIdProdotto(rs.getInt("id_prodotto"));
                     prodotto.setNome(rs.getString("nome_prodotto"));
                     prodotto.setDescrizione(rs.getString("descrizione"));
                     
-                    // Gestione Enums (con controlli di sicurezza)
+                    // Gestione degli Enums (con controlli di sicurezza)
                     if (rs.getString("genere") != null)
                         prodotto.setGenere(GenereScarpa.valueOf(rs.getString("genere")));
                     if (rs.getString("tipo_terreno") != null)
@@ -65,7 +65,7 @@ public class VarianteDAO {
                     prodotto.setTotaleVendite(rs.getInt("totale_vendite"));
                     prodotto.setBrand(brand);
 
-                    // 3. Mappatura VarianteProdotto
+                    // Mappatura della Variante con il Prodotto associato
                     variante = new VarianteProdotto();
                     variante.setIdVariante(rs.getInt("id_variante"));
                     variante.setColore(rs.getString("colore"));
@@ -84,7 +84,7 @@ public class VarianteDAO {
         return variante;
     }
 
-    // Recupera una variante specifica con i dettagli del prodotto e del brand, calcolando il prezzo scontato se è attiva una promozione
+    // Metodo per ottenere una variante con informazioni sulla promozione attiva (se presente)
     public VarianteDTO getVarianteConPromozione(VarianteProdotto variante) throws SQLException {
         VarianteDTO vDto = new VarianteDTO();
         vDto.setVariante(variante);
@@ -92,8 +92,7 @@ public class VarianteDAO {
 
         if (variante == null) return vDto;
 
-        // Query perfettamente allineata alla tabella ponte variante_promozione
-        // Seleziona la percentuale controllando che il timestamp attuale sia nel range di validità
+        // Query che verifica se esiste una promozione attiva per la variante passata in input e ne estrae la percentuale di sconto
         String query = "SELECT pr.percentuale " +
                        "FROM variante_promozione vpr " +
                        "JOIN promozione pr ON vpr.id_promozione = pr.id_promozione " +
@@ -114,7 +113,7 @@ public class VarianteDAO {
                     if (percentuale != null && percentuale.compareTo(BigDecimal.ZERO) > 0) {
                         vDto.setInPromozione(true);
                         
-                        // Calcolo prezzo scontato: Prezzo - (Prezzo * percentuale / 100)
+                        // Calcolo del prezzo scontato: Prezzo - (Prezzo * percentuale / 100)
                         BigDecimal cento = new BigDecimal("100");
                         BigDecimal sconto = variante.getPrezzo().multiply(percentuale.divide(cento, 4, java.math.RoundingMode.HALF_UP));
                         vDto.setPrezzoScontato(variante.getPrezzo().subtract(sconto));
@@ -130,13 +129,7 @@ public class VarianteDAO {
     }
 
 
-    // =========================================================================
-    // METODI CRUD PER L'AREA ADMIN (AJAX/FETCH)
-    // =========================================================================
-
-    /**
-     * Recupera tutte le varianti di uno specifico prodotto (per la tabella Admin).
-     */
+    // Metodo per ottenere tutte le varianti associate a un prodotto specifico, ordinando per colore e taglia (utile per l'area admin)
     public java.util.List<VarianteProdotto> getVariantiByProdotto(int idProdotto) throws SQLException {
         java.util.List<VarianteProdotto> list = new java.util.ArrayList<>();
         String query = "SELECT id_variante, id_prodotto, colore, taglia, prezzo, quantita_magazzino " +
@@ -150,7 +143,7 @@ public class VarianteDAO {
                     VarianteProdotto v = new VarianteProdotto();
                     v.setIdVariante(rs.getInt("id_variante"));
                     
-                    // Creiamo un Prodotto "fittizio" con solo l'ID per mantenere il riferimento
+                    // Mappatura del Prodotto associato alla variante (con solo l'ID, per evitare query ridondanti)
                     Prodotto p = new Prodotto();
                     p.setIdProdotto(rs.getInt("id_prodotto"));
                     v.setProdotto(p);
@@ -169,9 +162,7 @@ public class VarianteDAO {
         return list;
     }
 
-    /**
-     * Inserisce una nuova variante e restituisce l'ID autogenerato.
-     */
+    // Metodo per inserire una nuova variante nel database, restituendo l'ID generato se l'inserimento è avvenuto con successo
     public int insertVariante(VarianteProdotto v) throws SQLException {
         String query = "INSERT INTO variante_prodotto (id_prodotto, colore, taglia, prezzo, quantita_magazzino) VALUES (?, ?, ?, ?, ?)";
         Connection con = ConnectionPool.getConnection();
@@ -193,9 +184,7 @@ public class VarianteDAO {
         }
     }
 
-    /**
-     * Aggiorna una variante esistente (Modifica Inline).
-     */
+    // Metodo per aggiornare una variante esistente nel database, restituendo true se l'aggiornamento è avvenuto con successo
     public boolean updateVariante(VarianteProdotto v) throws SQLException {
         String query = "UPDATE variante_prodotto SET colore = ?, taglia = ?, prezzo = ?, quantita_magazzino = ? WHERE id_variante = ?";
         Connection con = ConnectionPool.getConnection();
@@ -212,9 +201,7 @@ public class VarianteDAO {
         }
     }
 
-    /**
-     * Elimina fisicamente una variante.
-     */
+    // Metodo per eliminare fisicamente una variante
     public boolean deleteVariante(int idVariante) throws SQLException {
         String query = "DELETE FROM variante_prodotto WHERE id_variante = ?";
         Connection con = ConnectionPool.getConnection();

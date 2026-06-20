@@ -27,10 +27,7 @@ public class AdminVariantiServlet extends HttpServlet {
     private final VarianteDAO varianteDAO = new VarianteDAO();
     private final ProdottoDAO prodottoDAO = new ProdottoDAO();
 
-    /**
-        * DOGET: Visualizza la pagina di gestione varianti per un prodotto specifico.
-        * Richiede il parametro "idProdotto" nella query string.
-    */
+    // doGet: Recupera tutte le varianti di un prodotto specifico e le inoltra alla JSP per la visualizzazione.
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -45,14 +42,14 @@ public class AdminVariantiServlet extends HttpServlet {
         try {
             int idProdotto = Integer.parseInt(idProdottoStr);
             
-            // 1. Recuperiamo il prodotto per mostrare il titolo in pagina (es. "Gestione Varianti: Nike Air Max")
+            // Recupero del prodotto per verificare che esista
             Prodotto prodotto = prodottoDAO.getProdottoById(idProdotto);
             if (prodotto == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Prodotto non trovato.");
                 return;
             }
 
-            // 2. Recuperiamo la lista di tutte le varianti attuali
+            // Recupero delle varianti associate al prodotto
             List<VarianteProdotto> listaVarianti = varianteDAO.getVariantiByProdotto(idProdotto);
 
             request.setAttribute("prodotto", prodotto);
@@ -68,10 +65,7 @@ public class AdminVariantiServlet extends HttpServlet {
         }
     }
 
-    /**
-     * DOPOST: Gestisce le chiamate ASINCRONE (Fetch API) per il CRUD delle varianti.
-     * Riceve un body JSON e risponde sempre con un JSON.
-     */
+    // doPost: Gestisce le operazioni di inserimento, modifica ed eliminazione delle varianti tramite richieste AJAX con payload JSON.
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -81,7 +75,7 @@ public class AdminVariantiServlet extends HttpServlet {
         JsonObject jsonResponse = new JsonObject();
 
         try {
-            // 1. Leggiamo il payload JSON inviato dalla Fetch
+            // Lettura del payload JSON dalla richiesta
             BufferedReader reader = request.getReader();
             JsonObject jsonBody = new Gson().fromJson(reader, JsonObject.class);
 
@@ -92,7 +86,7 @@ public class AdminVariantiServlet extends HttpServlet {
 
             String action = jsonBody.get("action").getAsString();
 
-            // 2. SWITCH SULLE 3 AZIONI POSSIBILI (Insert, Update, Delete)
+            // Switch per determinare l'azione da eseguire: insert, update o delete
             switch (action) {
                 case "insert":
                     inserisciVariante(jsonBody, jsonResponse);
@@ -108,7 +102,7 @@ public class AdminVariantiServlet extends HttpServlet {
                     return;
             }
 
-            // Inviamo la risposta di successo
+            // Invio della risposta JSON al client
             response.getWriter().write(new Gson().toJson(jsonResponse));
 
         } catch (Exception e) {
@@ -117,10 +111,7 @@ public class AdminVariantiServlet extends HttpServlet {
         }
     }
 
-    // =========================================================================================
-    // METODI PRIVATI PER MANTENERE IL DOPOST PULITO
-    // =========================================================================================
-
+    // Metodo helper per inserire una nuova variante nel database
     private void inserisciVariante(JsonObject jsonBody, JsonObject jsonResponse) throws Exception {
         int idProdotto = jsonBody.get("idProdotto").getAsInt();
         
@@ -144,6 +135,7 @@ public class AdminVariantiServlet extends HttpServlet {
         }
     }
 
+    // Metodo helper per modificare una variante esistente nel database
     private void modificaVariante(JsonObject jsonBody, JsonObject jsonResponse) throws Exception {
         VarianteProdotto v = new VarianteProdotto();
         v.setIdVariante(jsonBody.get("idVariante").getAsInt());
@@ -161,6 +153,7 @@ public class AdminVariantiServlet extends HttpServlet {
         }
     }
 
+    // Metodo helper per eliminare una variante esistente nel database
     private void eliminaVariante(JsonObject jsonBody, JsonObject jsonResponse) throws Exception {
         int idVariante = jsonBody.get("idVariante").getAsInt();
         
@@ -173,6 +166,7 @@ public class AdminVariantiServlet extends HttpServlet {
         }
     }
 
+    // Metodo helper per inviare un messaggio di errore in formato JSON al client
     private void inviaErrore(HttpServletResponse response, JsonObject jsonResponse, String messaggio) throws IOException {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         jsonResponse.addProperty("success", false);

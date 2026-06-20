@@ -38,8 +38,8 @@ public class FatturaPdfServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        // 1. Recupero dell'ordine già validato dal nostro OrderOwnerFilter
+
+        // Recupero dell'ordine validato dalla richiesta, che dovrebbe essere stato impostato in precedenza
         Ordine ordine = (Ordine) request.getAttribute("ordineValidato");
 
         if (ordine == null) {
@@ -48,33 +48,33 @@ public class FatturaPdfServlet extends HttpServlet {
         }
 
         try {
-            // 2. Caricamento dei prodotti
+            // Recupero dei dettagli dell'ordine dal database per popolare la fattura
             List<DettaglioOrdine> dettagli = ordineDAO.getDettagliByOrdine(ordine.getIdOrdine());
 
-            // 3. Preparazione degli Header HTTP per forzare il download del PDF
+            // Impostazione della risposta HTTP per il download del PDF
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=\"Fattura_Ordine_" + ordine.getIdOrdine() + ".pdf\"");
 
-            // 4. Inizializzazione del Documento iText
+            // Creazione del documento PDF utilizzando iText
             Document document = new Document();
             
-            // Il PdfWriter collega il documento iText all'OutputStream della Servlet
+            // Creazione del PdfWriter per scrivere il contenuto del documento nella risposta HTTP
             PdfWriter.getInstance(document, response.getOutputStream());
             document.open();
 
-            // --- DEFINIZIONE DEI FONT ---
+            // Definizione dei font da utilizzare nel documento PDF
             Font fontTitolo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK);
             Font fontSottotitolo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.BLACK);
             Font fontNormale = FontFactory.getFont(FontFactory.HELVETICA, 10, BaseColor.BLACK);
             Font fontGrigio = FontFactory.getFont(FontFactory.HELVETICA, 10, BaseColor.DARK_GRAY);
             Font fontIntestazioneTabella = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, BaseColor.WHITE);
 
-            // --- SEZIONE 1: HEADER (Azienda e Dati Documento) ---
+            // Sezione di intestazione della fattura con i dati dell'azienda e dell'ordine
             PdfPTable headerTable = new PdfPTable(2);
             headerTable.setWidthPercentage(100);
             headerTable.setWidths(new float[]{60, 40}); // Proporzioni delle due colonne
 
-            // Colonna Sinistra (Dati RunItUp)
+            // Colonna Sinistra (Dati Azienda)
             PdfPCell leftCell = new PdfPCell();
             leftCell.setBorder(PdfPCell.NO_BORDER);
             leftCell.addElement(new Paragraph("RunTime SRL.", fontTitolo));
@@ -107,7 +107,7 @@ public class FatturaPdfServlet extends HttpServlet {
             document.add(new Chunk(new LineSeparator(1f, 100f, BaseColor.BLACK, Element.ALIGN_CENTER, -10f)));
             document.add(new Paragraph("\n"));
 
-            // --- SEZIONE 2: DATI CLIENTE ---
+            // Sezione Dati Cliente
             Paragraph intestazioneCliente = new Paragraph("Intestato a:", fontSottotitolo);
             document.add(intestazioneCliente);
             
@@ -118,7 +118,7 @@ public class FatturaPdfServlet extends HttpServlet {
                 "Email: " + ordine.getUtente().getEmail() + "\n\n", fontNormale);
             document.add(datiCliente);
 
-            // --- SEZIONE 3: TABELLA PRODOTTI ---
+            // Sezione Tabella Prodotti
             PdfPTable table = new PdfPTable(4);
             table.setWidthPercentage(100);
             table.setWidths(new float[]{45, 15, 20, 20}); // Larghezze relative colonne
@@ -129,14 +129,14 @@ public class FatturaPdfServlet extends HttpServlet {
             String[] headers = {"Descrizione Articolo", "Q.tà", "Prezzo Unit.", "Totale"};
             for (String header : headers) {
                 PdfPCell cell = new PdfPCell(new Phrase(header, fontIntestazioneTabella));
-                // Usiamo un grigio simile allo sfondo alternativo del tuo CSS
+                // Impostazione dello sfondo grigio per le intestazioni
                 cell.setBackgroundColor(new BaseColor(100, 116, 139)); 
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 cell.setPadding(8f);
                 table.addCell(cell);
             }
 
-            // Inserimento Righe Prodotti
+            // Popolamento della tabella con i dettagli dei prodotti acquistati
             for (DettaglioOrdine dett : dettagli) {
                 java.math.BigDecimal subtotaleRiga = dett.getPrezzoUnitarioConIva().multiply(new java.math.BigDecimal(dett.getQuantitaAcquistata()));
 
@@ -160,7 +160,7 @@ public class FatturaPdfServlet extends HttpServlet {
             }
             document.add(table);
 
-            // --- SEZIONE 4: TOTALI ---
+            // Sezione Totali
             PdfPTable totaliTable = new PdfPTable(2);
             totaliTable.setWidthPercentage(40);
             totaliTable.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -179,13 +179,13 @@ public class FatturaPdfServlet extends HttpServlet {
                                  "-€ " + String.format(java.util.Locale.ITALY, "%.2f", ordine.getCoupon().getValoreSconto()), fontRosso);
             }
 
-            // Totale Finale in Grassetto e più grande
+            // Riga Totale Finale con font più grande e in grassetto
             Font fontTotaleFinale = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.BLACK);
             aggiungiRigaTotale(totaliTable, "TOTALE PAGATO:", "€ " + String.format(java.util.Locale.ITALY, "%.2f", ordine.getTotalePagato()), fontTotaleFinale);
 
             document.add(totaliTable);
 
-            // Chiusura Documento
+            // Chiusura del documento PDF e invio della risposta al client
             document.close();
 
         } catch (SQLException | DocumentException e) {
@@ -210,6 +210,7 @@ public class FatturaPdfServlet extends HttpServlet {
         table.addCell(cellValore);
     }
 
+    // doPost: Reindirizza le richieste POST alla gestione GET per la generazione del PDF della fattura
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {

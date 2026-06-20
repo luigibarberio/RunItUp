@@ -28,7 +28,7 @@ public class AdminOrdiniServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        // 1. Lettura dei parametri di filtro dalla query string (?dal=...&al=...&emailCliente=...)
+        // Estrazione dei parametri di filtro dalla query string
         String dalStr = request.getParameter("dal");
         String alStr = request.getParameter("al");
         String emailCliente = request.getParameter("emailCliente");
@@ -38,7 +38,7 @@ public class AdminOrdiniServlet extends HttpServlet {
         Integer idCliente = null;
 
         try {
-            // 2. Parsifichiamo le date (se l'admin le ha inserite)
+            // Parsing delle date dai parametri della query string, se presenti
             if (dalStr != null && !dalStr.trim().isEmpty()) {
                 dal = LocalDate.parse(dalStr.trim());
             }
@@ -46,38 +46,36 @@ public class AdminOrdiniServlet extends HttpServlet {
                 al = LocalDate.parse(alStr.trim());
             }
 
-            // 3. Risolviamo l'email del cliente nel suo ID reale (per la query in DB)
+            // Se l'email del cliente è stata fornita, si recupera l'ID corrispondente nel database
             if (emailCliente != null && !emailCliente.trim().isEmpty()) {
                 Utente u = utenteDAO.doRetrieveByEmail(emailCliente.trim());
                 if (u != null) {
                     idCliente = u.getIdUtente();
                 } else {
-                    // Se l'admin digita un'email che non esiste nel datalist,
-                    // usiamo un ID fittizio (-1) per far sì che la query restituisca un risultato vuoto,
-                    // e impostiamo un messaggio di errore soft.
+                    // Se non troviamo il cliente, impostiamo idCliente a -1 per indicare che non esiste
                     idCliente = -1; 
                     request.setAttribute("erroreFiltro", "Nessun cliente trovato con l'email: " + emailCliente);
                 }
             }
 
-            // 4. Esecuzione delle Query tramite i DAO
+            // Recupero della lista dei clienti e degli ordini filtrati dal database
             List<Utente> listaClienti = utenteDAO.doRetrieveAll(); // Serve per popolare il <datalist>
             List<Ordine> ordiniAdmin = ordineDAO.doRetrieveAllAdmin(dal, al, idCliente); // Risultato del filtro
 
-            // 5. Setup degli attributi per la JSP
+            // Impostazione degli attributi della request per la JSP
             request.setAttribute("listaClienti", listaClienti);
             request.setAttribute("ordiniAdmin", ordiniAdmin);
             
-            // Rimandiamo indietro i parametri per mantenere compilato il form di filtro (UX)
+            // Impostazione dei valori dei filtri per mantenere i campi del form precompilati
             request.setAttribute("filtroDal", dalStr != null ? dalStr : "");
             request.setAttribute("filtroAl", alStr != null ? alStr : "");
             request.setAttribute("filtroEmail", emailCliente != null ? emailCliente : "");
 
-            // 6. Forward alla View
+            // Forward alla View
             request.getRequestDispatcher("/WEB-INF/view/admin/admin_ordini.jsp").forward(request, response);
 
         } catch (DateTimeParseException e) {
-            // Caso limite: l'utente manomette a mano la query string nell'URL con formati strani (es. ?dal=ciao)
+            // Gestione dell'errore di parsing delle date
             request.setAttribute("erroreFiltro", "Formato data non valido.");
             ricaricaPaginaSenzaFiltri(request, response);
             
@@ -97,9 +95,7 @@ public class AdminOrdiniServlet extends HttpServlet {
         doGet(request, response);
     }
     
-    /**
-     * Helper method per ricaricare la pagina allo stato base in caso di errori di parsing.
-     */
+    // Metodo di utilità per ricaricare la pagina senza filtri in caso di errore
     private void ricaricaPaginaSenzaFiltri(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             request.setAttribute("listaClienti", utenteDAO.doRetrieveAll());

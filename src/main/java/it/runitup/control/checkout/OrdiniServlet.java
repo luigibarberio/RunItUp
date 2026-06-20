@@ -32,13 +32,13 @@ public class OrdiniServlet extends HttpServlet {
         String idParam = request.getParameter("id");
 
         try {
-            // --- CASISTICA A: Dettaglio Ordine ---
+            // Caso A: Visualizzazione Dettaglio Ordine Specifico
             if (idParam != null && !idParam.trim().isEmpty()) {
                 
-                // L'oggetto Ordine ce lo ha appena impacchettato e validato il Filtro!
+                // Recupero dell'ordine specifico dal filtro OrderOwnerFilter, che ha già validato la proprietà dell'ordine
                 Ordine ordine = (Ordine) request.getAttribute("ordineValidato");
                 
-                // Estraiamo solo i dettagli commerciali
+                // Recupero dei dettagli dell'ordine per la visualizzazione
                 List<DettaglioOrdine> dettagli = ordineDAO.getDettagliByOrdine(ordine.getIdOrdine());
 
                 request.setAttribute("ordine", ordine); // Non serve rimetterlo se la JSP usa "ordineGiaValidato", ma lo rimettiamo col nome standard per comodità
@@ -47,7 +47,7 @@ public class OrdiniServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/view/order/dettaglio_ordine.jsp").forward(request, response);
                 return;
             }
-            // --- CASISTICA B: Cronologia Completa ---
+            // Caso B: Visualizzazione Cronologia Ordini dell'Utente
             else {
                 List<Ordine> cronologiaOrdini = ordineDAO.getOrdiniByUtente(utenteLoggato.getIdUtente());
                 request.setAttribute("cronologiaOrdini", cronologiaOrdini);
@@ -60,10 +60,10 @@ public class OrdiniServlet extends HttpServlet {
         }
     }
 
+    // doPost: Reindirizza le richieste POST alla gestione GET per la visualizzazione degli ordini
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        // Le consultazioni dello storico avvengono solo in GET. Rimandiamo al doGet in caso di chiamate errate.
         doGet(request, response);
     }
 }

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+// Servlet per servire le immagini dei prodotti. Riceve richieste GET con parametri "id" (ID del prodotto) e "index" (indice dell'immagine, opzionale, default 0). Se l'immagine richiesta non esiste, restituisce un errore 404.
 @WebServlet("/images/prodotti")
 public class ImmagineProdottoServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -30,20 +31,21 @@ public class ImmagineProdottoServlet extends HttpServlet {
 
         String uploadRoot = System.getProperty("user.home") + File.separator + "runitup_media" + File.separator + "prodotti";
         
-        // Creiamo il riferimento al file richiesto (es. prodotto_5_1.png)
+        // Costruzione del percorso dell'immagine basata sull'ID del prodotto e sull'indice dell'immagine
         File imageFile = new File(uploadRoot + File.separator + "prodotto_" + idParam + "_" + index + ".png");
 
-        // Se l'immagine richiesta non esiste e l'indice è 1, proviamo a servire la primaria (indice 0)
+        // Se l'immagine specificata non esiste, proviamo a servire la prima immagine (indice 0) come fallback
         if (!imageFile.exists() && "1".equals(index)) {
             imageFile = new File(uploadRoot + File.separator + "prodotto_" + idParam + "_0.png");
         }
 
-        // Se nemmeno la primaria esiste, allora diamo 404 (così la JSP usa il placeholder SVG)
+        // Se l'immagine non esiste ancora, restituiamo un errore 404
         if (!imageFile.exists()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
+        // Impostiamo il tipo di contenuto della risposta come immagine PNG e copiamo il file dell'immagine nel flusso di output della risposta
         response.setContentType("image/png");
         
         Files.copy(imageFile.toPath(), response.getOutputStream());

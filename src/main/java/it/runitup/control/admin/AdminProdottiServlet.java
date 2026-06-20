@@ -13,20 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 import it.runitup.model.dao.ProdottoDAO;
 import it.runitup.model.dto.ProdottoDTO;
 
-/**
- * Servlet deputata alla visualizzazione dell'elenco completo dei prodotti 
- * all'interno del pannello di amministrazione (Richiesto da Checklist).
- * Mappata sotto /admin/ per essere protetta automaticamente dall'AdminFilter.
- */
+// Servlet per la visualizzazione dell'elenco completo dei prodotti nel pannello di controllo admin. Riceve richieste GET per mostrare la tabella riassuntiva dei prodotti.
 @WebServlet("/admin/prodotti")
 public class AdminProdottiServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
     private final ProdottoDAO prodottoDAO = new ProdottoDAO();
 
-    /**
-     * Recupera l'intero catalogo prodotti e lo inoltra alla tabella riassuntiva admin.
-     */
+    // Gestione della richiesta GET per visualizzare l'elenco dei prodotti
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {

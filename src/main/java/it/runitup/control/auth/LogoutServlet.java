@@ -17,10 +17,10 @@ import com.google.gson.Gson;
 public class LogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
-    // Riutilizziamo Gson per la conformità con il resto del Front Controller (LoginServlet)
+    // Creiamo un'istanza di Gson per la serializzazione JSON
     private final Gson gson = new Gson();
 
-    // Endpoint Sincrono
+    // Metodo doGet: Gestisce la richiesta di logout tramite GET, tipicamente quando l'utente clicca su un link di logout
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -42,7 +42,7 @@ public class LogoutServlet extends HttpServlet {
         }
     }
 
-    // Endpoint Asincrono: Intercetta la richiesta POST inviata dal file JS "logout.js" quando l'utente clicca sul bottone "Logout" nella dashboard
+    // Metodo doPost: Gestisce la richiesta di logout tramite POST, tipicamente quando l'utente invia un form di logout
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {

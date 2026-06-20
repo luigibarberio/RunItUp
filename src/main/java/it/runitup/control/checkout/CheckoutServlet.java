@@ -55,7 +55,7 @@ public class CheckoutServlet extends HttpServlet {
                 return;
             }
 
-            // Prepariamo la lista dei DTO arricchita con le promozioni per l'ultimo riepilogo visivo
+            // Creazione di una lista di DTO per le voci del carrello, che includeranno i prezzi scontati in tempo reale
             List<VoceCarrelloDTO> vociDTO = new ArrayList<>();
             BigDecimal totaleProdotti = BigDecimal.ZERO;
             
@@ -67,7 +67,7 @@ public class CheckoutServlet extends HttpServlet {
                 totaleProdotti = totaleProdotti.add(costoRiga);
             }
             
-            // Calcolo spedizione tramite la nostra classe di utilità centralizzata
+            // Calcolo del costo di spedizione e del totale finale
             BigDecimal costoSpedizione = SpedizioneUtil.calcolaCostoSpedizione(totaleProdotti);
             BigDecimal totaleFinale = totaleProdotti.add(costoSpedizione);
             
@@ -102,7 +102,7 @@ public class CheckoutServlet extends HttpServlet {
             // Le informazioni dell'utente verranno ottenute tramite chiamata al DB usando l'ID utente memorizzato in sessione, per evitare manomissioni dei dati lato client
             Utente utente = utenteDAO.doRetrieveById(utenteLoggato.getIdUtente());
 
-            // 1. Lettura dello stream JSON inviato dal client
+            // Parsing del corpo della richiesta JSON per ottenere i dati di spedizione e pagamento
             java.io.BufferedReader reader = request.getReader();
             JsonObject jsonBody = gson.fromJson(reader, JsonObject.class);
 
@@ -114,7 +114,7 @@ public class CheckoutServlet extends HttpServlet {
             String metodoPagamentoStr = jsonBody.has("metodoPagamento") ? jsonBody.get("metodoPagamento").getAsString().trim() : "";
             String codiceCoupon = jsonBody.has("codiceCoupon") ? jsonBody.get("codiceCoupon").getAsString().trim().toUpperCase() : "";
 
-            // Validazione severa delle stringhe, con limite di lunghezza e formato
+            // Validazione lato server dei dati di spedizione e pagamento ricevuti dal client
             if (nome.isEmpty() || nome.length() > 50 ||
                 cognome.isEmpty() || cognome.length() > 50 ||
                 indirizzo.isEmpty() || indirizzo.length() > 100 ||
@@ -127,7 +127,7 @@ public class CheckoutServlet extends HttpServlet {
                 return;
             }
 
-            // Conversione tipizzata e provata del metodo di pagamento (Enum omonimo)
+            // Validazione del metodo di pagamento ricevuto dal client
             TipoMetodoDiPagamento metodoPagamento;
             try {
                 metodoPagamento = TipoMetodoDiPagamento.valueOf(metodoPagamentoStr);
@@ -136,7 +136,7 @@ public class CheckoutServlet extends HttpServlet {
                 return;
             }
 
-            // 2. Ricalcolo Server-Side del Carrello (Protezione anti-manomissione dei prezzi)
+            // Ricalcolo del carrello e dei totali, considerando eventuali coupon, per garantire che il client non possa manipolare i prezzi o le quantità
             CarrelloManager cartManager = new CarrelloManager(request, carrelloDAO, varianteDAO);
             List<VoceCarrello> vociGrezze = cartManager.getVociCarrello();
             
@@ -155,10 +155,15 @@ public class CheckoutServlet extends HttpServlet {
                 totaleProdotti = totaleProdotti.add(subtot);
             }
 
-            // 3. Verifica e calcolo del Coupon reale a Backend
+            // Se il totale prodotti è zero o negativo, non permettiamo di procedere con l'ordine
+            if (totaleProdotti.compareTo(BigDecimal.ZERO) <= 0) {
+                inviaRisposta(response, jsonResponse, false, "Il totale del carrello non è valido. Impossibile procedere.");
+                return;
+            }
             Coupon couponApplicato = null;
             BigDecimal valoreSconto = BigDecimal.ZERO;
 
+            // Se l'utente ha inserito un codice coupon, verifichiamo la sua validità e calcoliamo lo sconto applicabile
             if (!codiceCoupon.isEmpty()) {
                 CouponDAO cDAO = new CouponDAO();
                 couponApplicato = cDAO.getCouponByCodice(codiceCoupon);
@@ -169,7 +174,7 @@ public class CheckoutServlet extends HttpServlet {
                     return;
                 }
 
-                // Eseguiamo gli stessi calcoli matematici formali
+                // Calcolo del valore dello sconto in base al tipo di coupon (percentuale o fisso)
                 if (couponApplicato.getTipoSconto().name().equals("PERCENTUALE")) {
                     BigDecimal pct = couponApplicato.getValoreSconto().divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP);
                     valoreSconto = totaleProdotti.multiply(pct).setScale(2, RoundingMode.HALF_UP);
@@ -183,19 +188,19 @@ public class CheckoutServlet extends HttpServlet {
                 }
             }
 
-            // Applichiamo la riduzione del coupon al subtotale merci
+            // Calcolo del totale prodotti scontato
             BigDecimal totaleProdottiScontato = totaleProdotti.subtract(valoreSconto);
 
             // Calcolo spedizione sul parziale merci rimasto
             BigDecimal costoSpedizione = SpedizioneUtil.calcolaCostoSpedizione(totaleProdottiScontato);
             BigDecimal totalePagato = totaleProdottiScontato.add(costoSpedizione);
 
-            // 4. Scorporo Fiscale IVA 22% sull'importo effettivamente pagato
+            // Scorporo dell'IVA dal totale pagato, considerando un'aliquota del 22%
             BigDecimal aliquotaDivisore = new BigDecimal("1.22");
             BigDecimal totaleImponibile = totalePagato.divide(aliquotaDivisore, 2, RoundingMode.HALF_UP);
             BigDecimal totaleIva = totalePagato.subtract(totaleImponibile);
 
-            // 5. Compilazione del record Ordine
+            // Creazione dell'oggetto Ordine con tutti i dati necessari per il salvataggio nel database
             Ordine ordine = new Ordine();
             ordine.setUtente(utente);
             ordine.setCoupon(couponApplicato); // Se applicato conterrà il Bean, altrimenti null (gestito da OrdineDAO)
@@ -213,7 +218,7 @@ public class CheckoutServlet extends HttpServlet {
             ordine.setMetodoPagamento(metodoPagamento.name());
             ordine.setStato(StatoOrdine.IN_LAVORAZIONE);
 
-            // 6. Esecuzione della transazione atomica ACID nel DB
+            // Salvataggio dell'ordine completo nel database, comprese le voci del carrello e l'eventuale coupon
             int idOrdineGenerato = ordineDAO.salvaOrdineCompleto(ordine, vociDTO, utente.getIdUtente());
 
             if (idOrdineGenerato > 0) {
@@ -234,7 +239,7 @@ public class CheckoutServlet extends HttpServlet {
         }
     }
 
-    // Helper interno per snellire la scrittura delle risposte di errore
+    // Metodo di utilità per inviare una risposta JSON al client con l'esito dell'operazione e un messaggio
     private void inviaRisposta(HttpServletResponse response, JsonObject jsonResponse, boolean success, String message) throws IOException {
         jsonResponse.addProperty("success", success);
         jsonResponse.addProperty("message", message);

@@ -45,7 +45,7 @@ public class ValidaCouponServlet extends HttpServlet {
         }
 
         try {
-            // 1. Recupero del coupon (Il DB controlla già se esiste ed è attivo/valido temporalmente)
+            // Recupero del coupon dal database tramite il codice fornito
             Coupon coupon = couponDAO.getCouponByCodice(codice.trim().toUpperCase());
             if (coupon == null) {
                 jsonResponse.addProperty("success", false);
@@ -54,7 +54,7 @@ public class ValidaCouponServlet extends HttpServlet {
                 return;
             }
 
-            // 2. Recupero del subtotale attuale dei prodotti dal carrello dell'utente
+            // Recupero delle voci del carrello per calcolare il totale dei prodotti
             CarrelloManager cartManager = new CarrelloManager(request, carrelloDAO, varianteDAO);
             List<VoceCarrello> vociGrezze = cartManager.getVociCarrello();
             
@@ -72,7 +72,7 @@ public class ValidaCouponServlet extends HttpServlet {
                 totaleProdotti = totaleProdotti.add(costoRiga);
             }
 
-            // 3. Applicazione delle regole matematiche concordate (Scenario A + Cap a 0 euro)
+            // Calcolo dello sconto in base al tipo di coupon (percentuale o fisso)
             BigDecimal valoreScontoCalcolato = BigDecimal.ZERO;
             String visualizzazioneSconto = "";
 
@@ -87,15 +87,15 @@ public class ValidaCouponServlet extends HttpServlet {
                 visualizzazioneSconto = "€ " + coupon.getValoreSconto().setScale(2).toString();
             }
 
-            // Cap a 0€: Lo sconto non può superare il valore dei prodotti
+            // Assicuriamoci che lo sconto non superi il totale dei prodotti
             if (valoreScontoCalcolato.compareTo(totaleProdotti) > 0) {
                 valoreScontoCalcolato = totaleProdotti;
             }
 
-            // Sottraiamo lo sconto dai prodotti
+            // Calcolo del nuovo totale dei prodotti dopo l'applicazione dello sconto
             BigDecimal totaleProdottiScontato = totaleProdotti.subtract(valoreScontoCalcolato);
 
-            // Calcolo spedizione basandoci sul subtotale dei prodotti post-sconto
+            // Calcolo del costo di spedizione basato sul nuovo totale dei prodotti scontato
             BigDecimal costoSpedizione = SpedizioneUtil.calcolaCostoSpedizione(totaleProdottiScontato);
             BigDecimal nuovoTotaleFinale = totaleProdottiScontato.add(costoSpedizione);
 
@@ -107,7 +107,7 @@ public class ValidaCouponServlet extends HttpServlet {
             jsonResponse.addProperty("importoSconto", String.format(java.util.Locale.US, "%.2f", valoreScontoCalcolato));
             jsonResponse.addProperty("nuovoTotale", String.format(java.util.Locale.US, "%.2f", nuovoTotaleFinale));
             
-            // Includiamo anche il costo di spedizione, così da permettere al client di aggiornare dinamicamente anche quello se necessario (es: se il coupon ha fatto scendere il totale sotto la soglia per la spedizione gratuita)
+            // Formattazione del costo di spedizione per la visualizzazione (2 decimali, separatore decimale a virgola)
             jsonResponse.addProperty("costoSpedizione", String.format(java.util.Locale.US, "%.2f", costoSpedizione));
             
         } catch (Exception e) {

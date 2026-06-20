@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 public class OrdineDAO {
 
     // Questo metodo salva un ordine completo, i dettagli e aggiorna il magazzino in un'unica transazione
+// Questo metodo salva un ordine completo, i dettagli e aggiorna il magazzino in un'unica transazione
     public int salvaOrdineCompleto(Ordine ordine, List<VoceCarrelloDTO> voci, int idUtente) throws SQLException {
         int idOrdineGenerato = -1;
 
@@ -36,6 +37,9 @@ public class OrdineDAO {
                                  
         String updateMagazzino = "UPDATE variante_prodotto SET quantita_magazzino = quantita_magazzino - ? " +
                                  "WHERE id_variante = ? AND quantita_magazzino >= ?";
+                                 
+        String incrementaVendite = "UPDATE prodotto SET totale_vendite = totale_vendite + ? " +
+                                   "WHERE id_prodotto = (SELECT id_prodotto FROM variante_prodotto WHERE id_variante = ?)";
                                  
         String svuotaCarrello = "DELETE FROM voce_carrello WHERE id_carrello = (SELECT id_carrello FROM carrello WHERE id_utente = ?)";
 
@@ -64,7 +68,7 @@ public class OrdineDAO {
                 psOrd.setString(8, ordine.getIndirizzoSpedizione());
                 psOrd.setString(9, ordine.getCitta());
                 psOrd.setString(10, ordine.getCap());
-                psOrd.setString(11, ordine.getMetodoPagamento()); // Passiamo la stringa "CARTA", "PAYPAL", ecc. Postgres farà il cast
+                psOrd.setString(11, ordine.getMetodoPagamento());
                 psOrd.setString(12, ordine.getStato().name()); 
                 
                 psOrd.executeUpdate();
@@ -79,9 +83,10 @@ public class OrdineDAO {
                 }
             }
 
-            // 2. ITERAZIONE SULLE VOCI DEL CARRELLO (Dettagli e Magazzino)
+            // 2. ITERAZIONE SULLE VOCI DEL CARRELLO (Dettagli, Magazzino e Vendite)
             try (PreparedStatement psDet = con.prepareStatement(insertDettaglio);
-                 PreparedStatement psMag = con.prepareStatement(updateMagazzino)) {
+                 PreparedStatement psMag = con.prepareStatement(updateMagazzino);
+                 PreparedStatement psVendite = con.prepareStatement(incrementaVendite)) {
                 
                 for (VoceCarrelloDTO voceDTO : voci) {
                     int idVariante = voceDTO.getVarianteDTO().getVariante().getIdVariante();
@@ -90,13 +95,11 @@ public class OrdineDAO {
                     // 2a. Sottrazione Magazzino con Hard-Check Concorrenziale
                     psMag.setInt(1, qta);
                     psMag.setInt(2, idVariante);
-                    psMag.setInt(3, qta); // Verifica: Il magazzino DEVE essere >= della quantità richiesta!
+                    psMag.setInt(3, qta); 
                     
                     int righeAggiornate = psMag.executeUpdate();
                     
                     if (righeAggiornate == 0) {
-                        // Se righeAggiornate è 0, significa che la scarpa è finita un attimo prima del click.
-                        // Lanciamo un'eccezione che farà scattare il ROLLBACK
                         throw new SQLException("STOCK_ESAURITO_" + idVariante); 
                     }
                     
@@ -108,7 +111,6 @@ public class OrdineDAO {
                     psDet.setString(5, voceDTO.getVarianteDTO().getVariante().getTaglia());
                     psDet.setInt(6, qta);
                     
-                    // Calcoli IVA del singolo prodotto (Scorporo 22%)
                     java.math.BigDecimal prezzoIvato = voceDTO.getVarianteDTO().getPrezzoEffettivo();
                     java.math.BigDecimal aliquota = new java.math.BigDecimal("0.22");
                     java.math.BigDecimal divisore = new java.math.BigDecimal("1.22");
@@ -119,18 +121,21 @@ public class OrdineDAO {
                     psDet.setBigDecimal(9, prezzoIvato);
                     
                     psDet.executeUpdate();
+
+                    // 2c. INCREMENTO CONTATORE VENDITE
+                    psVendite.setInt(1, qta);
+                    psVendite.setInt(2, idVariante);
+                    psVendite.executeUpdate();
                 }
             }
             
-            // TODO Incrementare contatore vendite per prodotto!!!
-
             // 3. SVUOTAMENTO DEL CARRELLO DELL'UTENTE
             try (PreparedStatement psCart = con.prepareStatement(svuotaCarrello)) {
                 psCart.setInt(1, idUtente);
                 psCart.executeUpdate();
             }
 
-            // SE ARRIVIAMO QUI SENZA ERRORI, CONFERMIAMO TUTTO SUL DB
+            // 4. COMMIT DELLA TRANSAZIONE
             con.commit();
             return idOrdineGenerato;
 

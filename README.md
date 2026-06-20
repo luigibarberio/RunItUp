@@ -1,26 +1,27 @@
 <!-- Logo di RunItUp -->
 <p align="center">
 <img src="src/main/webapp//images/common/icons/logo-runitup.svg" 
-style="filter: invert(40%) sepia(4%) saturate(20000%) hue-rotate(190deg) brightness(95%) contrast(90%);" 
+style="filter: invert(40%) sepia(4%) saturate(20000%) hue-rotate(190deg) brightness(90%) contrast(80%);" 
      width="200" alt="Logo">
 </p>
 
 # RunItUp, L'E-Commerce per il Running
 
-> Università degli Studi di Salerno.
+> **Corso:** Tecnologie Software per il Web  
+> **Università:** Università degli Studi di Salerno  
+> **Anno Accademico:** 2025/2026  
+> **Corso di Laurea:** Informatica
 
-> Corso di Laurea in Informatica Progetto d'esame per il corso di Tecnologie Software per il Web (A.A. 2025/2026)  
-
-## 👥 Il Team (Gruppo RunTime)
-* Luigi Barberio - Matr. 0512121298
-* Antonio Tolino - Matr. 0512121511
+## Il Team (Gruppo RunTime)
+* Luigi Barberio - 0512121298
+* Antonio Tolino - 0512121511
 
 ---
 
-## 🎯 Panoramica del Progetto
+## Panoramica del Progetto
 RunItUp è una piattaforma e-commerce B2C specializzata nella vendita di articoli per il running. Nasce dall'analisi dei leader di settore per offrire un'esperienza d'acquisto immersiva, intuitiva e tecnicamente avanzata. Il sito si rivolge sia al runner amatoriale che all'atleta agonista, mettendo a disposizione strumenti di ricerca potenziati (come l'algoritmo FindMyShoes) e un layout Light Mode dinamico e completamente responsivo.
 
-## 🛠️ Stack Tecnologico
+## Stack Tecnologico
 Il progetto è stato sviluppato attenendosi rigorosamente allo stack richiesto dalla traccia d'esame, sviluppando l'intera logica di business e di persistenza from scratch, senza l'ausilio di framework esterni (es. Spring o Hibernate). Non sono stati, inoltre, effettuati deploy su piattaforme cloud, ma l'applicativo è stato testato in locale tramite container Docker.
 
 * Backend: Java 11, Servlet 4.0, JSP (JavaServer Pages)

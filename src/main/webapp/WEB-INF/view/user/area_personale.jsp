@@ -86,7 +86,7 @@
                     <p class="card-description">Proteggi il tuo profilo modificando la password o effettua la disconnessione in totale sicurezza.</p>
                     
                     <div class="card-actions security-actions">
-                        <a href="${pageContext.request.contextPath}/area_personale/modifica" class="btn-secondary w-100 mb-2">
+                        <a href="${pageContext.request.contextPath}/area_personale/modifica#cambioPassword" class="btn-secondary w-100 mb-2">
                             Cambia Password
                         </a>
                         <%-- Bottone di logout asincrono agganciato al file JS --%>

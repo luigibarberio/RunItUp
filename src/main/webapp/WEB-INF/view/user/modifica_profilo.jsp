@@ -82,7 +82,7 @@
                     <span class="error-msg" id="telefonoError"></span>
                 </div>
 
-                <h3 class="section-title margin-top-section">Cambio Password</h3>
+                <h3 class="section-title margin-top-section" id="cambioPassword">Cambio Password</h3>
                 <p class="section-subtitle">Lascia questi campi vuoti se non desideri modificare la password.</p>
 
                 <div class="input-group">

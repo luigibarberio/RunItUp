@@ -2,6 +2,12 @@
    RUNITUP - STILE PAGINA MODIFICA PROFILO
    ========================================================================== */
 
+/* Scroll smooth per tutta la pagina */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 110px; /* Compensa l'altezza della navbar fissa */
+}
+
 /* Contenitore principale della pagina */
 .modifica-main {
     display: flex;

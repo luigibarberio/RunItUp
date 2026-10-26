@@ -1,20 +1,43 @@
 <!-- Logo di RunItUp -->
 <p align="center">
-<img src="src/main/webapp//images/common/icons/logo-runitup.svg" 
-style="filter: invert(40%) sepia(4%) saturate(20000%) hue-rotate(190deg) brightness(90%) contrast(80%);" 
-     width="200" alt="Logo">
+  <img src="src/main/webapp/images/common/icons/logo-runitup.svg" 
+       style="filter: invert(40%) sepia(4%) saturate(20000%) hue-rotate(190deg) brightness(90%) contrast(80%);" 
+       width="200" alt="Logo RunItUp">
 </p>
 
 # RunItUp, L'E-Commerce per il Running
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-11-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 11">
+  <img src="https://img.shields.io/badge/Jakarta%20EE-Servlet%204.0-2C5E8A?style=for-the-badge&logo=eclipse&logoColor=white" alt="Servlet 4.0">
+  <img src="https://img.shields.io/badge/PostgreSQL-15-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/Apache%20Tomcat-9.0-F8DC75?style=for-the-badge&logo=apache-tomcat&logoColor=black" alt="Apache Tomcat 9">
+  <img src="https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+</p>
+
+---
+
+## 🇬🇧 Executive Summary (For International Visitors & Recruiters)
+
+**RunItUp** is a full-stack B2C e-commerce platform specialized in running gear, built from scratch using pure Java (Servlet 4.0, JSP, JDBC) without higher-level frameworks such as Spring Boot or Hibernate.
+
+**Key Engineering Highlights:**
+- **Layered Architecture:** Strict MVC separation, DAO/DTO patterns, dedicated service layer (`CarrelloManager`), and security filters (`AuthFilter`, `AdminFilter`, `OrderOwnerFilter`).
+- **ACID Transactions:** Thread-safe order placement and inventory reduction under concurrent load.
+- **Faceted Search & Dynamic Catalog:** Dual-context querying algorithm providing real-time multi-attribute filtering (Brand, Size, Color, Technical Specs) without empty states.
+- **Containerized Infrastructure:** Ready-to-run environment with Docker Compose, automated PostgreSQL schema initialization, and database seeding.
+- **Asynchronous UX:** Vanilla ES6+ JavaScript, Fetch API, live search suggestions, and responsive design.
+
+---
+
 > **Corso:** Tecnologie Software per il Web  
 > **Università:** Università degli Studi di Salerno  
 > **Anno Accademico:** 2025/2026  
-> **Corso di Laurea:** Informatica
+> **Corso di Laurea:** Informatica  
 
 ## Il Team (Gruppo RunTime)
-* Luigi Barberio - 0512121298
-* Antonio Tolino - 0512121511
+* **[Luigi Barberio](https://github.com/luigibarberio/)**
+* **[Antonio Tolino](https://github.com/Antonio-T-5)**
 
 ---
 
@@ -82,16 +105,22 @@ Questa soluzione orchestra automaticamente il database PostgreSQL e il server To
 1. Assicurarsi di avere Docker e Docker Compose installati sul proprio PC.
 2. Aprire un terminale nella cartella root del progetto.
 3. Eseguire il comando:
+   ```bash
    docker-compose up --build -d
+   ```
 4. Attendere pochi secondi: l'infrastruttura caricherà il database, eseguirà in automatico gli script SQL presenti in /db_scripts (generazione schema e seeding dati) ed esporrà l'applicativo.
-5. Il sito sarà accessibile all'indirizzo: http://localhost:8080/RunItUp (o alla porta definita nel file .env), oppure all'indirizzo fornito dal Cloudflare Tunnel.
+5. Il sito sarà accessibile all'indirizzo: `http://localhost:8080/RunItUp` (o alla porta definita nel file .env), oppure all'indirizzo fornito dal Cloudflare Tunnel.
 
 ### 3. Metodo per lo Sviluppo: Avvio Locale (Eclipse IDE / Tomcat)
 Qualora si preferisse analizzare il codice e avviare il server direttamente dall'IDE:
 
 1. Importare il progetto in Eclipse come Maven Project (File > Import > Existing Maven Projects).
-2. Per il Database, è possibile avviare solo l'istanza PostgreSQL usando Docker (docker-compose up -d db) oppure utilizzare una propria installazione locale. In quest'ultimo caso, eseguire manualmente gli script in /db_scripts (01-schema.sql e 02-seed.sql).
+2. Per il Database, è possibile avviare solo l'istanza PostgreSQL usando Docker (`docker-compose up -d db`) oppure utilizzare una propria installazione locale. In quest'ultimo caso, eseguire manualmente gli script in `/db_scripts` (`01-schema.sql` e `02-seed.sql`).
 3. Aggiungere il progetto al server integrato Apache Tomcat (versione 9.0 o superiore).
 4. Avviare il server dall'IDE.
 
 ---
+
+## Licenza e Diritti
+Copyright © 2026 Luigi Barberio, Antonio Tolino. Tutti i diritti riservati.  
+Questo repository è reso pubblico a scopo di consultazione, portfolio e valutazione tecnica delle competenze degli autori. Consulta il file [LICENSE.md](LICENSE.md) per i dettagli completi sui termini d'uso.

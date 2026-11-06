@@ -17,7 +17,7 @@
 
 ---
 
-## 🇬🇧 Executive Summary (For International Visitors & Recruiters)
+## 🇬🇧 Executive Summary
 
 **RunItUp** is a full-stack B2C e-commerce platform specialized in running gear, built from scratch using pure Java (Servlet 4.0, JSP, JDBC) without higher-level frameworks such as Spring Boot or Hibernate.
 
